@@ -1,0 +1,7 @@
+DB_HOST=localhost
+DB_USER=kingdombattles
+DB_PASS=kingdombattles
+DB_NAME=kingdombattles
+DB_PORT=3306
+
+WEB_ADDRESS=localhost

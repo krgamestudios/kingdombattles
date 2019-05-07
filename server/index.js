@@ -1,15 +1,20 @@
+//environment variables
+require('dotenv').config();
+
 //libraries
 let express = require('express');
 let app = express();
 let http = require('http').Server(app);
 let path = require('path');
 
+//database
+let { connectToDatabase } = require('./database.js');
+let connection = connectToDatabase(); //uses .env
+
 //handle accounts
-app.post('/signup', (req, res) => {
-	console.log('message heard, data ignored')
-	res.write('<p>message heard, data ignored</p>');
-	res.end();
-});
+let accounts = require('./accounts.js');
+app.post('/signup', accounts.signup(connection));
+app.get('/verify', accounts.verify(connection));
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );

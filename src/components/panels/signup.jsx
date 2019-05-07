@@ -6,6 +6,7 @@ export default class Signup extends React.Component {
 		super(props);
 		this.state = {
 			email: '',
+			username: '',
 			password: '',
 			retype: '',
 			warning: ''
@@ -32,6 +33,11 @@ export default class Signup extends React.Component {
 					</div>
 
 					<div>
+						<label>User Name:</label>
+						<input type='text' name='username' value={this.state.username} onChange={this.updateUsername.bind(this)} />
+					</div>
+
+					<div>
 						<label>Password:</label>
 						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
 					</div>
@@ -51,6 +57,16 @@ export default class Signup extends React.Component {
 		if (!validateEmail(this.state.email)) {
 			e.preventDefault();
 			this.setWarning('Invalid Email');
+		}
+
+		else if (this.state.username.length < 4) {
+			e.preventDefault();
+			this.setWarning('Minimum username length is 4 characters');
+		}
+
+		else if (this.state.username.length > 100) {
+			e.preventDefault();
+			this.setWarning('Maximum username length is 100 characters');
 		}
 
 		else if (this.state.password.length < 8) {
@@ -82,6 +98,12 @@ export default class Signup extends React.Component {
 	updateEmail(evt) {
 		this.setState({
 			email: evt.target.value
+		});
+	}
+
+	updateUsername(evt) {
+		this.setState({
+			username: evt.target.value
 		});
 	}
 
