@@ -2,8 +2,10 @@ module.exports = {
   entry: './src/index.jsx',
   output: {
     path: __dirname + '/public/',
-    filename: 'app.bundle.js'
+    filename: 'app.bundle.js',
+    sourceMapFilename: 'app.js.map'
   },
+  devtool: 'source-map',
   module: {
     rules: [
       {

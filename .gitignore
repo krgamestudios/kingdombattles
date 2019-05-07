@@ -13,4 +13,4 @@ auth.json
 
 #output files
 *.bundle.js
-
+*.js.map
