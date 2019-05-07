@@ -6,7 +6,7 @@
   "scripts": {
     "start": "forever -o forever.log -e error.log start server/index.js",
     "restart": "forever -o forever.log -e error.log restart server/index.js",
-    "stop": "forever stop server.js",
+    "stop": "forever stop server/index.js",
     "node": "node server/index.js",
     "webpack": "webpack --mode=development",
     "webpack-production": "webpack --mode=production"
