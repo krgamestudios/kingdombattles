@@ -4,8 +4,12 @@
   "description": "Kingdom Battles",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --mode=development",
-    "build": "webpack --mode=production"
+    "start": "forever -o forever.log -e error.log start server/index.js",
+    "restart": "forever -o forever.log -e error.log restart server/index.js",
+    "stop": "forever stop server.js",
+    "node": "node server/index.js",
+    "webpack": "webpack --mode=development",
+    "webpack-production": "webpack --mode=production"
   },
   "author": "Kayne Ruse",
   "license": "",
@@ -14,6 +18,8 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "express": "^4.16.4",
+    "forever": "^1.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.3",

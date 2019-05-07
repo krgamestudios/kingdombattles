@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+//panels
+import Signup from '../panels/signup.jsx';
+
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
@@ -12,7 +15,8 @@ class Home extends React.Component {
 	render() {
 		return (
 			<div className='page'>
-				<p>This is the home page</p>
+				<p>This is the home page.</p>
+				<Signup />
 			</div>
 		);
 	}

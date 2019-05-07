@@ -84,6 +84,13 @@ footer {
 	justify-content: flex-start;
 }
 
+.panel {
+	flex: 0 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
 /* warning message */
 .warning {
 	flex: 0 1 auto;
