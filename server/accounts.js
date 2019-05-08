@@ -193,6 +193,8 @@ function logout(connection) {
 		connection.query(query, [req.body.email, req.body.token], (err) => {
 			if (err) throw err;
 		});
+
+		res.end();
 	}
 }
 
