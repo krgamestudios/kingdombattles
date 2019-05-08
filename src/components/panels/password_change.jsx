@@ -55,12 +55,18 @@ class PasswordChange extends React.Component {
 		let xhr = new XMLHttpRequest();
 
 		formData.append('email', this.props.email);
+		formData.append('token', this.props.token);
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
 					this.props.sessionChange(json.token);
+
+					//DEBUGGING
+					if (this.props.onPasswordChange) {
+						this.props.onPasswordChange();
+					}
 				}
 
 				else if (xhr.status === 400) {
@@ -72,11 +78,6 @@ class PasswordChange extends React.Component {
 		//send the XHR
 		xhr.open('POST', form.action, true);
 		xhr.send(formData);
-
-		//DEBUGGING
-		if (this.props.onSubmit) {
-			this.props.onSubmit();
-		}
 	}
 
 	validateInput(e) {
@@ -122,7 +123,8 @@ class PasswordChange extends React.Component {
 
 function mapStoreToProps(store) {
 	return {
-		email: store.account.email
+		email: store.account.email,
+		token: store.account.token
 	}
 }
 

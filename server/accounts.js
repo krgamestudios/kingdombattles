@@ -20,7 +20,7 @@ function signup(connection) {
 
 			//validate email, username and password
 			if (!validateEmail(fields.email) || fields.username.length < 4 || fields.username.length > 100 || fields.password.length < 8 || fields.password !== fields.retype) {
-				res.write('<p>Invalid signup data</p>');
+				res.status(400).write('Invalid signup data');
 				res.end();
 				return;
 			}
@@ -31,13 +31,13 @@ function signup(connection) {
 				if (err) throw err;
 
 				if (results[0].email !== 0) {
-					res.write('<p>Email already registered!</p>');
+					res.status(400).write('Email already registered!');
 					res.end();
 					return;
 				}
 
 				if (results[0].username !== 0) {
-					res.write('<p>Username already registered!</p>');
+					res.status(400).write('Username already registered!');
 					res.end();
 					return;
 				}
@@ -76,7 +76,7 @@ function signup(connection) {
 									return;
 								}
 
-								res.write('<p>Verification email sent!</p>');
+								res.status(200).write('Verification email sent!');
 								res.end();
 							});
 						})
@@ -209,36 +209,52 @@ function passwordChange(connection) {
 
 			//validate password, retype
 			if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
-				res.write('<p>Invalid password change data</p>');
+				res.status(400).write('Invalid password change data');
 				res.end();
 				return;
 			}
 
-			//generate the new salt, hash
-			bcrypt.genSalt(11, (err, salt) => {
+			//validate token
+			query = 'SELECT sessions.token FROM sessions WHERE sessions.accountId IN (SELECT id FROM accounts WHERE email = ?);';
+			connection.query(query, [fields.email], (err, results) => {
 				if (err) throw err;
-				bcrypt.hash(fields.password, salt, (err, hash) => {
-					if (err) throw err;
 
-					let query = 'UPDATE accounts SET salt = ?, hash = ? WHERE email = ?;';
-					connection.query(query, [salt, hash, fields.email], (err) => {
+				let found = false;
+
+				results.map((result) => { if (result.token == fields.token) found = true; });
+
+				if (!found) {
+					res.status(400).write('Invalid password change authentication');
+					res.end();
+					return;
+				}
+
+				//generate the new salt, hash
+				bcrypt.genSalt(11, (err, salt) => {
+					if (err) throw err;
+					bcrypt.hash(fields.password, salt, (err, hash) => {
 						if (err) throw err;
 
-						//clear all session data for this user (a 'feature')
-						let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?);';
-						connection.query(query, [fields.email], (err) => {
+						let query = 'UPDATE accounts SET salt = ?, hash = ? WHERE email = ?;';
+						connection.query(query, [salt, hash, fields.email], (err) => {
 							if (err) throw err;
 
-							//create the new session
-							let rand = Math.floor(Math.random() * 100000);
-
-							let query = 'INSERT INTO sessions (accountId, token) VALUES ((SELECT accounts.id FROM accounts WHERE email = ?), ?);';
-							connection.query(query, [fields.email, rand], (err) => {
+							//clear all session data for this user (a 'feature')
+							let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?);';
+							connection.query(query, [fields.email], (err) => {
 								if (err) throw err;
 
-								//send json containing the account info
-								res.status(200).json({
-									token: rand
+								//create the new session
+								let rand = Math.floor(Math.random() * 100000);
+
+								let query = 'INSERT INTO sessions (accountId, token) VALUES ((SELECT accounts.id FROM accounts WHERE email = ?), ?);';
+								connection.query(query, [fields.email, rand], (err) => {
+									if (err) throw err;
+
+									//send json containing the account info
+									res.status(200).json({
+										token: rand
+									});
 								});
 							});
 						});

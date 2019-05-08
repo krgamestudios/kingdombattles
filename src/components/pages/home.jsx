@@ -13,7 +13,9 @@ class Home extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			changedPassword: false
+			changedPassword: false,
+			signedUp: false,
+			signupMsg: ''
 		};
 	}
 
@@ -27,7 +29,7 @@ class Home extends React.Component {
 
 				if (!this.state.changedPassword) {
 					PasswordChangePanel = () => {
-						return (<PasswordChange onSubmit={() => { this.setState({changedPassword: true}) }} />);
+						return (<PasswordChange onPasswordChange={() => { this.setState({changedPassword: true}) }} />);
 					}
 				} else {
 					PasswordChangePanel = () => {
@@ -48,12 +50,22 @@ class Home extends React.Component {
 				if (this.state.changedPassword) {
 					this.setState({changedPassword: false});
 				}
-				return (
-					<div>
-						<Signup />
-						<Login />
-					</div>
-				);
+
+				if (!this.state.signedUp) {
+					return (
+						<div>
+							<Signup onSignup={(msg) => this.setState( {signedUp: true, signupMsg: msg} )} />
+							<Login />
+						</div>
+					);
+				} else {
+					return (
+						<div>
+							<p>{this.state.signupMsg}</p>
+							<Login />
+						</div>
+					);
+				}
 			};
 		}
 

@@ -26,7 +26,7 @@ export default class Signup extends React.Component {
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/signup' method='post' onSubmit={(e) => this.validateInput(e)}>
+				<form action='/signup' method='post' onSubmit={(e) => this.submit(e)}>
 					<div>
 						<label>Email:</label>
 						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
@@ -53,31 +53,60 @@ export default class Signup extends React.Component {
 		);
 	}
 
-	validateInput(e) {
+	submit(e) {
+		e.preventDefault();
+
+		if (!this.validateInput()) {
+			return;
+		}
+
+		//build the XHR
+		let form = e.target;
+		let formData = new FormData(form);
+		let xhr = new XMLHttpRequest();
+
+		xhr.onreadystatechange = () => {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					if (this.props.onSignup) {
+						this.props.onSignup(xhr.responseText);
+					}
+				}
+
+				else if (xhr.status === 400) {
+					this.setWarning(xhr.responseText);
+				}
+			}
+		};
+
+		//send the XHR
+		xhr.open('POST', form.action, true);
+		xhr.send(formData);
+	}
+
+	validateInput() {
 		if (!validateEmail(this.state.email)) {
-			e.preventDefault();
 			this.setWarning('Invalid Email');
+			return false;
 		}
-
-		else if (this.state.username.length < 4) {
-			e.preventDefault();
+		if (this.state.username.length < 4) {
 			this.setWarning('Minimum username length is 4 characters');
+			return false;
 		}
-
-		else if (this.state.username.length > 100) {
-			e.preventDefault();
+		if (this.state.username.length > 100) {
 			this.setWarning('Maximum username length is 100 characters');
+			return false;
 		}
-
-		else if (this.state.password.length < 8) {
-			e.preventDefault();
+		if (this.state.password.length < 8) {
 			this.setWarning('Minimum password length is 8 characters');
+			return false;
+		}
+		if (this.state.password !== this.state.retype) {
+			this.setWarning('Passwords do not match');
+			return false;
 		}
 
-		else if (this.state.password !== this.state.retype) {
-			e.preventDefault();
-			this.setWarning('Passwords do not match');
-		}
+		return true;
 	}
 
 	setWarning(s) {
