@@ -71,7 +71,7 @@ function signup(connection) {
 							}, (err, reply) => {
 								//final check
 								if (err) {
-									res.write(`<p>Something went wrong (did you use a valid email?)</p>${err}`)
+									res.write(`<p>Something went wrong (did you use a valid email?)</p><p>${err}</p>`);
 									res.end();
 									return;
 								}
