@@ -127,7 +127,78 @@ function verify(connection) {
 	}
 }
 
+function login(connection) {
+	return (req, res) => {
+		//formidable handles forms
+		let form = formidable.IncomingForm();
+
+		//parse form
+		form.parse(req, (err, fields) => {
+			if (err) throw err;
+
+			//validate email, username and password
+			if (!validateEmail(fields.email) || fields.password.length < 8) {
+				res.write('<p>Invalid login data</p>');
+				res.end();
+				return;
+			}
+
+			//find this email's information
+			let query = 'SELECT id, username, salt, hash FROM accounts WHERE email = ?;';
+			connection.query(query, [fields.email], (err, results) => {
+				if (err) throw err;
+
+				//found this email?
+				if (results.length === 0) {
+					res.status(400).write('Incorrect email or password');
+					res.end();
+					return;
+				}
+
+				//gen a new hash from the salt and password
+				bcrypt.hash(fields.password, results[0].salt, (err, newHash) => {
+					if (err) throw err;
+
+					//compare the passwords
+					if (results[0].hash !== newHash) {
+						res.status(400).write('Incorrect email or password');
+						res.end();
+						return;
+					}
+
+					//create the new session
+					let rand = Math.floor(Math.random() * 100000);
+
+					let query = 'INSERT INTO sessions (accountId, token) VALUES (?, ?);';
+					connection.query(query, [results[0].id, rand], (err) => {
+						if (err) throw err;
+
+						//send json containing the account info
+						res.status(200).json({
+							id: results[0].id,
+							email: fields.email,
+							username: results[0].username,
+							token: rand
+						});
+					});
+				});
+			});
+		});
+	}
+}
+
+function logout(connection) {
+	return (req, res) => {
+		let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?) AND token = ?;';
+		connection.query(query, [req.body.email, req.body.token], (err) => {
+			if (err) throw err;
+		});
+	}
+}
+
 module.exports = {
 	signup: signup,
-	verify: verify
+	verify: verify,
+	login: login,
+	logout: logout
 };

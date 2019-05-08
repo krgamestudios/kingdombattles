@@ -1,3 +1,4 @@
 DROP TABLE signups;
 DROP TABLE accounts;
-DROP TABLE profiles;
+DROP TABLE sessions;
+#DROP TABLE profiles;

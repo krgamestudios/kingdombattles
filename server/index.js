@@ -5,7 +5,10 @@ require('dotenv').config();
 let express = require('express');
 let app = express();
 let http = require('http').Server(app);
+let bodyParser = require('body-parser');
 let path = require('path');
+
+app.use(bodyParser.json());
 
 //database
 let { connectToDatabase } = require('./database.js');
@@ -15,6 +18,8 @@ let connection = connectToDatabase(); //uses .env
 let accounts = require('./accounts.js');
 app.post('/signup', accounts.signup(connection));
 app.get('/verify', accounts.verify(connection));
+app.post('/login', accounts.login(connection));
+app.post('/logout', accounts.logout(connection));
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );

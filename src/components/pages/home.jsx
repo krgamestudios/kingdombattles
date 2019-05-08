@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 
 //panels
 import Signup from '../panels/signup.jsx';
+import Login from '../panels/login.jsx';
+import Logout from '../panels/logout.jsx';
 
 class Home extends React.Component {
 	constructor(props) {
@@ -13,10 +15,33 @@ class Home extends React.Component {
 	}
 
 	render() {
+		//well this is goofy
+		let SidePanel;
+
+		if (this.props.id) {
+			SidePanel = () => {
+				return (
+					<div>
+						<p>You are logged in.</p>
+						<Logout />
+					</div>
+				);
+			};
+		} else {
+			SidePanel = () => {
+				return (
+					<div>
+						<Signup />
+						<Login />
+					</div>
+				);
+			};
+		}
+
 		return (
 			<div className='page'>
 				<p>This is the home page.</p>
-				<Signup />
+				<SidePanel />
 			</div>
 		);
 	}
@@ -24,7 +49,7 @@ class Home extends React.Component {
 
 function mapStoreToProps(store) {
 	return {
-		//
+		id: store.account.id
 	}
 }
 
