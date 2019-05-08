@@ -48,7 +48,7 @@ function signup(connection) {
 					bcrypt.hash(fields.password, salt, (err, hash) => {
 						if (err) throw err;
 
-						//generate a random number as a key
+						//generate a random number as a token
 						let rand = Math.floor(Math.random() * 100000);
 
 						//save the generated data to the signups table
@@ -198,9 +198,61 @@ function logout(connection) {
 	}
 }
 
+function passwordChange(connection) {
+	return (req, res) => {
+		//formidable handles forms
+		let form = formidable.IncomingForm();
+
+		//parse form
+		form.parse(req, (err, fields) => {
+			if (err) throw err;
+
+			//validate password, retype
+			if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
+				res.write('<p>Invalid password change data</p>');
+				res.end();
+				return;
+			}
+
+			//generate the new salt, hash
+			bcrypt.genSalt(11, (err, salt) => {
+				if (err) throw err;
+				bcrypt.hash(fields.password, salt, (err, hash) => {
+					if (err) throw err;
+
+					let query = 'UPDATE accounts SET salt = ?, hash = ? WHERE email = ?;';
+					connection.query(query, [salt, hash, fields.email], (err) => {
+						if (err) throw err;
+
+						//clear all session data for this user (a 'feature')
+						let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?);';
+						connection.query(query, [fields.email], (err) => {
+							if (err) throw err;
+
+							//create the new session
+							let rand = Math.floor(Math.random() * 100000);
+
+							let query = 'INSERT INTO sessions (accountId, token) VALUES ((SELECT accounts.id FROM accounts WHERE email = ?), ?);';
+							connection.query(query, [fields.email, rand], (err) => {
+								if (err) throw err;
+
+								//send json containing the account info
+								res.status(200).json({
+									token: rand
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+	}
+}
+
 module.exports = {
 	signup: signup,
 	verify: verify,
 	login: login,
-	logout: logout
+	logout: logout,
+	passwordChange: passwordChange
 };

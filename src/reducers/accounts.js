@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT } from "../actions/accounts.js";
+import { LOGIN, LOGOUT, SESSIONCHANGE } from "../actions/accounts.js";
 
 const initialStore = {
 	id: 0,
@@ -9,7 +9,7 @@ const initialStore = {
 
 export function accountReducer(store = initialStore, action) {
 	switch(action.type) {
-		case LOGIN:
+		case LOGIN: {
 			let newStore = JSON.parse(JSON.stringify(initialStore));
 
 			newStore.id = action.id;
@@ -18,9 +18,18 @@ export function accountReducer(store = initialStore, action) {
 			newStore.token = action.token;
 
 			return newStore;
+		}
 
 		case LOGOUT:
 			return initialStore;
+
+		case SESSIONCHANGE: {
+			let newStore = JSON.parse(JSON.stringify(store));
+
+			newStore.token = action.token;
+
+			return newStore;
+		}
 
 		default:
 			return store;

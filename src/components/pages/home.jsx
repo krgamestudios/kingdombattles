@@ -7,28 +7,47 @@ import PropTypes from 'prop-types';
 import Signup from '../panels/signup.jsx';
 import Login from '../panels/login.jsx';
 import Logout from '../panels/logout.jsx';
+import PasswordChange from '../panels/password_change.jsx';
 
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			changedPassword: false
+		};
 	}
 
 	render() {
-		//well this is goofy
+		//DEBUGGING: well this is goofy
 		let SidePanel;
 
 		if (this.props.id) {
 			SidePanel = () => {
+				let PasswordChangePanel;
+
+				if (!this.state.changedPassword) {
+					PasswordChangePanel = () => {
+						return (<PasswordChange onSubmit={() => { this.setState({changedPassword: true}) }} />);
+					}
+				} else {
+					PasswordChangePanel = () => {
+						return (<p>Password changed!</p>);
+					}
+				}
+
 				return (
 					<div>
 						<p>You are logged in.</p>
+						<PasswordChangePanel />
 						<Logout />
 					</div>
 				);
 			};
 		} else {
 			SidePanel = () => {
+				if (this.state.changedPassword) {
+					this.setState({changedPassword: false});
+				}
 				return (
 					<div>
 						<Signup />
@@ -49,7 +68,8 @@ class Home extends React.Component {
 
 function mapStoreToProps(store) {
 	return {
-		id: store.account.id
+		id: store.account.id,
+		token: store.account.token
 	}
 }
 

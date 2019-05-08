@@ -20,6 +20,7 @@ app.post('/signup', accounts.signup(connection));
 app.get('/verify', accounts.verify(connection));
 app.post('/login', accounts.login(connection));
 app.post('/logout', accounts.logout(connection));
+app.post('/passwordchange', accounts.passwordChange(connection));
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
