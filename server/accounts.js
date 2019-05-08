@@ -265,10 +265,131 @@ function passwordChange(connection) {
 	}
 }
 
+function passwordRecover(connection) {
+	return (req, res) => {
+		//formidable handles forms
+		let form = formidable.IncomingForm();
+
+		//parse form
+		form.parse(req, (err, fields) => {
+			if (err) throw err;
+
+			//validate email, username and password
+			if (!validateEmail(fields.email)) {
+				res.status(400).write('Invalid recover data');
+				res.end();
+				return;
+			}
+
+			//ensure that this email is registered to an account
+			let query = 'SELECT accounts.id FROM accounts WHERE email = ?;';
+			connection.query(query, [fields.email], (err, results) => {
+				if (err) throw err;
+
+				if (results.length !== 1) {
+					res.status(400).write('Invalid recover data (did you use a registered email?)');
+					res.end();
+					return;
+				}
+
+				//create the new recover record
+				let rand = Math.floor(Math.random() * 100000);
+
+				let query = 'REPLACE INTO passwordRecover (accountId, token) VALUES (?, ?)';
+				connection.query(query, [results[0].id, rand], (err) => {
+					if (err) throw err;
+
+					//build the recovery email
+					let addr = `http://${process.env.WEB_ADDRESS}/passwordreset?email=${fields.email}&token=${rand}`;
+					let msg = 'Hello! Please visit the following address to set a new password (if you didn\'t request a password recovery, ignore this email): ';
+					let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+
+					//send the verification email
+					sendmail({
+						from: `passwordrecover@${process.env.WEB_ADDRESS}`,
+						to: fields.email,
+						subject: 'Password Recovery',
+						text: msg + addr,
+						html: msgHtml
+					}, (err, reply) => {
+						//final check
+						if (err) {
+							res.write(`<p>Something went wrong (did you use a valid email?)</p>${err}`)
+							res.end();
+							return;
+						}
+
+						res.status(200).write('Recovery email sent!');
+						res.end();
+					});
+				});
+			});
+		});
+	}
+}
+
+function passwordReset(connection) {
+	return (req, res) => {
+		//formidable handles forms
+		let form = formidable.IncomingForm();
+
+		//parse form
+		form.parse(req, (err, fields) => {
+			if (err) throw err;
+
+			//validate email, username and password
+			if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
+				res.status(400).write('Invalid reset data (invalid email/password)');
+				res.end();
+				return;
+			}
+
+			//get the account based on this email, token
+			let query = 'SELECT * FROM accounts WHERE email = ? AND id IN (SELECT passwordRecover.accountId FROM passwordRecover WHERE token = ?);';
+			connection.query(query, [fields.email, fields.token], (err, results) => {
+				if (err) throw err;
+
+				//results should be only 1 account
+				if (results.length !== 1) {
+					res.status(400).write('Invalid reset data (incorrect parameters/database state)');
+					res.end();
+					return;
+				}
+
+				//generate the new salt, hash
+				bcrypt.genSalt(11, (err, salt) => {
+					if (err) throw err;
+					bcrypt.hash(fields.password, salt, (err, hash) => {
+						if (err) throw err;
+
+						//update the salt, hash
+						let query = 'UPDATE accounts SET salt = ?, hash = ? WHERE email = ?;';
+						connection.query(query, [salt, hash, fields.email], (err) => {
+							if (err) throw err;
+
+							//delete the recover request from the database
+							let query = 'DELETE FROM passwordRecover WHERE accountId IN (SELECT id FROM accounts WHERE email = ?);';
+							connection.query(query, [fields.email], (err) => {
+								if (err) throw err;
+
+								res.status(200).write('Password updated!');
+								res.end();
+								return;
+							});
+						});
+					});
+				});
+			});
+		});
+	}
+}
+
 module.exports = {
 	signup: signup,
 	verify: verify,
 	login: login,
 	logout: logout,
-	passwordChange: passwordChange
+	passwordChange: passwordChange,
+	passwordRecover: passwordRecover,
+	passwordReset: passwordReset
 };

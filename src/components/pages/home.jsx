@@ -8,6 +8,7 @@ import Signup from '../panels/signup.jsx';
 import Login from '../panels/login.jsx';
 import Logout from '../panels/logout.jsx';
 import PasswordChange from '../panels/password_change.jsx';
+import PasswordRecover from '../panels/password_recover.jsx';
 
 class Home extends React.Component {
 	constructor(props) {
@@ -15,7 +16,9 @@ class Home extends React.Component {
 		this.state = {
 			changedPassword: false,
 			signedUp: false,
-			signupMsg: ''
+			signupMsg: '',
+			recoverSent: false,
+			recoverMsg: ''
 		};
 	}
 
@@ -23,8 +26,16 @@ class Home extends React.Component {
 		//DEBUGGING: well this is goofy
 		let SidePanel;
 
-		if (this.props.id) {
+		if (this.props.id) { //logged in
 			SidePanel = () => {
+				if (this.state.signedUp) {
+					this.setState({ signedUp: false });
+				}
+
+				if (this.state.recoverSent) {
+					this.setState({ recoverSent: false });
+				}
+
 				let PasswordChangePanel;
 
 				if (!this.state.changedPassword) {
@@ -45,27 +56,52 @@ class Home extends React.Component {
 					</div>
 				);
 			};
-		} else {
+		} else { //not logged in
 			SidePanel = () => {
 				if (this.state.changedPassword) {
-					this.setState({changedPassword: false});
+					this.setState({ changedPassword: false });
 				}
 
+				let SignupPanel;
+
 				if (!this.state.signedUp) {
-					return (
-						<div>
+					SignupPanel = () => {
+						return (
 							<Signup onSignup={(msg) => this.setState( {signedUp: true, signupMsg: msg} )} />
-							<Login />
-						</div>
-					);
+						);
+					}
 				} else {
-					return (
-						<div>
+					SignupPanel = () => {
+						return (
 							<p>{this.state.signupMsg}</p>
-							<Login />
-						</div>
-					);
+						);
+					}
 				}
+
+				let RecoverPanel;
+
+				if (!this.state.recoverSent) {
+					RecoverPanel = () => {
+						return (
+							<PasswordRecover onEmailSent={(msg) => this.setState( {recoverSent: true, recoverMsg: msg} )} />
+						);
+					}
+				}
+				else {
+					RecoverPanel = () => {
+						return (
+							<p>{this.state.recoverMsg}</p>
+						);
+					}
+				}
+
+				return (
+					<div>
+						<SignupPanel />
+						<Login />
+						<RecoverPanel />
+					</div>
+				);
 			};
 		}
 
@@ -77,6 +113,11 @@ class Home extends React.Component {
 		);
 	}
 }
+
+Home.propTypes = {
+	id: PropTypes.number.isRequired,
+	token: PropTypes.number.isRequired
+};
 
 function mapStoreToProps(store) {
 	return {
