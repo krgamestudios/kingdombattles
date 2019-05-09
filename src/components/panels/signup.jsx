@@ -19,7 +19,7 @@ export default class Signup extends React.Component {
 		};
 
 		return (
-			<div className='panel'>
+			<div className='panel left'>
 				<h1>Sign Up</h1>
 
 				<div className='warning' style={warningStyle}>

@@ -19,7 +19,7 @@ class Login extends React.Component {
 		};
 
 		return (
-			<div className='panel'>
+			<div className='panel left'>
 				<h1>Login</h1>
 
 				<div className='warning' style={warningStyle}>

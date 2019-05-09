@@ -6,17 +6,20 @@
 }
 
 body {
-	font: 13pt Helvetica, Arial;
+	font: 12pt Helvetica, Arial;
 	width: 100vw;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
 	overflow-x: hidden;
 	overflow-y: auto;
+	background-color: #000000;
+	color: white;
 }
 
 h1 {
 	font: 24pt;
+	color: red;
 }
 
 h2 {
@@ -65,11 +68,12 @@ footer {
 	flex-direction: column;
 	padding: 0 10px;
 	min-height: 100vh;
+	margin: 0 10%;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (max-width: 768px) {
 	.central {
-		margin: 0 10%;
+		margin: 0;
 	}
 }
 
@@ -104,3 +108,74 @@ footer {
 	background: #ff6666;
 }
 
+/* custom styling */
+
+/* Homepage structure */
+.homePage {
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+@media screen and (max-width: 480px) {
+	.homePage {
+		flex-direction: column;
+	}
+}
+
+/* left panel */
+.sidePanel {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	min-width: 320px;
+	width: 320px;
+}
+
+@media screen and (max-width: 480px) {
+	.sidePanel {
+		align-self: stretch;
+		width: auto;
+	}
+}
+
+.panel.left, .panel.center {
+	align-items: center;
+}
+
+.panel.left .warning, .panel.center .warning {
+	align-self: stretch;
+}
+
+.panel.left form, .panel.center form {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	align-self: stretch;
+}
+
+.panel.left form button, .panel.center form button {
+	align-self: stretch;
+	margin-top: .2em;
+	margin-bottom: .2em;
+}
+
+@media screen and (max-width: 480px) {
+	.panel.left h1, .panel.center h1 {
+		font-size: 16px;
+	}
+}
+
+/* New panel */
+.newsPanel {
+	margin-left: 15px;
+}
+
+/* bits and pieces */
+.logoutButton {
+	align-self: stretch;
+}

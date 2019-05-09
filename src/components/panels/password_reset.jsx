@@ -19,7 +19,7 @@ class PasswordReset extends React.Component {
 		};
 
 		return (
-			<div className='panel'>
+			<div className='panel center'>
 				<h1>Change Password</h1>
 
 				<div className='warning' style={warningStyle}>

@@ -18,7 +18,7 @@ class PasswordChange extends React.Component {
 		};
 
 		return (
-			<div className='panel'>
+			<div className='panel left'>
 				<h1>Change Password</h1>
 
 				<div className='warning' style={warningStyle}>

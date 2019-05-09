@@ -15,100 +15,130 @@ class Home extends React.Component {
 		super(props);
 		this.state = {
 			changedPassword: false,
-			signedUp: false,
+			signupSent: false,
 			signupMsg: '',
 			recoverSent: false,
 			recoverMsg: ''
 		};
 	}
 
+	//rendering function
 	render() {
-		//DEBUGGING: well this is goofy
+		//get the correct side panel
 		let SidePanel;
 
-		if (this.props.id) { //logged in
-			SidePanel = () => {
-				if (this.state.signedUp) {
-					this.setState({ signedUp: false });
-				}
-
-				if (this.state.recoverSent) {
-					this.setState({ recoverSent: false });
-				}
-
-				let PasswordChangePanel;
-
-				if (!this.state.changedPassword) {
-					PasswordChangePanel = () => {
-						return (<PasswordChange onPasswordChange={() => { this.setState({changedPassword: true}) }} />);
-					}
-				} else {
-					PasswordChangePanel = () => {
-						return (<p>Password changed!</p>);
-					}
-				}
-
-				return (
-					<div>
-						<p>You are logged in.</p>
-						<PasswordChangePanel />
-						<Logout />
-					</div>
-				);
-			};
-		} else { //not logged in
-			SidePanel = () => {
-				if (this.state.changedPassword) {
-					this.setState({ changedPassword: false });
-				}
-
-				let SignupPanel;
-
-				if (!this.state.signedUp) {
-					SignupPanel = () => {
-						return (
-							<Signup onSignup={(msg) => this.setState( {signedUp: true, signupMsg: msg} )} />
-						);
-					}
-				} else {
-					SignupPanel = () => {
-						return (
-							<p>{this.state.signupMsg}</p>
-						);
-					}
-				}
-
-				let RecoverPanel;
-
-				if (!this.state.recoverSent) {
-					RecoverPanel = () => {
-						return (
-							<PasswordRecover onEmailSent={(msg) => this.setState( {recoverSent: true, recoverMsg: msg} )} />
-						);
-					}
-				}
-				else {
-					RecoverPanel = () => {
-						return (
-							<p>{this.state.recoverMsg}</p>
-						);
-					}
-				}
-
-				return (
-					<div>
-						<SignupPanel />
-						<Login />
-						<RecoverPanel />
-					</div>
-				);
-			};
+		if (this.props.id) {
+			SidePanel = this.LoggedInSidePanel.bind(this);
+		} else {
+			SidePanel = this.LoggedOutSidePanel.bind(this);
 		}
 
+		//TODO: news column
+
+		//return the home page
 		return (
 			<div className='page'>
-				<p>This is the home page.</p>
-				<SidePanel />
+				<h1 style={{textAlign: 'center', fontSize: '50px', margin: '30px'}}>KINGDOM BATTLES!</h1>
+				<div className='homePage'>
+					<SidePanel />
+					<br />
+					<div className='newsPanel'>
+						<h1 className='centered'>News</h1>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	//panel functions
+	LoggedInSidePanel() {
+		//reset the other mode
+		if (this.state.signupSent) {
+			this.setState({ signupSent: false });
+		}
+
+		if (this.state.recoverSent) {
+			this.setState({ recoverSent: false });
+		}
+
+		//build the password change panel
+		let PasswordChangePanel;
+
+		if (!this.state.changedPassword) {
+			PasswordChangePanel = () => {
+				return (<PasswordChange onPasswordChange={() => { this.setState({changedPassword: true}) }} />);
+			}
+		} else {
+			PasswordChangePanel = () => {
+				return (<p>Password changed!</p>);
+			}
+		}
+
+		//finally return the side panel
+		return (
+			<div className='sidePanel'>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<PasswordChangePanel />
+				<Logout />
+			</div>
+		);
+	}
+
+	LoggedOutSidePanel() {
+		//reset the other mode
+		if (this.state.changedPassword) {
+			this.setState({ changedPassword: false });
+		}
+
+		//build the signup panel
+		let SignupPanel;
+
+		if (!this.state.signupSent) {
+			SignupPanel = () => {
+				return (
+					<Signup onSignup={(msg) => this.setState( {signupSent: true, signupMsg: msg} )} />
+				);
+			}
+		} else {
+			SignupPanel = () => {
+				return (
+					<p>{this.state.signupMsg}</p>
+				);
+			}
+		}
+
+		//build the recover panel
+		let RecoverPanel;
+
+		if (!this.state.recoverSent) {
+			RecoverPanel = () => {
+				return (
+					<PasswordRecover onEmailSent={(msg) => this.setState( {recoverSent: true, recoverMsg: msg} )} />
+				);
+			}
+		}
+		else {
+			RecoverPanel = () => {
+				return (
+					<p>{this.state.recoverMsg}</p>
+				);
+			}
+		}
+
+		//finally return the side panel 
+		return (
+			<div className='sidePanel'>
+				<SignupPanel />
+				<Login />
+				<RecoverPanel />
 			</div>
 		);
 	}
