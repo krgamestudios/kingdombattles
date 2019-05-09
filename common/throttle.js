@@ -11,7 +11,7 @@ function isThrottled(email) {
 		return false;
 	}
 
-	if ( (emails[email] - new Date()) / 1000 > 3) { //3 seconds
+	if ( Math.abs(emails[email] - new Date()) / 1000 > 3) { //3 seconds
 		return false;
 	}
 
