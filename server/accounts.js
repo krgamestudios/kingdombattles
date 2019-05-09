@@ -8,6 +8,7 @@ let sendmail = require('sendmail')();
 
 //utilities
 let { validateEmail } = require('../common/utilities.js');
+let { throttle, isThrottled } = require('../common/throttle.js');
 
 function signup(connection) {
 	return (req, res) => {
@@ -55,6 +56,15 @@ function signup(connection) {
 						let query = 'REPLACE INTO signups (email, username, salt, hash, verify) VALUES (?, ?, ?, ?, ?);';
 						connection.query(query, [fields.email, fields.username, salt, hash, rand], (err) => {
 							if (err) throw err;
+
+							//prevent too many clicks
+							if (isThrottled(fields.email)) {
+								res.status(400).write('signup throttled');
+								res.end();
+								return;
+							}
+
+							throttle(fields.email);
 
 							//build the verification email
 							let addr = `http://${process.env.WEB_ADDRESS}/verify?email=${fields.email}&verify=${rand}`;
@@ -303,6 +313,15 @@ function passwordRecover(connection) {
 					let addr = `http://${process.env.WEB_ADDRESS}/passwordreset?email=${fields.email}&token=${rand}`;
 					let msg = 'Hello! Please visit the following address to set a new password (if you didn\'t request a password recovery, ignore this email): ';
 					let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+
+					//prevent too many clicks
+					if (isThrottled(fields.email)) {
+						res.status(400).write('recover throttled');
+						res.end();
+						return;
+					}
+
+					throttle(fields.email);
 
 					//send the verification email
 					sendmail({
