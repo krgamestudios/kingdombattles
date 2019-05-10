@@ -110,8 +110,8 @@ footer {
 
 /* custom styling */
 
-/* Homepage structure */
-.homePage {
+/* SidePanelPage structure */
+.sidePanelPage {
 	flex: 1;
 	display: flex;
 	flex-direction: row;
@@ -120,14 +120,14 @@ footer {
 }
 
 @media screen and (max-width: 480px) {
-	.homePage {
+	.sidePanelPage {
 		flex-direction: column;
 	}
 }
 
 /* left panel */
 .sidePanel {
-	flex: 1;
+	flex: 0 1 auto;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -173,6 +173,10 @@ footer {
 /* New panel */
 .newsPanel {
 	margin-left: 15px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
 }
 
 /* bits and pieces */

@@ -24,6 +24,10 @@ app.post('/passwordchange', accounts.passwordChange(connection));
 app.post('/passwordrecover', accounts.passwordRecover(connection));
 app.post('/passwordreset', accounts.passwordReset(connection));
 
+//handle profiles
+let profiles = require('./profiles.js');
+app.post('/profilerequest', profiles.profileRequest(connection));
+
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
 

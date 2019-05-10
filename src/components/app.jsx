@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 //include pages
 import Home from './pages/home.jsx';
+import Profile from './pages/profile.jsx';
 import PasswordReset from './pages/password_reset.jsx'
 import PageNotFound from './pages/page_not_found.jsx';
 
@@ -21,6 +22,7 @@ export default class App extends React.Component {
 				<BrowserRouter>
 					<Switch>
 						<Route exact path='/' component={Home} />
+						<Route path='/profile' component={Profile} />
 						<Route path='/passwordreset' component={PasswordReset} />
 						<Route path='*' component={PageNotFound} />
 					</Switch>
