@@ -136,7 +136,7 @@ class Home extends React.Component {
 		return (
 			<div className='sidePanel'>
 				<SignupPanel />
-				<Login />
+				<Login onSubmit={() => {this.props.history.push('/profile');}} />
 				<RecoverPanel />
 			</div>
 		);

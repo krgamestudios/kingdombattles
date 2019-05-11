@@ -60,6 +60,10 @@ class Login extends React.Component {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
 					this.props.login(json.id, json.email, json.username, json.token);
+
+					if (this.props.onSubmit) {
+						this.props.onSubmit();
+					}
 				}
 
 				else if (xhr.status === 400) {
