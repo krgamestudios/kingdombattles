@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/accounts.js';
+import PropTypes from 'prop-types';
 
 class Logout extends React.Component {
 	constructor(props) {
@@ -26,7 +27,18 @@ class Logout extends React.Component {
 		}));
 
 		this.props.logout();
+
+		if (this.props.onClick) {
+			this.props.onClick();
+		}
 	}
+}
+
+Logout.propTypes = {
+	email: PropTypes.string.isRequired,
+	token: PropTypes.number.isRequired,
+	logout: PropTypes.func.isRequired,
+	onClick: PropTypes.func
 }
 
 function mapStoreToProps(store) {

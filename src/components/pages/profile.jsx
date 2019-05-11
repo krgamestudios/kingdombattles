@@ -163,7 +163,7 @@ class Profile extends React.Component {
 			<div className='sidePanel'>
 				<p>Return <Link to='/'>home</Link></p>
 				<PasswordChangePanel />
-				<Logout />
+				<Logout onClick={(e) => this.props.history.push('/')} />
 			</div>
 		);
 	}
@@ -174,7 +174,7 @@ class Profile extends React.Component {
 			<div className='sidePanel'>
 				<p>Return <Link to='/'>home</Link></p>
 				<p>Go to <Link to='/profile' onClick={(e) => { e.preventDefault(); this.requestProfileData(this.props.username); this.props.history.push('/profile'); }}>your profile</Link></p>
-				<Logout />
+				<Logout onClick={(e) => this.props.history.push('/')} />
 			</div>
 		);
 	}
