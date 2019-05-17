@@ -170,13 +170,36 @@ footer {
 	}
 }
 
-/* New panel */
+/* News panel */
 .newsPanel {
 	margin-left: 15px;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+}
+
+@media screen and (max-width: 480px) {
+	.newsPanel {
+		align-self: stretch;
+		width: auto;
+	}
+}
+
+.table {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.row {
+	flex: 1;
+	display: flex;
+}
+
+.col {
+	flex: 1;
 }
 
 /* bits and pieces */

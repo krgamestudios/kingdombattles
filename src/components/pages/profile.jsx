@@ -51,13 +51,47 @@ class Profile extends React.Component {
 		if (this.state.username != '') {
 			MainPanel = () => {
 				return (
-					<div>
-						<p>Username: {this.state.username}</p>
-						<p>Gold: {this.state.gold}</p>
-						<p>Recruits: {this.state.recruits}</p>
-						<p>Soldiers: {this.state.soldiers}</p>
-						<p>Spies: {this.state.spies}</p>
-						<p>Scientists: {this.state.scientists}</p>
+					<div className='table'>
+						<div className='row'>
+							<p className='col'>Username:</p>
+							<p className='col'>{this.state.username}</p>
+							<div className='col'></div>
+							<div className='col'></div>
+						</div>
+
+						<div className='row'>
+							<p className='col'>Gold:</p>
+							<p className='col'>{this.state.gold}</p>
+							<div className='col'></div>
+							<div className='col'></div>
+						</div>
+
+						<div className='row'>
+							<p className='col'>Recruits:</p>
+							<p className='col'>{this.state.recruits}</p>
+							<button className='col' style={{flex: '2 1 1.5%'}}>Get More...</button>
+						</div>
+
+						<div className='row'>
+							<p className='col'>Soldiers:</p>
+							<p className='col'>{this.state.soldiers}</p>
+							<button className='col'>Train</button>
+							<button className='col'>Untrain</button>
+						</div>
+
+						<div className='row'>
+							<p className='col'>Spies:</p>
+							<p className='col'>{this.state.spies}</p>
+							<button className='col'>Train</button>
+							<button className='col'>Untrain</button>
+						</div>
+
+						<div className='row'>
+							<p className='col'>Scientists:</p>
+							<p className='col'>{this.state.scientists}</p>
+							<button className='col'>Train</button>
+							<button className='col'>Untrain</button>
+						</div>
 					</div>
 				);
 			}
