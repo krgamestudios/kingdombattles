@@ -82,7 +82,7 @@ function profileRequestInner(connection, req, res, fields) {
 				if (results.length === 1) {
 					return profileCreateInner(connection, req, res, fields);
 				} else {
-					res.status(404).write('Profile not found');
+					res.status(400).write('Profile not found');
 					res.end();
 				}
 			});

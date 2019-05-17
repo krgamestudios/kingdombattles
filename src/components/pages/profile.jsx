@@ -121,9 +121,6 @@ class Profile extends React.Component {
 				else if (xhr.status === 400) {
 					this.setWarning(xhr.responseText);
 				}
-				else if (xhr.status === 404) {
-					this.props.history.push('/404');
-				}
 			}
 		}
 
