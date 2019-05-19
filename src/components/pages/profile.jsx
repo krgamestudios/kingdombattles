@@ -48,63 +48,17 @@ class Profile extends React.Component {
 		//main panel
 		let MainPanel;
 
-		if (this.state.username != '') {
-			MainPanel = () => {
-				return (
-					<div className='table'>
-						<div className='row'>
-							<p className='col'>Username:</p>
-							<p className='col'>{this.state.username}</p>
-							<div className='col'></div>
-							<div className='col'></div>
-						</div>
-
-						<div className='row'>
-							<p className='col'>Gold:</p>
-							<p className='col'>{this.state.gold}</p>
-							<div className='col'></div>
-							<div className='col'></div>
-						</div>
-
-						<div className='row'>
-							<p className='col'>Recruits:</p>
-							<p className='col'>{this.state.recruits}</p>
-							<button className='col' style={{flex: '2 1 1.5%'}}>Get More...</button>
-						</div>
-
-						<div className='row'>
-							<p className='col'>Soldiers:</p>
-							<p className='col'>{this.state.soldiers}</p>
-							<button className='col'>Train</button>
-							<button className='col'>Untrain</button>
-						</div>
-
-						<div className='row'>
-							<p className='col'>Spies:</p>
-							<p className='col'>{this.state.spies}</p>
-							<button className='col'>Train</button>
-							<button className='col'>Untrain</button>
-						</div>
-
-						<div className='row'>
-							<p className='col'>Scientists:</p>
-							<p className='col'>{this.state.scientists}</p>
-							<button className='col'>Train</button>
-							<button className='col'>Untrain</button>
-						</div>
-					</div>
-				);
-			}
+		if (this.state.username === this.props.username && this.state.username !== '') {
+			MainPanel = this.MyProfileMainPanel.bind(this);
 		} else {
-			MainPanel = () => {
-				return (
-					<div>
-						<p>No profile found!</p>
-					</div>
-				);
+			if (this.state.username !== '') {
+				MainPanel = this.NotMyProfileMainPanel.bind(this);
+			} else {
+				MainPanel = this.ProfileNotFoundMainPanel.bind(this);
 			}
 		}
 
+		//finally
 		return (
 			<div className='page'>
 				<h1 style={{textAlign: 'center', fontSize: '50px', margin: '30px'}}>KINGDOM BATTLES!</h1>
@@ -199,13 +153,108 @@ class Profile extends React.Component {
 		);
 	}
 
+	MyProfileMainPanel() {
+		return (
+			<div className='table'>
+				<div className='row'>
+					<p className='col'>Username:</p>
+					<p className='col'>{this.state.username}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Gold:</p>
+					<p className='col'>{this.state.gold}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Recruits:</p>
+					<p className='col'>{this.state.recruits}</p>
+					<button className='col' style={{flex: '2 1 1.5%'}}>Get More...</button>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Soldiers:</p>
+					<p className='col'>{this.state.soldiers}</p>
+					<button className='col'>Train</button>
+					<button className='col'>Untrain</button>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Spies:</p>
+					<p className='col'>{this.state.spies}</p>
+					<button className='col'>Train</button>
+					<button className='col'>Untrain</button>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Scientists:</p>
+					<p className='col'>{this.state.scientists}</p>
+					<button className='col'>Train</button>
+					<button className='col'>Untrain</button>
+				</div>
+			</div>
+		);
+	}
+
 	NotMyProfileSidePanel() {
 		//finally return the side panel
 		return (
 			<div className='sidePanel'>
 				<p>Return <Link to='/'>home</Link></p>
-				<p>Go to <Link to='/profile' onClick={(e) => { e.preventDefault(); this.requestProfileData(this.props.username); this.props.history.push('/profile'); }}>your profile</Link></p>
+				<p>Go to <Link to='/profile' onClick={(e) => { e.preventDefault(); this.requestProfileData(this.props.username); this.setWarning(''); this.props.history.push('/profile'); }}>your profile</Link></p>
 				<Logout onClick={(e) => this.props.history.push('/')} />
+			</div>
+		);
+	}
+
+	NotMyProfileMainPanel() {
+		return (
+			<div className='table'>
+				<div className='row'>
+					<p className='col'>Username:</p>
+					<p className='col'>{this.state.username}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Gold:</p>
+					<p className='col'>{this.state.gold}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Recruits:</p>
+					<p className='col'>{this.state.recruits}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Soldiers:</p>
+					<p className='col'>{this.state.soldiers}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Spies:</p>
+					<p className='col'>{this.state.spies}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Scientists:</p>
+					<p className='col'>{this.state.scientists}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
 			</div>
 		);
 	}
@@ -214,6 +263,14 @@ class Profile extends React.Component {
 		return (
 			<div className='sidePanel'>
 				<p>Return <Link to='/'>home</Link></p>
+			</div>
+		);
+	}
+
+	ProfileNotFoundMainPanel() {
+		return (
+			<div>
+				<p>No profile found!</p>
 			</div>
 		);
 	}
