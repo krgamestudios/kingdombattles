@@ -163,8 +163,7 @@ class Profile extends React.Component {
 				<div className='row'>
 					<p className='col'>Gold:</p>
 					<p className='col'>{this.state.gold}</p>
-					<div className='col'></div>
-					<div className='col'></div>
+					<div className='col' style={{flex: '2 1 1.5%'}}>(+1 gold for each recruit every half hour)</div>
 				</div>
 
 				<div className='row'>

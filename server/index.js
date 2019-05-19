@@ -30,6 +30,7 @@ app.post('/profilerequest', profiles.profileRequest(connection));
 app.post('/recruit', profiles.recruit(connection));
 app.post('/train', profiles.train(connection));
 app.post('/untrain', profiles.untrain(connection));
+profiles.runGoldTick(connection);
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );

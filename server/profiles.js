@@ -3,7 +3,9 @@ require('dotenv').config();
 
 //libraries
 let formidable = require('formidable');
+let CronJob = require('cron').CronJob;
 
+//profile creation & requesting
 const profileCreate = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
@@ -95,6 +97,7 @@ function profileRequestInner(connection, req, res, fields) {
 	});
 }
 
+//actual actions to be taken
 const recruit = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
@@ -332,10 +335,25 @@ const untrain = (connection) => (req, res) => {
 	});
 }
 
+const runGoldTick = (connection) => {
+	let goldTickJob = new CronJob('0 */30 * * * *', () => {
+		let query = 'UPDATE profiles SET gold = gold + recruits;';
+		connection.query(query, (err) => {
+			if (err) throw err;
+
+			//debugging
+			//console.log(Date().toString() + ' gold tick');
+		});
+	});
+
+	goldTickJob.start();
+}
+
 module.exports = {
 //	profileCreate: profileCreate, //NOTE: Not actually used
 	profileRequest: profileRequest,
 	recruit: recruit,
 	train: train,
-	untrain: untrain
+	untrain: untrain,
+	runGoldTick: runGoldTick
 }
