@@ -95,7 +95,88 @@ function profileRequestInner(connection, req, res, fields) {
 	});
 }
 
+const recruit = (connection) => (req, res) => {
+	//formidable handles forms
+	let form = formidable.IncomingForm();
+
+	//parse form
+	form.parse(req, (err, fields) => {
+		if (err) throw err;
+
+		//verify the credentials
+		let query = 'SELECT accountId FROM sessions WHERE accountId = ? AND token = ?;';
+		connection.query(query, [fields.id, fields.token], (err, results) => {
+			if (err) throw err;
+
+			if (results.length !== 1) {
+				res.status(400).write('Invalid recruit credentials');
+				res.end();
+				return;
+			}
+
+			//verify enough time has passed since the last successful recruit action
+			let query = 'SELECT TIMESTAMPDIFF(HOUR, (SELECT lastRecruitTime FROM profiles WHERE accountId = ?), CURRENT_TIMESTAMP());';
+			connection.query(query, [fields.id], (err, results) => {
+				if (err) throw err;
+
+				if (results.length !== 1) {
+					res.status(400).write('Invalid database state'); //TODO: internal error logging
+					res.end();
+					return;
+				}
+
+				let timespans = results[0][Object.keys(results[0])];
+
+				//not enough time has passed
+				if (timespans < 24) {
+					res.status(400).write('Not enough time has passed');
+					res.end();
+					return;
+				}
+
+				//update the profile with the new data (gaining 1 recruit)
+				let query = 'UPDATE profiles SET recruits = recruits + 1, lastRecruitTime = CURRENT_TIMESTAMP() WHERE accountId	= ?;';
+				connection.query(query, [fields.id], (err) => {
+					if (err) throw err;
+
+					//send the new profile data as JSON (NOTE: possible duplication)
+					let query = 'SELECT * FROM profiles WHERE accountId = ?;';
+					connection.query(query, [fields.id], (err, results) => {
+						if (err) throw err;
+
+						//check just in case
+						if (results.length !== 1) {
+							res.status(400).write('Invalid recruit credentials');
+							res.end();
+							return;
+						}
+
+						//results.length === 1
+						res.status(200).json({
+							username: fields.username, //TODO: join here
+							gold: results[0].gold,
+							recruits: results[0].recruits,
+							soldiers: results[0].soldiers,
+							spies: results[0].spies,
+							scientists: results[0].scientists
+						});
+						res.end();
+					});
+				});
+			});
+		});
+	});
+}
+
+const notYetImplemented = (connection) => (req, res) => {
+	res.status(400).write('Not Yet Implmented');
+	res.end();
+}
+
 module.exports = {
 //	profileCreate: profileCreate, //NOTE: Not actually used
-	profileRequest: profileRequest
+	profileRequest: profileRequest,
+	recruit: recruit,
+	train: notYetImplemented,
+	untrain: notYetImplemented
 }

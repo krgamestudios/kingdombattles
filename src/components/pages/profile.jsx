@@ -24,7 +24,7 @@ class Profile extends React.Component {
 	}
 
 	componentWillMount() {
-		this.requestProfileData(this.state.params.username ? this.state.params.username : this.props.username);
+		this.sendRequest('/profilerequest', this.state.params.username ? this.state.params.username : this.props.username);
 	}
 
 	render() {
@@ -78,11 +78,7 @@ class Profile extends React.Component {
 	}
 
 	//gameplay functions
-	requestProfileData(username) {
-		if (username === undefined || username === '') {
-			return;
-		}
-
+	sendRequest(url, username = this.props.username, role = '') { //NOTE: merged all requests here
 		//request this profile's info, using my credentials
 		let formData = new FormData();
 
@@ -90,6 +86,7 @@ class Profile extends React.Component {
 		formData.append('token', this.props.token);
 
 		formData.append('username', username);
+		formData.append('role', role);
 
 		//build the XHR
 		let xhr = new XMLHttpRequest();
@@ -113,7 +110,7 @@ class Profile extends React.Component {
 		}
 
 		//send
-		xhr.open('POST', '/profilerequest', true);
+		xhr.open('POST', url, true);
 		xhr.send(formData);
 	}
 
@@ -173,28 +170,28 @@ class Profile extends React.Component {
 				<div className='row'>
 					<p className='col'>Recruits:</p>
 					<p className='col'>{this.state.recruits}</p>
-					<button className='col' style={{flex: '2 1 1.5%'}}>Get More...</button>
+					<button className='col' style={{flex: '2 1 1.5%'}} onClick={() => this.sendRequest('/recruit')}>Recruit More</button>
 				</div>
 
 				<div className='row'>
 					<p className='col'>Soldiers:</p>
 					<p className='col'>{this.state.soldiers}</p>
-					<button className='col'>Train</button>
-					<button className='col'>Untrain</button>
+					<button className='col' onClick={() => this.sendRequest('/train', this.props.username, 'soldier')}>Train (100 gold)</button>
+					<button className='col' onClick={() => this.sendRequest('/untrain', this.props.username, 'soldier')}>Untrain</button>
 				</div>
 
 				<div className='row'>
 					<p className='col'>Spies:</p>
 					<p className='col'>{this.state.spies}</p>
-					<button className='col'>Train</button>
-					<button className='col'>Untrain</button>
+					<button className='col' onClick={() => this.sendRequest('/train', this.props.username, 'spy')}>Train (200 gold)</button>
+					<button className='col' onClick={() => this.sendRequest('/untrain', this.props.username, 'spy')}>Untrain</button>
 				</div>
 
 				<div className='row'>
 					<p className='col'>Scientists:</p>
 					<p className='col'>{this.state.scientists}</p>
-					<button className='col'>Train</button>
-					<button className='col'>Untrain</button>
+					<button className='col' onClick={() => this.sendRequest('/train', this.props.username, 'scientist')}>Train (120 gold)</button>
+					<button className='col' onClick={() => this.sendRequest('/untrain', this.props.username, 'scientist')}>Untrain</button>
 				</div>
 			</div>
 		);
@@ -205,7 +202,7 @@ class Profile extends React.Component {
 		return (
 			<div className='sidePanel'>
 				<p>Return <Link to='/'>home</Link></p>
-				<p>Go to <Link to='/profile' onClick={(e) => { e.preventDefault(); this.requestProfileData(this.props.username); this.setWarning(''); this.props.history.push('/profile'); }}>your profile</Link></p>
+				<p>Go to <Link to='/profile' onClick={(e) => { e.preventDefault(); this.sendRequest('/profilerequest', this.props.username); this.setWarning(''); this.props.history.push('/profile'); }}>your profile</Link></p>
 				<Logout onClick={(e) => this.props.history.push('/')} />
 			</div>
 		);
