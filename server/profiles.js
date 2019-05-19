@@ -4,19 +4,17 @@ require('dotenv').config();
 //libraries
 let formidable = require('formidable');
 
-function profileCreate(connection) {
-	return (req, res) => {
-		//formidable handles forms
-		let form = formidable.IncomingForm();
+const profileCreate = (connection) => (req, res) => {
+	//formidable handles forms
+	let form = formidable.IncomingForm();
 
-		//parse form
-		form.parse(req, (err, fields) => {
-			if (err) throw err;
+	//parse form
+	form.parse(req, (err, fields) => {
+		if (err) throw err;
 
-			//separate this section so it can be used elsewhere too
-			return profileCreateInner(connection, req, res, fields);
-		});
-	};
+		//separate this section so it can be used elsewhere too
+		return profileCreateInner(connection, req, res, fields);
+	});
 }
 
 function profileCreateInner(connection, req, res, fields) {
@@ -51,24 +49,20 @@ function profileCreateInner(connection, req, res, fields) {
 	});
 }
 
-function profileRequest(connection) {
-	return (req, res) => {
-		//formidable handles forms
-		let form = formidable.IncomingForm();
+const profileRequest = (connection) => (req, res) => {
+	//formidable handles forms
+	let form = formidable.IncomingForm();
 
-		//parse form
-		form.parse(req, (err, fields) => {
-			if (err) throw err;
+	//parse form
+	form.parse(req, (err, fields) => {
+		if (err) throw err;
 
-			//separate this section so it can be used elsewhere too
-			return profileRequestInner(connection, req, res, fields);
-		});
-	};
-}
+		//separate this section so it can be used elsewhere too
+		return profileRequestInner(connection, req, res, fields);
+	});
+};
 
 function profileRequestInner(connection, req, res, fields) {
-	//TODO: do something with the id and token provided
-
 	let query = 'SELECT * FROM profiles WHERE accountId IN (SELECT accounts.id FROM accounts WHERE username = ?);';
 	connection.query(query, [fields.username], (err, results) => {
 		if (err) throw err;
