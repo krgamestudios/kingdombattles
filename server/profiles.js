@@ -261,9 +261,75 @@ const train = (connection) => (req, res) => {
 	});
 }
 
-const notYetImplemented = (connection) => (req, res) => {
-	res.status(400).write('Not Yet Implmented');
-	res.end();
+const untrain = (connection) => (req, res) => {
+	//formidable handles forms
+	let form = formidable.IncomingForm();
+
+	//parse form
+	form.parse(req, (err, fields) => {
+		if (err) throw err;
+
+		//verify the credentials (NOTE: duplication)
+		let query = 'SELECT accountId FROM sessions WHERE accountId = ? AND token = ?;';
+		connection.query(query, [fields.id, fields.token], (err, results) => {
+			if (err) throw err;
+
+			if (results.length !== 1) {
+				res.status(400).write('Invalid train credentials');
+				res.end();
+				return;
+			}
+
+			//verify the role argument
+			if (fields.role !== 'soldier' && fields.role !== 'spy' && fields.role !== 'scientist') {
+				res.status(400).write('Invalid untrain parameters');
+				res.end();
+				return;
+			}
+
+			//verify that the user has a high enough balance
+			let query = 'SELECT soldiers, spies, scientists FROM profiles WHERE accountId = ?;';
+			connection.query(query, [fields.id], (err, results) => {
+				if (err) throw err;
+
+				if (results[0][fields.role] <= 0) {
+					res.status(400).write('Not enough ' + fields.role);
+					res.end();
+					return;
+				}
+
+				//update the profile with new values
+				let query = 'UPDATE profiles SET recruits = recruits + 1, soldiers = soldiers - ?, spies = spies - ?, scientists = scientists - ? WHERE accountId = ?;';
+				connection.query(query, [fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
+					if (err) throw err;
+
+					//send the new profile data as JSON (NOTE: possible duplication)
+					let query = 'SELECT * FROM profiles WHERE accountId = ?;';
+					connection.query(query, [fields.id], (err, results) => {
+						if (err) throw err;
+
+						//check just in case
+						if (results.length !== 1) {
+							res.status(400).write('Invalid recruit credentials');
+							res.end();
+							return;
+						}
+
+						//results.length === 1
+						res.status(200).json({
+							username: fields.username, //TODO: join here
+							gold: results[0].gold,
+							recruits: results[0].recruits,
+							soldiers: results[0].soldiers,
+							spies: results[0].spies,
+							scientists: results[0].scientists
+						});
+						res.end();
+					});
+				});
+			});
+		});
+	});
 }
 
 module.exports = {
@@ -271,5 +337,5 @@ module.exports = {
 	profileRequest: profileRequest,
 	recruit: recruit,
 	train: train,
-	untrain: notYetImplemented
+	untrain: untrain
 }
