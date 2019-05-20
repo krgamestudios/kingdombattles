@@ -295,8 +295,20 @@ const untrain = (connection) => (req, res) => {
 			connection.query(query, [fields.id], (err, results) => {
 				if (err) throw err;
 
-				if (results[0][fields.role] <= 0) {
-					res.status(400).write('Not enough ' + fields.role);
+				if (fields.role === 'soldier' && results[0].soldiers <= 0) {
+					res.status(400).write('Not enough soldiers');
+					res.end();
+					return;
+				}
+
+				if (fields.role === 'spy' && results[0].spies <= 0) {
+					res.status(400).write('Not enough spies');
+					res.end();
+					return;
+				}
+
+				if (fields.role === 'scientist' && results[0].scientists <= 0) {
+					res.status(400).write('Not enough scientists');
 					res.end();
 					return;
 				}
