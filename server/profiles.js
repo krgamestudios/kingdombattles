@@ -131,7 +131,7 @@ const recruit = (connection) => (req, res) => {
 				let timespans = results[0][Object.keys(results[0])];
 
 				//not enough time has passed
-				if (timespans < 24) {
+				if (timespans < 22) {
 					res.status(400).write('Not enough time has passed');
 					res.end();
 					return;
