@@ -65,7 +65,7 @@ class Profile extends React.Component {
 
 				<div className='sidePanelPage'>
 					<SidePanel />
-					<div className='newsPanel'>
+					<div className='mainPanel'>
 						<div className='warning' style={warningStyle}>
 							<p>{this.state.warning}</p>
 						</div>

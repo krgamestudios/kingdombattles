@@ -10,6 +10,10 @@ let path = require('path');
 
 app.use(bodyParser.json());
 
+//handle the news request
+let news = require('./news.js');
+app.post('/newsrequest', news.newsRequest());
+
 //database
 let { connectToDatabase } = require('./database.js');
 let connection = connectToDatabase(); //uses .env
