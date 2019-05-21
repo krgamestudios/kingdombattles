@@ -20,7 +20,7 @@ const newsRequest = () => (req, res) => {
 
 	//send each file as json
 	for (let i = 0; i < max; i++) {
-		json[fileNames[fileNames.length - i - 1]] = fs.readFileSync(fpath + '\\' + fileNames[fileNames.length - i - 1], 'utf8');
+		json[fileNames[fileNames.length - i - 1]] = fs.readFileSync(path.join(fpath, fileNames[fileNames.length - i - 1]), 'utf8');
 	}
 
 	//actually send the data
