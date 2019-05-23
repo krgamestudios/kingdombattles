@@ -7,7 +7,7 @@ let formidable = require('formidable');
 let sendmail = require('sendmail')();
 
 //utilities
-let { validateEmail } = require('../common/utilities.js');
+let { log, validateEmail } = require('../common/utilities.js');
 let { throttle, isThrottled } = require('../common/throttle.js');
 
 const signup = (connection) => (req, res) => {
@@ -20,7 +20,7 @@ const signup = (connection) => (req, res) => {
 
 		//validate email, username and password
 		if (!validateEmail(fields.email) || fields.username.length < 4 || fields.username.length > 100 || fields.password.length < 8 || fields.password !== fields.retype) {
-			res.status(400).write('Invalid signup data');
+			res.status(400).write(log('Invalid signup data', fields));
 			res.end();
 			return;
 		}
@@ -31,13 +31,13 @@ const signup = (connection) => (req, res) => {
 			if (err) throw err;
 
 			if (results[0].email !== 0) {
-				res.status(400).write('Email already registered!');
+				res.status(400).write(log('Email already registered!', fields.email));
 				res.end();
 				return;
 			}
 
 			if (results[0].username !== 0) {
-				res.status(400).write('Username already registered!');
+				res.status(400).write(log('Username already registered!', fields.username));
 				res.end();
 				return;
 			}
@@ -58,7 +58,7 @@ const signup = (connection) => (req, res) => {
 
 						//prevent too many clicks
 						if (isThrottled(fields.email)) {
-							res.status(400).write('signup throttled');
+							res.status(400).write(log('signup throttled', fields.email));
 							res.end();
 							return;
 						}
@@ -80,12 +80,12 @@ const signup = (connection) => (req, res) => {
 						}, (err, reply) => {
 							//final check
 							if (err) {
-								res.write(`<p>Something went wrong (did you use a valid email?)</p><p>${err}</p>`);
+								res.status(400).write(log('Something went wrong (did you use a valid email?)', err));
 								res.end();
 								return;
 							}
 
-							res.status(200).write('Verification email sent!');
+							res.status(200).write(log('Verification email sent!', fields.email));
 							res.end();
 						});
 					});
@@ -104,14 +104,14 @@ const verify = (connection) => (req, res) => {
 
 		//correct number of results
 		if (results.length != 1) {
-			res.write('<p>That account does not exist or this link has already been used.</p>');
+			res.status(400).write(log('That account does not exist or this link has already been used.', req.query.email, req.query.verify));
 			res.end();
 			return;
 		}
 
 		//verify the link
 		if (req.query.verify != results[0].verify) {
-			res.write('<p>Verification failed!</p>');
+			res.status(400).write(log('Verification failed!', req.query.email, req.query.verify, results[0].verify));
 			res.end();
 			return;
 		}
@@ -126,7 +126,7 @@ const verify = (connection) => (req, res) => {
 			connection.query(query, [results[0].email], (err) => {
 				if (err) throw err;
 
-				res.write('<p>Verification succeeded!</p>');
+				res.status(200).write(log('Verification succeeded!', req.query.email));
 				res.end();
 			});
 		});
@@ -143,7 +143,7 @@ const login = (connection) => (req, res) => {
 
 		//validate email, username and password
 		if (!validateEmail(fields.email) || fields.password.length < 8) {
-			res.write('<p>Invalid login data</p>');
+			res.status(400).write(log('Invalid login data', fields.email)); //WARNING: NEVER LOG PASSWORDS. EVER.
 			res.end();
 			return;
 		}
@@ -155,7 +155,7 @@ const login = (connection) => (req, res) => {
 
 			//found this email?
 			if (results.length === 0) {
-				res.status(400).write('Incorrect email or password');
+				res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this email'));
 				res.end();
 				return;
 			}
@@ -166,7 +166,7 @@ const login = (connection) => (req, res) => {
 
 				//compare the passwords
 				if (results[0].hash !== newHash) {
-					res.status(400).write('Incorrect email or password');
+					res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this password'));
 					res.end();
 					return;
 				}
@@ -185,6 +185,8 @@ const login = (connection) => (req, res) => {
 						username: results[0].username,
 						token: rand
 					});
+					res.end();
+					log('Logged in', fields.email, rand);
 				});
 			});
 		});
@@ -195,6 +197,7 @@ const logout = (connection) => (req, res) => {
 	let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?) AND token = ?;';
 	connection.query(query, [req.body.email, req.body.token], (err) => {
 		if (err) throw err;
+		log('Logged out', req.body.email, req.body.token);
 	});
 
 	res.end();
@@ -210,7 +213,7 @@ const passwordChange = (connection) => (req, res) => {
 
 		//validate password, retype
 		if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
-			res.status(400).write('Invalid password change data');
+			res.status(400).write(log('Invalid password change data', fields.email));
 			res.end();
 			return;
 		}
@@ -225,7 +228,7 @@ const passwordChange = (connection) => (req, res) => {
 			results.map((result) => { if (result.token == fields.token) found = true; });
 
 			if (!found) {
-				res.status(400).write('Invalid password change authentication');
+				res.status(400).write(log('Invalid password change authentication', fields.email, fields.token));
 				res.end();
 				return;
 			}
@@ -256,6 +259,7 @@ const passwordChange = (connection) => (req, res) => {
 								res.status(200).json({
 									token: rand
 								});
+								log('Password changed', fields.email);
 							});
 						});
 					});
@@ -275,7 +279,7 @@ const passwordRecover = (connection) => (req, res) => {
 
 		//validate email, username and password
 		if (!validateEmail(fields.email)) {
-			res.status(400).write('Invalid recover data');
+			res.status(400).write(log('Invalid recover data', fields.email));
 			res.end();
 			return;
 		}
@@ -286,7 +290,7 @@ const passwordRecover = (connection) => (req, res) => {
 			if (err) throw err;
 
 			if (results.length !== 1) {
-				res.status(400).write('Invalid recover data (did you use a registered email?)');
+				res.status(400).write(log('Invalid recover data (did you use a registered email?)', fields.email));
 				res.end();
 				return;
 			}
@@ -305,7 +309,7 @@ const passwordRecover = (connection) => (req, res) => {
 
 				//prevent too many clicks
 				if (isThrottled(fields.email)) {
-					res.status(400).write('recover throttled');
+					res.status(400).write(log('recover throttled', fields.email));
 					res.end();
 					return;
 				}
@@ -322,12 +326,12 @@ const passwordRecover = (connection) => (req, res) => {
 				}, (err, reply) => {
 					//final check
 					if (err) {
-						res.write(`<p>Something went wrong (did you use a valid email?)</p>${err}`)
+						res.status(400).write(log('Something went wrong (did you use a valid email?)', err));
 						res.end();
 						return;
 					}
 
-					res.status(200).write('Recovery email sent!');
+					res.status(200).write(log('Recovery email sent!', fields.email));
 					res.end();
 				});
 			});
@@ -345,7 +349,7 @@ const passwordReset = (connection) => (req, res) => {
 
 		//validate email, username and password
 		if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
-			res.status(400).write('Invalid reset data (invalid email/password)');
+			res.status(400).write(log('Invalid reset data (invalid email/password)', fields.email));
 			res.end();
 			return;
 		}
@@ -357,7 +361,7 @@ const passwordReset = (connection) => (req, res) => {
 
 			//results should be only 1 account
 			if (results.length !== 1) {
-				res.status(400).write('Invalid reset data (incorrect parameters/database state)');
+				res.status(400).write(log('Invalid reset data (incorrect parameters/database state)', fields.email));
 				res.end();
 				return;
 			}
@@ -378,7 +382,7 @@ const passwordReset = (connection) => (req, res) => {
 						connection.query(query, [fields.email], (err) => {
 							if (err) throw err;
 
-							res.status(200).write('Password updated!');
+							res.status(200).write(log('Password updated!', fields.email));
 							res.end();
 							return;
 						});

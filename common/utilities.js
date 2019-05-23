@@ -1,9 +1,26 @@
-var emailExpression = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let emailExpression = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 function validateEmail(email) {
 	return emailExpression.test(email);
 }
 
+let excluded = [ //errors that should not be logged
+	'Not enough gold',
+	'Not enough recruits',
+	'Not enough soldiers',
+	'Not enough spies',
+	'Not enough scientists',
+	'Not enough time has passed'
+];
+
+const log = (msg, ...args) => {
+	if (excluded.indexOf(msg) === -1) {
+		console.log(`log ${Date()}: ${msg} (${args.toString()})`);
+	}
+	return msg;
+}
+
 module.exports = {
-	validateEmail
+	validateEmail: validateEmail,
+	log: log
 };

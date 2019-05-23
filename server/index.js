@@ -8,6 +8,9 @@ let http = require('http').Server(app);
 let bodyParser = require('body-parser');
 let path = require('path');
 
+//utilities
+let { log } = require('../common/utilities.js');
+
 app.use(bodyParser.json());
 
 //handle the news request
@@ -51,5 +54,5 @@ app.get('*', (req, res) => {
 
 //startup
 http.listen(4000, () => {
-  console.log('listening to *:4000');
+	log('listening to *:4000');
 });

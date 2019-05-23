@@ -5,12 +5,15 @@ require('dotenv').config();
 let formidable = require('formidable');
 let CronJob = require('cron').CronJob;
 
+//utilities
+let { log } = require('../common/utilities.js');
+
 //profile creation & requesting
 const profileCreate = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
-	//parse form
+	//parse form TODO: form? That was a bad idea
 	form.parse(req, (err, fields) => {
 		if (err) throw err;
 
@@ -25,7 +28,7 @@ function profileCreateInner(connection, req, res, fields) {
 		if (err) throw err;
 
 		if (results.length === 1) {
-			res.status(400).write('That profile already exists');
+			res.status(400).write(log('That profile already exists', fields.username));
 			res.end();
 			return;
 		}
@@ -36,7 +39,7 @@ function profileCreateInner(connection, req, res, fields) {
 			if (err) throw err;
 
 			if (results.length !== 1 || results[0].accountId != fields.id) {
-				res.status(400).write('Invalid profile creation credentials');
+				res.status(400).write(log('Invalid profile creation credentials', fields.username, fields.id, fields.token));
 				res.end();
 				return;
 			}
@@ -44,6 +47,8 @@ function profileCreateInner(connection, req, res, fields) {
 			let query = 'INSERT INTO profiles (accountId) SELECT accounts.id FROM accounts WHERE username = ?;';
 			connection.query(query, [fields.username], (err) => {
 				if (err) throw err;
+
+				log('Profile created', fields.username, fields.id, fields.token);
 
 				return profileRequestInner(connection, req, res, fields);
 			});
@@ -78,7 +83,7 @@ function profileRequestInner(connection, req, res, fields) {
 				if (results.length === 1) {
 					return profileCreateInner(connection, req, res, fields);
 				} else {
-					res.status(400).write('Profile not found');
+					res.status(400).write(log('Profile not found', fields.username, fields.id, fields.token));
 					res.end();
 				}
 			});
@@ -93,6 +98,7 @@ function profileRequestInner(connection, req, res, fields) {
 				scientists: results[0].scientists
 			});
 			res.end();
+//			log('Profile sent', fields.username, fields.id, fields.token);
 		}
 	});
 }
@@ -112,7 +118,7 @@ const recruit = (connection) => (req, res) => {
 			if (err) throw err;
 
 			if (results.length !== 1) {
-				res.status(400).write('Invalid recruit credentials');
+				res.status(400).write(log('Invalid recruit credentials', fields.username, fields.id, fields.token));
 				res.end();
 				return;
 			}
@@ -123,7 +129,7 @@ const recruit = (connection) => (req, res) => {
 				if (err) throw err;
 
 				if (results.length !== 1) {
-					res.status(400).write('Invalid database state'); //TODO: internal error logging
+					res.status(400).write(log('Invalid database state', fields.username, fields.id, fields.token));
 					res.end();
 					return;
 				}
@@ -132,7 +138,7 @@ const recruit = (connection) => (req, res) => {
 
 				//not enough time has passed
 				if (timespans < 22) {
-					res.status(400).write('Not enough time has passed');
+					res.status(400).write(log('Not enough time has passed', fields.username, fields.id, fields.token));
 					res.end();
 					return;
 				}
@@ -149,7 +155,7 @@ const recruit = (connection) => (req, res) => {
 
 						//check just in case
 						if (results.length !== 1) {
-							res.status(400).write('Invalid recruit credentials');
+							res.status(400).write(log('Invalid recruit credentials', fields.username, fields.id, fields.token));
 							res.end();
 							return;
 						}
@@ -164,6 +170,7 @@ const recruit = (connection) => (req, res) => {
 							scientists: results[0].scientists
 						});
 						res.end();
+						log('Recruit successful', fields.username, fields.id, fields.token);
 					});
 				});
 			});
@@ -185,19 +192,19 @@ const train = (connection) => (req, res) => {
 			if (err) throw err;
 
 			if (results.length !== 1) {
-				res.status(400).write('Invalid train credentials');
+				res.status(400).write(log('Invalid train credentials', fields.username, fields.id, fields.token));
 				res.end();
 				return;
 			}
 
 			//verify the role argument
 			if (fields.role !== 'soldier' && fields.role !== 'spy' && fields.role !== 'scientist') {
-				res.status(400).write('Invalid train parameters');
+				res.status(400).write(log('Invalid train parameters', fields.username, fields.role, fields.id, fields.token));
 				res.end();
 				return;
 			}
 
-			//determine the cost of the training
+			//determine the cost of the training TODO: make these global for the client too
 			let cost = 0;
 			switch(fields.role) {
 				case 'soldier':
@@ -219,13 +226,13 @@ const train = (connection) => (req, res) => {
 				if (err) throw err;
 
 				if (results[0].recruits <= 0) {
-					res.status(400).write('Not enough recruits');
+					res.status(400).write(log('Not enough recruits', fields.username, results[0].recruits, fields.id, fields.token));
 					res.end();
 					return;
 				}
 
 				if (results[0].gold < cost) {
-					res.status(400).write('Not enough gold');
+					res.status(400).write(log('Not enough gold', fields.username, results[0].gold, fields.id, fields.token));
 					res.end();
 					return;
 				}
@@ -242,7 +249,7 @@ const train = (connection) => (req, res) => {
 
 						//check just in case
 						if (results.length !== 1) {
-							res.status(400).write('Invalid recruit credentials');
+							res.status(400).write(log('Invalid recruit credentials', fields.username, fields.id, fields.token));
 							res.end();
 							return;
 						}
@@ -257,6 +264,7 @@ const train = (connection) => (req, res) => {
 							scientists: results[0].scientists
 						});
 						res.end();
+						log('Train successful', fields.username, fields.role, fields.id, fields.token);
 					});
 				});
 			});
@@ -278,14 +286,14 @@ const untrain = (connection) => (req, res) => {
 			if (err) throw err;
 
 			if (results.length !== 1) {
-				res.status(400).write('Invalid train credentials');
+				res.status(400).write(log('Invalid untrain credentials', fields.username, fields.role, fields.id, fields.token));
 				res.end();
 				return;
 			}
 
 			//verify the role argument
 			if (fields.role !== 'soldier' && fields.role !== 'spy' && fields.role !== 'scientist') {
-				res.status(400).write('Invalid untrain parameters');
+				res.status(400).write(log('Invalid untrain parameters', fields.username, fields.role, fields.id, fields.token));
 				res.end();
 				return;
 			}
@@ -296,19 +304,19 @@ const untrain = (connection) => (req, res) => {
 				if (err) throw err;
 
 				if (fields.role === 'soldier' && results[0].soldiers <= 0) {
-					res.status(400).write('Not enough soldiers');
+					res.status(400).write(log('Not enough soldiers', fields.username, results[0].soldiers, fields.id, fields.token));
 					res.end();
 					return;
 				}
 
 				if (fields.role === 'spy' && results[0].spies <= 0) {
-					res.status(400).write('Not enough spies');
+					res.status(400).write(log('Not enough spies', fields.username, results[0].spies, fields.id, fields.token));
 					res.end();
 					return;
 				}
 
 				if (fields.role === 'scientist' && results[0].scientists <= 0) {
-					res.status(400).write('Not enough scientists');
+					res.status(400).write(log('Not enough scientists', fields.username, results[0].scientists, fields.id, fields.token));
 					res.end();
 					return;
 				}
@@ -325,7 +333,7 @@ const untrain = (connection) => (req, res) => {
 
 						//check just in case
 						if (results.length !== 1) {
-							res.status(400).write('Invalid recruit credentials');
+							res.status(400).write(log('Invalid untrain credentials', fields.username, fields.role, fields.id, fields.token));
 							res.end();
 							return;
 						}
@@ -340,6 +348,7 @@ const untrain = (connection) => (req, res) => {
 							scientists: results[0].scientists
 						});
 						res.end();
+						log('Untrain successful', fields.username, fields.role, fields.id, fields.token);
 					});
 				});
 			});
@@ -353,8 +362,7 @@ const runGoldTick = (connection) => {
 		connection.query(query, (err) => {
 			if (err) throw err;
 
-			//debugging
-			//console.log(Date().toString() + ' gold tick');
+			log('Gold tick');
 		});
 	});
 
