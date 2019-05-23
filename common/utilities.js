@@ -15,7 +15,8 @@ let excluded = [ //errors that should not be logged
 
 const log = (msg, ...args) => {
 	if (excluded.indexOf(msg) === -1) {
-		console.log(`log ${Date()}: ${msg} (${args.toString()})`);
+		let dateString = Date().replace(/\s\(.*\)/i, ''); //dumb formatting
+		console.log(`log ${dateString}: ${msg} (${args.toString()})`);
 	}
 	return msg;
 }
