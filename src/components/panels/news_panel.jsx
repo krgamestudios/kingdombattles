@@ -9,18 +9,18 @@ class NewsPanel extends React.Component {
 			data: {}
 		};
 
-		this.fetchNews();
+		this.fetchNews(3);
 	}
 
 	render() {
 		return (
 			<div>
-				{Object.keys(this.state.data).map((key, index) => <div key={key}><ReactMarkdown source={this.state.data[key]} escapeHTML={false} /><hr /></div> )}
+				{Object.keys(this.state.data).map((key) => <div key={key}><ReactMarkdown source={this.state.data[key]} escapeHTML={false} /><hr /></div> )}
 			</div>
 		);
 	}
 
-	fetchNews() {
+	fetchNews(max = 3) {
 		//build the XHR
 		let xhr = new XMLHttpRequest();
 
@@ -34,9 +34,7 @@ class NewsPanel extends React.Component {
 
 		xhr.open('POST', '/newsrequest', true);
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-		xhr.send(JSON.stringify({
-			max: 3
-		}));
+		xhr.send(JSON.stringify({ max: max }));
 	}
 };
 

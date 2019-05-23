@@ -13,13 +13,13 @@ body {
 	flex-direction: column;
 	overflow-x: hidden;
 	overflow-y: auto;
-	background-color: #000000;
+	background-color: #111111;
 	color: white;
 }
 
 h1 {
 	font-size: 24pt;
-	color: red;
+	color: pink;
 }
 
 h2 {
@@ -42,6 +42,10 @@ ul {
 	list-style-type: disc;
 	list-style-position: inside;
 	padding-bottom: .5rem;
+}
+
+a {
+	color: lightblue;
 }
 
 .centered {
@@ -171,22 +175,30 @@ footer {
 	}
 }
 
-/* News panel */
+/* main panel */
 .mainPanel {
-	margin-left: 15px;
+	margin-left: 30px;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
 }
 
+@media screen and (max-width: 768px) {
+	.mainPanel {
+		margin-left: 15px;
+	}
+}
+
 @media screen and (max-width: 480px) {
 	.mainPanel {
+		margin-left: 0;
 		align-self: stretch;
 		width: auto;
 	}
 }
 
+/* profile page */
 .table {
 	flex: 1;
 	display: flex;
