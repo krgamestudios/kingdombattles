@@ -4,18 +4,18 @@ import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 //panels
+import CommonLinks from '../panels/common_links.jsx';
+
 import Signup from '../panels/signup.jsx';
 import Login from '../panels/login.jsx';
-import Logout from '../panels/logout.jsx';
-import PasswordChange from '../panels/password_change.jsx';
 import PasswordRecover from '../panels/password_recover.jsx';
+
 import NewsPanel from '../panels/news_panel.jsx';
 
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			changedPassword: false,
 			signupSent: false,
 			signupMsg: '',
 			recoverSent: false,
@@ -34,14 +34,14 @@ class Home extends React.Component {
 			SidePanel = this.LoggedOutSidePanel.bind(this);
 		}
 
-		//TODO: news column
-
 		//return the home page
 		return (
 			<div className='page'>
 				<h1 style={{textAlign: 'center', fontSize: '50px', margin: '30px'}}>KINGDOM BATTLES!</h1>
+
 				<div className='sidePanelPage'>
 					<SidePanel />
+
 					<div className='mainPanel'>
 						<h1 className='centered'>News</h1>
 						<NewsPanel />
@@ -62,35 +62,15 @@ class Home extends React.Component {
 			this.setState({ recoverSent: false });
 		}
 
-		//build the password change panel
-		let PasswordChangePanel;
-
-		if (!this.state.changedPassword) {
-			PasswordChangePanel = () => {
-				return (<PasswordChange onPasswordChange={() => { this.setState({changedPassword: true}) }} />);
-			}
-		} else {
-			PasswordChangePanel = () => {
-				return (<p>Password changed!</p>);
-			}
-		}
-
 		//finally return the side panel
 		return (
 			<div className='sidePanel'>
-				<p>Go to <Link to='/profile'>your profile</Link></p>
-				<PasswordChangePanel />
-				<Logout />
+				<CommonLinks />
 			</div>
 		);
 	}
 
 	LoggedOutSidePanel() {
-		//reset the other mode
-		if (this.state.changedPassword) {
-			this.setState({ changedPassword: false });
-		}
-
 		//build the signup panel
 		let SignupPanel;
 

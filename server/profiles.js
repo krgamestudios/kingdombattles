@@ -98,7 +98,7 @@ function profileRequestInner(connection, req, res, fields) {
 				scientists: results[0].scientists
 			});
 			res.end();
-//			log('Profile sent', fields.username, fields.id, fields.token);
+			log('Profile sent', fields.username, fields.id, fields.token);
 		}
 	});
 }

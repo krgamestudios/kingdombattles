@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 
 //panels
-import Logout from '../panels/logout.jsx';
+import CommonLinks from '../panels/common_links.jsx';
 import PasswordChange from '../panels/password_change.jsx';
 
 class Profile extends React.Component {
@@ -21,9 +21,7 @@ class Profile extends React.Component {
 			scientists: 0,
 			warning: ''
 		};
-	}
 
-	componentWillMount() {
 		this.sendRequest('/profilerequest', this.state.params.username ? this.state.params.username : this.props.username);
 	}
 
@@ -65,6 +63,7 @@ class Profile extends React.Component {
 
 				<div className='sidePanelPage'>
 					<SidePanel />
+
 					<div className='mainPanel'>
 						<div className='warning' style={warningStyle}>
 							<p>{this.state.warning}</p>
@@ -143,9 +142,7 @@ class Profile extends React.Component {
 		//finally return the side panel
 		return (
 			<div className='sidePanel'>
-				<p>Return <Link to='/'>home</Link></p>
-				<PasswordChangePanel />
-				<Logout onClick={(e) => this.props.history.push('/')} />
+				<CommonLinks extra={() => <PasswordChangePanel />} />
 			</div>
 		);
 	}
@@ -200,9 +197,7 @@ class Profile extends React.Component {
 		//finally return the side panel
 		return (
 			<div className='sidePanel'>
-				<p>Return <Link to='/'>home</Link></p>
-				<p>Go to <Link to='/profile' onClick={(e) => { e.preventDefault(); this.sendRequest('/profilerequest', this.props.username); this.setWarning(''); this.props.history.push('/profile'); }}>your profile</Link></p>
-				<Logout onClick={(e) => this.props.history.push('/')} />
+				<CommonLinks onClickProfile={() => {e.preventDefault(); this.sendRequest('/profilerequest', this.props.username); this.setWarning(''); this.props.history.push('/profile');}} />
 			</div>
 		);
 	}
@@ -258,7 +253,7 @@ class Profile extends React.Component {
 	LoggedOutSidePanel() {
 		return (
 			<div className='sidePanel'>
-				<p>Return <Link to='/'>home</Link></p>
+				<CommonLinks />
 			</div>
 		);
 	}
