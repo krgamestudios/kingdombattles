@@ -4,8 +4,8 @@
   "description": "Kingdom Battles",
   "main": "index.js",
   "scripts": {
-    "start": "forever -o forever.log -e error.log start server/index.js",
-    "restart": "forever -o forever.log -e error.log restart server/index.js",
+    "start": "forever -a -o forever.log -e error.log start server/index.js",
+    "restart": "forever -a -o forever.log -e error.log restart server/index.js",
     "stop": "forever stop server/index.js",
     "node": "node server/index.js",
     "webpack": "webpack --mode=development",
