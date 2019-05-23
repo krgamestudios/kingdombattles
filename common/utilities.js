@@ -4,7 +4,7 @@ function validateEmail(email) {
 	return emailExpression.test(email);
 }
 
-let excluded = [ //errors that should not be logged
+let excluded = [ //messages that should not be logged
 	'Not enough gold',
 	'Not enough recruits',
 	'Not enough soldiers',

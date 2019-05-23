@@ -22,5 +22,5 @@ export function sessionChange(token) {
 	return {
 		type: SESSIONCHANGE,
 		token: token
-	}
+	};
 }

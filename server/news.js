@@ -16,7 +16,7 @@ const newsRequest = () => (req, res) => {
 	}
 
 	//build the object to send
-	let json = {}
+	let json = {} //TODO: caching
 
 	//send each file as json
 	for (let i = 0; i < max; i++) {

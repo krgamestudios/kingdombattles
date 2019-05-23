@@ -20,7 +20,7 @@ class NewsPanel extends React.Component {
 		);
 	}
 
-	fetchNews(max = 3) {
+	fetchNews(max) {
 		//build the XHR
 		let xhr = new XMLHttpRequest();
 
