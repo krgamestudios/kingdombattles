@@ -198,7 +198,7 @@ footer {
 	}
 }
 
-/* profile page */
+/* flexbox tables */
 .table {
 	flex: 1;
 	display: flex;

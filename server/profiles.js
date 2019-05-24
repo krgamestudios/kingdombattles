@@ -356,6 +356,16 @@ const untrain = (connection) => (req, res) => {
 	});
 }
 
+const ladderRequest = (connection) => (req, res) => {
+	let query = 'SELECT username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY soldiers DESC, recruits DESC, gold DESC LIMIT ?, ?;';
+	connection.query(query, [req.body.start, req.body.length], (err, results) => {
+		if (err) throw err;
+
+		res.status(200).json(results);
+		log('Ladder sent', req.body.start, req.body.length, results);
+	});
+}
+
 const runGoldTick = (connection) => {
 	let goldTickJob = new CronJob('0 */30 * * * *', () => {
 		let query = 'UPDATE profiles SET gold = gold + recruits;';
@@ -375,5 +385,6 @@ module.exports = {
 	recruit: recruit,
 	train: train,
 	untrain: untrain,
-	runGoldTick: runGoldTick
+	runGoldTick: runGoldTick,
+	ladderRequest: ladderRequest
 }

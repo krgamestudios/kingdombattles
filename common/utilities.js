@@ -12,7 +12,8 @@ let excluded = [ //messages that should not be logged
 	'Not enough scientists',
 	'Not enough time has passed',
 
-	'Profile sent'
+	'Profile sent',
+	'Ladder sent'
 ];
 
 const log = (msg, ...args) => {
