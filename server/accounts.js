@@ -257,9 +257,10 @@ const passwordChangeRequest = (connection) => (req, res) => {
 
 								//send json containing the account info
 								res.status(200).json({
-									token: rand
+									token: rand,
+									msg: log('Password changed!', fields.email)
 								});
-								log('Password changed', fields.email);
+								res.end();
 							});
 						});
 					});

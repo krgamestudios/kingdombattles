@@ -24,7 +24,7 @@ class CommonLinks extends React.Component {
 		//disable the profile link when logged out
 		let ProfileLink;
 		if (this.props.loggedIn) {
-			ProfileLink = () => <p>Go to <Link to='/profile' onClick={this.props.onClickProfile}>your profile</Link></p>;
+			ProfileLink = () => <p><Link to='/profile' onClick={this.props.onClickProfile}>Your Profile</Link></p>;
 		} else {
 			ProfileLink = () => null;
 		}
@@ -40,9 +40,10 @@ class CommonLinks extends React.Component {
 
 		return (
 			<div className='panel'>
-				<p>Return <Link to='/' onClick={this.props.onClickHome}>home</Link></p>
+				<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
 				<ProfileLink />
-				<p>Go to <Link to='/ladder' onClick={this.props.onClickLadder}>the game ladder</Link></p>
+				<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
+				<p><Link to='/passwordchange' onClick={this.props.onClickLadder}>Change Password</Link></p>
 
 				<Extra />
 

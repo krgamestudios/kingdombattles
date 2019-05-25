@@ -150,8 +150,8 @@ footer {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	min-width: 320px;
-	width: 320px;
+	min-width: 160px;
+	width: 160px;
 }
 
 @media screen and (max-width: 480px) {
@@ -186,6 +186,18 @@ footer {
 @media screen and (max-width: 480px) {
 	.panel.right h1, .panel.center h1 {
 		font-size: 16px;
+	}
+}
+
+.constrained {
+	align-self: center;
+	max-width: 320px;
+}
+
+@media screen and (max-width: 480px) {
+	.constrained {
+		align-self: stretch;
+		max-width: none;
 	}
 }
 

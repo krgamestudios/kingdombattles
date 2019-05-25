@@ -1,7 +1,8 @@
 import React from 'react';
 import { validateEmail } from '../../../common/utilities.js';
+import PropTypes from 'prop-types';
 
-export default class Signup extends React.Component {
+class Signup extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -70,6 +71,7 @@ export default class Signup extends React.Component {
 				if (xhr.status === 200) {
 					if (this.props.onSignup) {
 						this.props.onSignup(xhr.responseText);
+						console.log('trying to...');
 					}
 				}
 
@@ -151,3 +153,9 @@ export default class Signup extends React.Component {
 		});
 	}
 }
+
+Signup.propTypes = {
+	onSignup: PropTypes.func
+};
+
+export default Signup;

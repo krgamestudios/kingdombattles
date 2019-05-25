@@ -65,7 +65,7 @@ class PasswordChange extends React.Component {
 
 					//DEBUGGING
 					if (this.props.onPasswordChange) {
-						this.props.onPasswordChange();
+						this.props.onPasswordChange(json.msg);
 					}
 				}
 

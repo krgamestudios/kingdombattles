@@ -3,9 +3,15 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 //include pages
 import Home from './pages/home.jsx';
+import Signup from './pages/signup.jsx';
+import Login from './pages/login.jsx';
+import PasswordChange from './pages/password_change.jsx';
+import PasswordRecover from './pages/password_recover.jsx';
+import PasswordReset from './pages/password_reset.jsx';
+
 import Profile from './pages/profile.jsx';
 import Ladder from './pages/ladder.jsx';
-import PasswordReset from './pages/password_reset.jsx'
+
 import PageNotFound from './pages/page_not_found.jsx';
 
 //other stuff
@@ -24,9 +30,15 @@ export default class App extends React.Component {
 				<BrowserRouter>
 					<Switch>
 						<Route exact path='/' component={Home} />
+						<Route path='/signup' component={Signup} />
+						<Route path='/login' component={Login} />
+						<Route path='/passwordchange' component={PasswordChange} />
+						<Route path='/passwordrecover' component={PasswordRecover} />
+						<Route path='/passwordreset' component={PasswordReset} />
+
 						<Route path='/profile' component={Profile} />
 						<Route path='/ladder' component={Ladder} />
-						<Route path='/passwordreset' component={PasswordReset} />
+
 						<Route path='*' component={PageNotFound} />
 					</Switch>
 				</BrowserRouter>

@@ -6,7 +6,6 @@ import queryString from 'query-string';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
-import PasswordChange from '../panels/password_change.jsx';
 
 class Profile extends React.Component {
 	constructor(props) {
@@ -124,23 +123,10 @@ class Profile extends React.Component {
 
 	//panel functions
 	MyProfileSidePanel() {
-		//build the password change panel
-		let PasswordChangePanel;
-
-		if (!this.state.changedPassword) {
-			PasswordChangePanel = () => {
-				return (<PasswordChange onPasswordChange={() => { this.setState({changedPassword: true}) }} />);
-			}
-		} else {
-			PasswordChangePanel = () => {
-				return (<p>Password changed!</p>);
-			}
-		}
-
 		//finally return the side panel
 		return (
 			<div className='sidePanel'>
-				<CommonLinks extra={() => <PasswordChangePanel />} />
+				<CommonLinks />
 			</div>
 		);
 	}

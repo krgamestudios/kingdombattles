@@ -75,6 +75,8 @@ class Login extends React.Component {
 		//send the XHR
 		xhr.open('POST', form.action, true);
 		xhr.send(formData);
+
+		this.clearInput();
 	}
 
 	validateInput(e) {
