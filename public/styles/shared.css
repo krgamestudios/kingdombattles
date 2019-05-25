@@ -17,6 +17,20 @@ body {
 	color: white;
 }
 
+.banner {
+	max-width: 320px;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: .5em;
+}
+
+@media screen and (max-width: 480px) {
+	.banner {
+		max-width: 80%;
+	}
+}
+
 h1 {
 	font-size: 24pt;
 	color: pink;

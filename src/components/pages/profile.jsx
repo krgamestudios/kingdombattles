@@ -59,8 +59,6 @@ class Profile extends React.Component {
 		//finally
 		return (
 			<div className='page'>
-				<h1 style={{textAlign: 'center', fontSize: '50px', margin: '30px'}}>KINGDOM BATTLES!</h1>
-
 				<div className='sidePanelPage'>
 					<SidePanel />
 

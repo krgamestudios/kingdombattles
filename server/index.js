@@ -42,6 +42,7 @@ profiles.runGoldTick(connection);
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
+app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );
 
 //the app file
 app.get('/app.bundle.js', (req, res) => {

@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
@@ -37,8 +36,6 @@ class Home extends React.Component {
 		//return the home page
 		return (
 			<div className='page'>
-				<h1 style={{textAlign: 'center', fontSize: '50px', margin: '30px'}}>KINGDOM BATTLES!</h1>
-
 				<div className='sidePanelPage'>
 					<SidePanel />
 
@@ -116,11 +113,6 @@ class Home extends React.Component {
 		);
 	}
 }
-
-Home.propTypes = {
-	id: PropTypes.number.isRequired,
-	token: PropTypes.number.isRequired
-};
 
 function mapStoreToProps(store) {
 	return {

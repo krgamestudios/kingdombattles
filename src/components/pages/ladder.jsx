@@ -22,8 +22,6 @@ class Ladder extends React.Component {
 
 		return (
 			<div className='page'>
-				<h1 style={{textAlign: 'center', fontSize: '50px', margin: '30px'}}>KINGDOM BATTLES!</h1>
-
 				<div className='sidePanelPage'>
 					<div className='sidePanel'>
 						<CommonLinks />

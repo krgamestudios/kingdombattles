@@ -20,6 +20,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className = 'central'>
+				<img className='banner' src={'/img/flag.png'} />
 				<BrowserRouter>
 					<Switch>
 						<Route exact path='/' component={Home} />
