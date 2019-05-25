@@ -47,7 +47,7 @@ export default class Signup extends React.Component {
 						<input type='password' name='retype' value={this.state.retype} onChange={this.updateRetype.bind(this)} />
 					</div>
 
-					<button type='submit'>Sign Up</button>
+					<button type='submit' disabled={!this.state.email}>Sign Up</button>
 				</form>
 			</div>
 		);
@@ -82,6 +82,8 @@ export default class Signup extends React.Component {
 		//send the XHR
 		xhr.open('POST', form.action, true);
 		xhr.send(formData);
+
+		this.clearInput();
 	}
 
 	validateInput() {
@@ -118,6 +120,7 @@ export default class Signup extends React.Component {
 	clearInput() {
 		this.setState({
 			email: '',
+			username: '',
 			password: '',
 			retype: '',
 			warning: ''

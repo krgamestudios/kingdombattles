@@ -37,7 +37,7 @@ class Login extends React.Component {
 						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
 					</div>
 
-					<button type='submit'>Login</button>
+					<button type='submit' disabled={!this.state.email}>Login</button>
 				</form>
 			</div>
 		);

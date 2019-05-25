@@ -29,7 +29,7 @@ class PasswordRecover extends React.Component {
 						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
 					</div>
 
-					<button type='submit'>Send Email</button>
+					<button type='submit' disabled={!this.state.email}>Send Email</button>
 				</form>
 			</div>
 		);
@@ -65,6 +65,8 @@ class PasswordRecover extends React.Component {
 		//send the XHR
 		xhr.open('POST', form.action, true);
 		xhr.send(formData);
+
+		this.clearInput();
 	}
 
 	validateInput(e) {
