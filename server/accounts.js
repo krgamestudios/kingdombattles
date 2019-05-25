@@ -18,6 +18,15 @@ const signup = (connection) => (req, res) => {
 	form.parse(req, (err, fields) => {
 		if (err) throw err;
 
+		//prevent too many clicks
+		if (isThrottled(fields.email)) {
+			res.status(400).write(log('signup throttled', fields.email));
+			res.end();
+			return;
+		}
+
+		throttle(fields.email);
+
 		//validate email, username and password
 		if (!validateEmail(fields.email) || fields.username.length < 4 || fields.username.length > 100 || fields.password.length < 8 || fields.password !== fields.retype) {
 			res.status(400).write(log('Invalid signup data', fields));
@@ -55,15 +64,6 @@ const signup = (connection) => (req, res) => {
 					let query = 'REPLACE INTO signups (email, username, salt, hash, verify) VALUES (?, ?, ?, ?, ?);';
 					connection.query(query, [fields.email, fields.username, salt, hash, rand], (err) => {
 						if (err) throw err;
-
-						//prevent too many clicks
-						if (isThrottled(fields.email)) {
-							res.status(400).write(log('signup throttled', fields.email));
-							res.end();
-							return;
-						}
-
-						throttle(fields.email);
 
 						//build the verification email
 						let addr = `http://${process.env.WEB_ADDRESS}/verify?email=${fields.email}&verify=${rand}`;
@@ -277,6 +277,15 @@ const passwordRecover = (connection) => (req, res) => {
 	form.parse(req, (err, fields) => {
 		if (err) throw err;
 
+		//prevent too many clicks
+		if (isThrottled(fields.email)) {
+			res.status(400).write(log('recover throttled', fields.email));
+			res.end();
+			return;
+		}
+
+		throttle(fields.email);
+
 		//validate email, username and password
 		if (!validateEmail(fields.email)) {
 			res.status(400).write(log('Invalid recover data', fields.email));
@@ -306,15 +315,6 @@ const passwordRecover = (connection) => (req, res) => {
 				let addr = `http://${process.env.WEB_ADDRESS}/passwordreset?email=${fields.email}&token=${rand}`;
 				let msg = 'Hello! Please visit the following address to set a new password (if you didn\'t request a password recovery, ignore this email): ';
 				let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
-
-				//prevent too many clicks
-				if (isThrottled(fields.email)) {
-					res.status(400).write(log('recover throttled', fields.email));
-					res.end();
-					return;
-				}
-
-				throttle(fields.email);
 
 				//send the verification email
 				sendmail({
