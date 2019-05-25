@@ -25,7 +25,7 @@ class PagedLadder extends React.Component {
 					<p className='col'>Recruits</p>
 					<p className='col'>Gold</p>
 				</div>
-				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}> <Link to={`/profile?username=${this.state.data[key].username}`} className={'col'}>{this.state.data[key].username}</Link><p className={'col'}>{this.state.data[key].soldiers}</p><p className={'col'}>{this.state.data[key].recruits}</p><p className={'col'}>{this.state.data[key].gold}</p><hr /></div> )}
+				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}> <Link to={`/profile?username=${this.state.data[key].username}`} className={'col'}>{this.state.data[key].username}</Link><p className={'col'}>{this.state.data[key].soldiers}</p><p className={'col'}>{this.state.data[key].recruits}</p><p className={'col'}>{this.state.data[key].gold}</p></div> )}
 			</div>
 		);
 	}
