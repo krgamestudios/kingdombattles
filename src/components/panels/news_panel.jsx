@@ -9,7 +9,7 @@ class NewsPanel extends React.Component {
 			data: {}
 		};
 
-		this.fetchNews(3);
+		this.fetchNews(this.props.length || 10);
 	}
 
 	render() {

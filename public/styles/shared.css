@@ -23,6 +23,7 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: .5em;
+	margin-bottom: 2em;
 }
 
 @media screen and (max-width: 480px) {
@@ -50,6 +51,8 @@ hr {
 	height: 1px;
 	color: lightblue;
 	background-color: lightblue;
+	margin-top: 1em;
+	margin-bottom: 2em;
 }
 
 ul {
