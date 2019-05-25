@@ -23,20 +23,20 @@ let connection = connectToDatabase(); //uses .env
 
 //handle accounts
 let accounts = require('./accounts.js');
-app.post('/signup', accounts.signup(connection));
-app.get('/verify', accounts.verify(connection));
-app.post('/login', accounts.login(connection));
-app.post('/logout', accounts.logout(connection));
-app.post('/passwordchange', accounts.passwordChange(connection));
-app.post('/passwordrecover', accounts.passwordRecover(connection));
-app.post('/passwordreset', accounts.passwordReset(connection));
+app.post('/signuprequest', accounts.signupRequest(connection));
+app.get('/verifyrequest', accounts.verifyRequest(connection));
+app.post('/loginrequest', accounts.loginRequest(connection));
+app.post('/logoutrequest', accounts.logoutRequest(connection));
+app.post('/passwordchangerequest', accounts.passwordChangeRequest(connection));
+app.post('/passwordrecoverrequest', accounts.passwordRecoverRequest(connection));
+app.post('/passwordresetrequest', accounts.passwordResetRequest(connection));
 
 //handle profiles
 let profiles = require('./profiles.js');
 app.post('/profilerequest', profiles.profileRequest(connection));
-app.post('/recruit', profiles.recruit(connection));
-app.post('/train', profiles.train(connection));
-app.post('/untrain', profiles.untrain(connection));
+app.post('/recruitrequest', profiles.recruitRequest(connection));
+app.post('/trainrequest', profiles.trainRequest(connection));
+app.post('/untrainrequest', profiles.untrainRequest(connection));
 app.post('/ladderrequest', profiles.ladderRequest(connection));
 profiles.runGoldTick(connection);
 

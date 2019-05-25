@@ -161,15 +161,15 @@ footer {
 	}
 }
 
-.panel.left, .panel.center {
+.panel.right, .panel.center {
 	align-items: center;
 }
 
-.panel.left .warning, .panel.center .warning {
+.panel.right .warning, .panel.center .warning {
 	align-self: stretch;
 }
 
-.panel.left form, .panel.center form {
+.panel.right form, .panel.center form {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -177,14 +177,14 @@ footer {
 	align-self: stretch;
 }
 
-.panel.left form button, .panel.center form button {
+.panel.right form button, .panel.center form button {
 	align-self: stretch;
 	margin-top: .2em;
 	margin-bottom: .2em;
 }
 
 @media screen and (max-width: 480px) {
-	.panel.left h1, .panel.center h1 {
+	.panel.right h1, .panel.center h1 {
 		font-size: 16px;
 	}
 }

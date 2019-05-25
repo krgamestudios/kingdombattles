@@ -19,7 +19,7 @@ class Logout extends React.Component {
 
 		//build the XHR
 		let xhr = new XMLHttpRequest();
-		xhr.open('POST', '/logout', true);
+		xhr.open('POST', '/logoutrequest', true);
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		xhr.send(JSON.stringify({
 			email: this.props.email,

@@ -18,14 +18,14 @@ class PasswordChange extends React.Component {
 		};
 
 		return (
-			<div className='panel left'>
+			<div className='panel right'>
 				<h1>Change Password</h1>
 
 				<div className='warning' style={warningStyle}>
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/passwordchange' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/passwordchangerequest' method='post' onSubmit={(e) => this.submit(e)}>
 					<div>
 						<label>Password:</label>
 						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />

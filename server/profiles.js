@@ -9,7 +9,7 @@ let CronJob = require('cron').CronJob;
 let { log } = require('../common/utilities.js');
 
 //profile creation & requesting
-const profileCreate = (connection) => (req, res) => {
+const profileCreateRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -18,11 +18,11 @@ const profileCreate = (connection) => (req, res) => {
 		if (err) throw err;
 
 		//separate this section so it can be used elsewhere too
-		return profileCreateInner(connection, req, res, fields);
+		return profileCreateRequestInner(connection, req, res, fields);
 	});
 }
 
-function profileCreateInner(connection, req, res, fields) {
+function profileCreateRequestInner(connection, req, res, fields) {
 	let query = 'SELECT accountId FROM profiles WHERE accountId IN (SELECT accounts.id FROM accounts WHERE username = ?);';
 	connection.query(query, [fields.username], (err, results) => {
 		if (err) throw err;
@@ -81,7 +81,7 @@ function profileRequestInner(connection, req, res, fields) {
 				if (err) throw err;
 
 				if (results.length === 1) {
-					return profileCreateInner(connection, req, res, fields);
+					return profileCreateRequestInner(connection, req, res, fields);
 				} else {
 					res.status(400).write(log('Profile not found', fields.username, fields.id, fields.token));
 					res.end();
@@ -104,7 +104,7 @@ function profileRequestInner(connection, req, res, fields) {
 }
 
 //actual actions to be taken
-const recruit = (connection) => (req, res) => {
+const recruitRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -178,7 +178,7 @@ const recruit = (connection) => (req, res) => {
 	});
 }
 
-const train = (connection) => (req, res) => {
+const trainRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -272,7 +272,7 @@ const train = (connection) => (req, res) => {
 	});
 }
 
-const untrain = (connection) => (req, res) => {
+const untrainRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -382,9 +382,9 @@ const runGoldTick = (connection) => {
 module.exports = {
 //	profileCreate: profileCreate, //NOTE: Not actually used
 	profileRequest: profileRequest,
-	recruit: recruit,
-	train: train,
-	untrain: untrain,
-	runGoldTick: runGoldTick,
-	ladderRequest: ladderRequest
+	recruitRequest: recruitRequest,
+	trainRequest: trainRequest,
+	untrainRequest: untrainRequest,
+	ladderRequest: ladderRequest,
+	runGoldTick: runGoldTick
 }

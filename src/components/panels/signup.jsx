@@ -19,14 +19,14 @@ export default class Signup extends React.Component {
 		};
 
 		return (
-			<div className='panel left'>
+			<div className='panel right'>
 				<h1>Sign Up</h1>
 
 				<div className='warning' style={warningStyle}>
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/signup' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/signuprequest' method='post' onSubmit={(e) => this.submit(e)}>
 					<div>
 						<label>Email:</label>
 						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />

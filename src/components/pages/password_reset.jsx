@@ -30,9 +30,9 @@ class PasswordReset extends React.Component {
 		}
 
 		return (
-			<div className='page' style={{justifyContent: 'center'}}>
+			<div className='page centered'>
 				<Panel />
-				<Link to='/' className='centered'>Return Home</Link>
+				<Link to='/'>Return Home</Link>
 			</div>
 		);
 	}

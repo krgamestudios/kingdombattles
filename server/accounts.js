@@ -10,7 +10,7 @@ let sendmail = require('sendmail')();
 let { log, validateEmail } = require('../common/utilities.js');
 let { throttle, isThrottled } = require('../common/throttle.js');
 
-const signup = (connection) => (req, res) => {
+const signupRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -66,7 +66,7 @@ const signup = (connection) => (req, res) => {
 						if (err) throw err;
 
 						//build the verification email
-						let addr = `http://${process.env.WEB_ADDRESS}/verify?email=${fields.email}&verify=${rand}`;
+						let addr = `http://${process.env.WEB_ADDRESS}/verifyrequest?email=${fields.email}&verify=${rand}`;
 						let msg = 'Hello! Please visit the following address to verify your account: ';
 						let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
 
@@ -95,7 +95,7 @@ const signup = (connection) => (req, res) => {
 	});
 }
 
-const verify = (connection) => (req, res) => {
+const verifyRequest = (connection) => (req, res) => {
 	//get the saved data
 	let query = 'SELECT email, username, salt, hash, verify FROM signups WHERE email = ?;';
 
@@ -133,7 +133,7 @@ const verify = (connection) => (req, res) => {
 	});
 }
 
-const login = (connection) => (req, res) => {
+const loginRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -193,7 +193,7 @@ const login = (connection) => (req, res) => {
 	});
 }
 
-const logout = (connection) => (req, res) => {
+const logoutRequest = (connection) => (req, res) => {
 	let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?) AND token = ?;';
 	connection.query(query, [req.body.email, req.body.token], (err) => {
 		if (err) throw err;
@@ -203,7 +203,7 @@ const logout = (connection) => (req, res) => {
 	res.end();
 }
 
-const passwordChange = (connection) => (req, res) => {
+const passwordChangeRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -269,7 +269,7 @@ const passwordChange = (connection) => (req, res) => {
 	});
 }
 
-const passwordRecover = (connection) => (req, res) => {
+const passwordRecoverRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -339,7 +339,7 @@ const passwordRecover = (connection) => (req, res) => {
 	});
 }
 
-const passwordReset = (connection) => (req, res) => {
+const passwordResetRequest = (connection) => (req, res) => {
 	//formidable handles forms
 	let form = formidable.IncomingForm();
 
@@ -394,11 +394,11 @@ const passwordReset = (connection) => (req, res) => {
 }
 
 module.exports = {
-	signup: signup,
-	verify: verify,
-	login: login,
-	logout: logout,
-	passwordChange: passwordChange,
-	passwordRecover: passwordRecover,
-	passwordReset: passwordReset
+	signupRequest: signupRequest,
+	verifyRequest: verifyRequest,
+	loginRequest: loginRequest,
+	logoutRequest: logoutRequest,
+	passwordChangeRequest: passwordChangeRequest,
+	passwordRecoverRequest: passwordRecoverRequest,
+	passwordResetRequest: passwordResetRequest
 };

@@ -16,14 +16,14 @@ class PasswordRecover extends React.Component {
 		};
 
 		return (
-			<div className='panel left'>
+			<div className='panel right'>
 				<h1>Recover Password</h1>
 
 				<div className='warning' style={warningStyle}>
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/passwordrecover' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/passwordrecoverrequest' method='post' onSubmit={(e) => this.submit(e)}>
 					<div>
 						<label>Email:</label>
 						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
