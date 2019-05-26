@@ -17,34 +17,13 @@ class Home extends React.Component {
 
 	//rendering function
 	render() {
-		//get the correct side panel
-		let SidePanel;
-
-		if (this.props.id) { //logged in
-			SidePanel = () => {
-				return (
-					<div className='sidePanel'>
-						<CommonLinks />
-					</div>
-				);
-			}
-		} else { //logged out
-			SidePanel = () => {
-				return (
-					<div className='sidePanel'>
-						<p><Link to='/signup'>Sign Up</Link></p>
-						<p><Link to='/login'>Login</Link></p>
-						<p><Link to='/passwordrecover'>Recover Password</Link></p>
-					</div>
-				);
-			}
-		}
-
 		//return the home page
 		return (
 			<div className='page'>
 				<div className='sidePanelPage'>
-					<SidePanel />
+					<div className='sidePanel'>
+						<CommonLinks />
+					</div>
 
 					<div className='mainPanel'>
 						<Blurb />

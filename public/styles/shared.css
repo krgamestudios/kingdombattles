@@ -46,15 +46,6 @@ br {
 	padding-bottom: .5rem;
 }
 
-hr {
-	border: none;
-	height: 1px;
-	color: lightblue;
-	background-color: lightblue;
-	margin-top: 1em;
-	margin-bottom: 2em;
-}
-
 ul {
 	list-style-type: disc;
 	list-style-position: inside;
@@ -164,15 +155,15 @@ footer {
 	}
 }
 
-.panel.right, .panel.center {
+.panel.right {
 	align-items: center;
 }
 
-.panel.right .warning, .panel.center .warning {
+.panel.right .warning {
 	align-self: stretch;
 }
 
-.panel.right form, .panel.center form {
+.panel.right form {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -180,14 +171,14 @@ footer {
 	align-self: stretch;
 }
 
-.panel.right form button, .panel.center form button {
+.panel.right form button {
 	align-self: stretch;
 	margin-top: .2em;
 	margin-bottom: .2em;
 }
 
 @media screen and (max-width: 480px) {
-	.panel.right h1, .panel.center h1 {
+	.panel.right h1 {
 		font-size: 16px;
 	}
 }
@@ -247,4 +238,13 @@ footer {
 /* bits and pieces */
 .logoutButton {
 	align-self: stretch;
+}
+
+.newsLine {
+	border: none;
+	height: 1px;
+	color: lightblue;
+	background-color: lightblue;
+	margin-top: 1em;
+	margin-bottom: 2em;
 }

@@ -15,7 +15,7 @@ class NewsPanel extends React.Component {
 	render() {
 		return (
 			<div>
-				{Object.keys(this.state.data).map((key) => <div key={key}><ReactMarkdown source={this.state.data[key]} escapeHTML={false} /><hr /></div> )}
+				{Object.keys(this.state.data).map((key) => <div key={key}><ReactMarkdown source={this.state.data[key]} escapeHTML={false} /><hr className='newsLine' /></div> )}
 			</div>
 		);
 	}
