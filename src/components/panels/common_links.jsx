@@ -64,7 +64,7 @@ CommonLinks.propTypes = {
 
 function mapStoreToProps(store) {
 	return {
-		loggedIn: this.store.id && store.account.id !== 0
+		loggedIn: store.account.id !== undefined && store.account.id !== 0
 	}
 }
 
