@@ -1,22 +1,21 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-
-//include pages
-import Home from './pages/home.jsx';
-import Signup from './pages/signup.jsx';
-import Login from './pages/login.jsx';
-import PasswordChange from './pages/password_change.jsx';
-import PasswordRecover from './pages/password_recover.jsx';
-import PasswordReset from './pages/password_reset.jsx';
-
-import Profile from './pages/profile.jsx';
-import Ladder from './pages/ladder.jsx';
-
-import PageNotFound from './pages/page_not_found.jsx';
+import Loadable from 'react-loadable';
 
 //other stuff
 import Footer from './panels/footer.jsx';
 
+//lazy route loading
+const LazyRoute = (props) => {
+	const component = Loadable({
+		loader: props.component,
+		loading: () => <div>Loading...</div>,
+	});
+
+	return <Route {...props} component={component} />;
+};
+
+//the app class
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
@@ -29,17 +28,17 @@ export default class App extends React.Component {
 				<img className='banner' src={'/img/flag_scaled.png'} />
 				<BrowserRouter>
 					<Switch>
-						<Route exact path='/' component={Home} />
-						<Route path='/signup' component={Signup} />
-						<Route path='/login' component={Login} />
-						<Route path='/passwordchange' component={PasswordChange} />
-						<Route path='/passwordrecover' component={PasswordRecover} />
-						<Route path='/passwordreset' component={PasswordReset} />
+						<LazyRoute exact path='/' component={() => import('./pages/home.jsx')} />
+						<LazyRoute path='/signup' component={() => import('./pages/signup.jsx')} />
+						<LazyRoute path='/login' component={() => import('./pages/login.jsx')} />
+						<LazyRoute path='/passwordchange' component={() => import('./pages/password_change.jsx')} />
+						<LazyRoute path='/passwordrecover' component={() => import('./pages/password_recover.jsx')} />
+						<LazyRoute path='/passwordreset' component={() => import('./pages/password_reset.jsx')} />
 
-						<Route path='/profile' component={Profile} />
-						<Route path='/ladder' component={Ladder} />
+						<LazyRoute path='/profile' component={() => import('./pages/profile.jsx')} />
+						<LazyRoute path='/ladder' component={() => import('./pages/ladder.jsx')} />
 
-						<Route path='*' component={PageNotFound} />
+						<LazyRoute path='*' component={() => import('./pages/page_not_found.jsx')} />
 					</Switch>
 				</BrowserRouter>
 				<Footer />

@@ -1,3 +1,5 @@
+const TerserPlugin = require('terser-webpack-plugin');
+
 module.exports = {
   entry: './src/index.jsx',
   output: {
@@ -14,10 +16,23 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+            plugins: ['react-loadable/babel', '@babel/plugin-syntax-dynamic-import']
           }
         }
       }
+    ]
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          output: {
+            comments: false,
+          },
+        },
+      })
     ]
   }
 };

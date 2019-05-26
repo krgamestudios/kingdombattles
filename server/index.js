@@ -44,9 +44,9 @@ profiles.runGoldTick(connection);
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
 app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );
 
-//the app file
-app.get('/app.bundle.js', (req, res) => {
-  res.sendFile(path.resolve(__dirname + '/../public/app.bundle.js'));
+//the app file(s)
+app.get('/*app.bundle.js', (req, res) => {
+  res.sendFile(path.resolve(`${__dirname}/../public/${req.originalUrl}`));
 });
 
 //fallback
