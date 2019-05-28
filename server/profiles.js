@@ -366,11 +366,6 @@ const ladderRequest = (connection) => (req, res) => {
 	});
 }
 
-const attackRequest = (connection) => (req, res) => {
-	res.status(400).write(log('Not yet implemented'));
-	res.end();
-}
-
 const runGoldTick = (connection) => {
 	let goldTickJob = new CronJob('0 */30 * * * *', () => {
 		let query = 'UPDATE profiles SET gold = gold + recruits;';
@@ -391,6 +386,5 @@ module.exports = {
 	trainRequest: trainRequest,
 	untrainRequest: untrainRequest,
 	ladderRequest: ladderRequest,
-	attackRequest: attackRequest,
 	runGoldTick: runGoldTick
 }
