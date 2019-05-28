@@ -19,7 +19,7 @@ const LazyRoute = (props) => {
 						</div>
 					</div>
 				);
-			} else if (props.timeOut) {
+			} else if (props.timedOut) {
 				return (
 					<div className='page'>
 						<div className='warning' style={{display: 'flex'}}>
