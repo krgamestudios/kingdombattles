@@ -32,6 +32,7 @@ class Signup extends React.Component {
 			<div className='page constrained'>
 				<Panel />
 				<Link to='/' className='centered'>Return Home</Link>
+				<p className='centered'>Remember to verify your email!</p>
 			</div>
 		);
 	}
