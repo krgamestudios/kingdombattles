@@ -1,8 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
-import { setAttackDisabled } from '../../actions/combat.js';
 
 class AttackButton extends React.Component {
 	constructor(props) {
@@ -17,11 +14,11 @@ class AttackButton extends React.Component {
 	render() {
 		if (this.state.message !== '') {
 			return (
-				<p>{this.state.message}</p>
+				<p className={this.props.className} style={this.props.style}>{this.state.message}</p>
 			);
 		} else {
 			return (
-				<button className={this.props.className} style={this.props.style} onClick={this.sendAttackRequest.bind(this)} disabled={this.props.disabled}>Attack</button>
+				<button className={this.props.className} style={this.props.style} onClick={this.sendAttackRequest.bind(this)}>Attack</button>
 			);
 		}
 	}
@@ -34,7 +31,10 @@ class AttackButton extends React.Component {
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					this.setState({message: xhr.responseText});
+					let json = JSON.parse(xhr.responseText);
+					if (json.status === 'attacking') {
+						this.setState({ message: `Your soldiers are attacking ${json.defender}` });
+					}
 				} else if (xhr.status === 400) {
 					if (this.props.setWarning) {
 						this.props.setWarning(xhr.responseText);
@@ -64,8 +64,9 @@ class AttackButton extends React.Component {
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					if (xhr.responseText === 'attacking') {
-						this.props.setDisabled(true);
+					let json = JSON.parse(xhr.responseText);
+					if (json.status === 'attacking') {
+						this.setState({ message: `Your soldiers are attacking ${json.defender}` });
 					}
 				}
 			}
@@ -85,24 +86,7 @@ AttackButton.propTypes = {
 	setWarning: PropTypes.func,
 	attacker: PropTypes.string.isRequired,
 	defender: PropTypes.string.isRequired,
-	token: PropTypes.number.isRequired,
-
-	disabled: PropTypes.bool.isRequired,
-	setDisabled: PropTypes.func.isRequired
+	token: PropTypes.number.isRequired
 };
-
-function mapStoreToProps(store) {
-	return {
-		disabled: store.combat.attackDisabled
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		setDisabled: (disabled) => dispatch(setAttackDisabled(disabled))
-	}
-}
-
-AttackButton = connect(mapStoreToProps, mapDispatchToProps)(AttackButton);
 
 export default AttackButton;

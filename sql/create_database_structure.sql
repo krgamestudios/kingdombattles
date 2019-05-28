@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS pastCombat (
 	attackerId INTEGER UNSIGNED,
 	defenderId INTEGER UNSIGNED,
 	attackingUnits INTEGER UNSIGNED,
-	defindingUnits INTEGER UNSIGNED,
+	defendingUnits INTEGER UNSIGNED,
 
 	undefended BOOLEAN,
 

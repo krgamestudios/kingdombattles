@@ -1,6 +1,9 @@
 //environment variables
 require('dotenv').config();
 
+//libraries
+let CronJob = require('cron').CronJob;
+
 //utilities
 let { log } = require('../common/utilities.js');
 
@@ -53,12 +56,17 @@ const attackRequest = (connection) => (req, res) => {
 					}
 
 					//create the pending attack value
-					let query = 'INSERT INTO pendingCombat (eventTime, attackerId, defenderId, attackingUnits) VALUES (DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 10 * ? SECOND), ?, ?, ?);';
+					let query = 'INSERT INTO pendingCombat (eventTime, attackerId, defenderId, attackingUnits) VALUES (DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 60 * ? SECOND), ?, ?, ?);';
 					connection.query(query, [attackingUnits, attackerId, defenderId, attackingUnits], (err) => {
 						if (err) throw err;
 
-						res.status(200).write(log(`Your soldiers are on their way to attack ${req.body.defender}`, req.body.attacker, req.body.defender));
+						res.status(200).json({
+							status: 'attacking',
+							defender: req.body.defender
+						});
 						res.end();
+
+						log(`attacking ${req.body.defender}`, req.body.attacker, req.body.defender)
 					});
 				});
 			});
@@ -67,37 +75,123 @@ const attackRequest = (connection) => (req, res) => {
 }
 
 const attackStatusRequest = (connection) => (req, res) => {
-	isAttacking(connection, req.body.username, (isAttacking) => {
-		res.status(200).write(log(isAttacking ? 'attacking' : 'idle', req.body.username));
+	isAttacking(connection, req.body.username, (isAttacking, defender) => {
+		res.status(200).json({
+			status: log(isAttacking ? 'attacking' : 'idle', req.body.username, defender),
+			defender: defender
+		});
+
 		res.end();
 	});
 }
 
-const isAttacking = (connection, username, cb) => {
-	let query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
-	connection.query(query, [username], (err, results) => {
+const runCombatTick = (connection) => {
+	let combatTick = new CronJob('* * * * * *', () => {
+		//find each pending combat
+		let query = 'SELECT * FROM pendingCombat WHERE eventTime < CURRENT_TIMESTAMP();';
+		connection.query(query, (err, results) => {
+			if (err) throw err;
+
+			results.forEach((pendingCombat) => {
+				//get the defender's undefended status
+				isAttacking(connection, pendingCombat.defenderId, (undefended) => {
+					//get the defending unit count, gold
+					let query = 'SELECT soldiers, recruits, gold FROM profiles WHERE accountId = ?;';
+
+					connection.query(query, [pendingCombat.defenderId], (err, results) => {
+						if (err) throw err;
+
+						let defendingUnits;
+						if (!undefended && results[0].soldiers > 0) {
+							defendingUnits = results[0].soldiers;
+						} else {
+							defendingUnits = results[0].recruits;
+						}
+
+						//determine the victor
+						let rand = Math.random() * (pendingCombat.attackingUnits + defendingUnits * (undefended ? 0.25 : 1));
+						let victor = rand <= pendingCombat.attackingUnits ? 'attacker' : 'defender';
+
+						//determine the spoils and casualties
+						let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
+						let casualtiesVictor = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
+
+						//save the combat
+						let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+						connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor], (err) => {
+							if (err) throw err;
+
+							//update the attacker profile
+							let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE id = ?;';
+							connection.query(query, [spoilsGold, casualtiesVictor, pendingCombat.attackerId], (err) => {
+								if (err) throw err;
+
+								//update the defender profile
+								let query = 'UPDATE profiles SET gold = gold - ? WHERE id = ?;';
+								connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
+									if (err) throw err;
+
+									//delete the pending combat
+									let query = 'DELETE FROM pendingCombat WHERE id = ?;';
+									connection.query(query, [pendingCombat.id], (err) => {
+										if (err) throw err;
+
+										log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor);
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+	});
+
+	combatTick.start();
+}
+
+const isAttacking = (connection, user, cb) => {
+	let query;
+
+	if (typeof(user) === 'string') {
+		query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
+	} else if (typeof(user) === 'number') {
+		query = 'SELECT * FROM pendingCombat WHERE attackerId = ?;';
+	}
+
+	connection.query(query, [user], (err, results) => {
 		if (err) throw err;
 
-		return cb(results.length !== 0);
+		if (results.length === 0) {
+			cb(false);
+		} else {
+			//get the username of the person being attacked
+			let query = 'SELECT username FROM accounts WHERE id = ?;';
+			connection.query(query, [results[0].defenderId], (err, results) => {
+				if (err) throw err;
+				cb(true, results[0].username);
+			});
+		}
 	});
 }
 
 module.exports = {
 	attackRequest: attackRequest,
-	attackStatusRequest: attackStatusRequest
+	attackStatusRequest: attackStatusRequest,
+	runCombatTick: runCombatTick
 }
 
 /*
 > You can attack another player using your soldiers (it doesn't work without soldiers).
-* Doing so takes time, up to 10 seconds for every soldier you have.
-* Combat takes place at the end of the time delay, at which point you can attack people again (after reloading the page).
+> Doing so takes time, up to 10 seconds for every soldier you have.
+> Combat takes place at the end of the time delay, at which point you can attack people again (after reloading the page).
 > While attacking, you are undefended.
-* While undefended, your recruits act as combatants, otherwise your soldiers do.
-* The chance of success is determined by the ratio of each side's combatant strength.
-* Recruits have a strength equal to 0.25 times that of a soldier.
-* On a success, you steal 10% of the target's gold. On a failure, you steal 2% of the target's gold.
-* The attacking force will lose a percentage, rounded down, of their units - 5% on a success, 10% on a failure (edit: excluding the first 10 units).
-* If the server resets (which happens alot) combat still progresses as expected.
+> While undefended, your recruits act as combatants, otherwise your soldiers do.
+> The chance of success is determined by the ratio of each side's combatant strength.
+> Recruits have a strength equal to 0.25 times that of a soldier.
+> On a success, you steal 10% of the target's gold. On a failure, you steal 2% of the target's gold.
+> The attacking force will lose a percentage, rounded down, of their units - 5% on a success, 10% on a failure (edit: excluding the first 10 units).
+> If the server resets (which happens alot) combat still progresses as expected.
 * All combat is logged and presented to the player.
 */
 

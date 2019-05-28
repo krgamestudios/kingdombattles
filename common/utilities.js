@@ -14,8 +14,8 @@ let excluded = [ //messages that should not be logged
 
 	'Profile sent',
 	'Ladder sent',
-//	'attacking',
-//	'idle'
+	'attacking',
+	'idle'
 ];
 
 const log = (msg, ...args) => {
