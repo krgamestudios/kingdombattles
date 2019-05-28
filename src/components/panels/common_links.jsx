@@ -27,7 +27,7 @@ class CommonLinks extends React.Component {
 			return (
 				<div className='panel'>
 					<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
-					<p><Link to='/profile' onClick={this.props.onClickProfile}>Your Profile</Link></p>
+					<p><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
 					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
 					<p><Link to='/passwordchange' onClick={this.props.onClickPasswordChange}>Change Password</Link></p>
 

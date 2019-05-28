@@ -148,7 +148,7 @@ class Profile extends React.Component {
 	MyProfileMainPanel() {
 		return (
 			<div className='panel'>
-				<h1 className='centered'>Profile</h1>
+				<h1 className='centered'>Your Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
@@ -210,7 +210,7 @@ class Profile extends React.Component {
 	NotMyProfileMainPanel() {
 		return (
 			<div className='panel'>
-				<h1 className='centered'>Profile</h1>
+				<h1 className='centered'>{this.state.username}'s Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
@@ -268,7 +268,7 @@ class Profile extends React.Component {
 	LoggedOutMainPanel() {
 		return (
 			<div className='panel'>
-				<h1 className='centered'>Profile</h1>
+				<h1 className='centered'>{this.state.username}'s Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
