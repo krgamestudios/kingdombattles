@@ -38,6 +38,7 @@ app.post('/recruitrequest', profiles.recruitRequest(connection));
 app.post('/trainrequest', profiles.trainRequest(connection));
 app.post('/untrainrequest', profiles.untrainRequest(connection));
 app.post('/ladderrequest', profiles.ladderRequest(connection));
+app.post('/attackrequest', profiles.attackRequest(connection));
 profiles.runGoldTick(connection);
 
 //static directories

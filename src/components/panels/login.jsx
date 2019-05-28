@@ -128,7 +128,7 @@ function mapStoreToProps(store) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		login: (id, email, username, token) => { dispatch(login(id, email, username, token)) }
+		login: (id, email, username, token) => dispatch(login(id, email, username, token))
 	}
 }
 

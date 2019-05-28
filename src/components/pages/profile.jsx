@@ -6,6 +6,7 @@ import queryString from 'query-string';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
+import AttackButton from '../panels/attack_button.jsx';
 
 class Profile extends React.Component {
 	constructor(props) {
@@ -123,7 +124,7 @@ class Profile extends React.Component {
 
 	//panel functions
 	MyProfileSidePanel() {
-		//finally return the side panel
+		//return the side panel
 		return (
 			<div className='sidePanel'>
 				<CommonLinks />
@@ -178,7 +179,7 @@ class Profile extends React.Component {
 	}
 
 	NotMyProfileSidePanel() {
-		//finally return the side panel
+		//return the side panel
 		return (
 			<div className='sidePanel'>
 				<CommonLinks onClickProfile={() => {e.preventDefault(); this.sendRequest('/profilerequest', this.props.username); this.setWarning(''); this.props.history.push('/profile');}} />
@@ -206,8 +207,7 @@ class Profile extends React.Component {
 				<div className='row'>
 					<p className='col'>Recruits:</p>
 					<p className='col'>{this.state.recruits}</p>
-					<div className='col'></div>
-					<div className='col'></div>
+					<AttackButton className='col' style={{flex: '2 1 1.5%'}} setWarning={this.setWarning.bind(this)} attacker={this.props.username} defender={this.state.username} />
 				</div>
 
 				<div className='row'>
