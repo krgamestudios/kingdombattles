@@ -9,7 +9,7 @@ import Footer from './panels/footer.jsx';
 const LazyRoute = (props) => {
 	const component = Loadable({
 		loader: props.component,
-		loading: () => <div>Loading...</div>,
+		loading: () => <div className='page'><p className='centered'>Loading...</p></div>,
 	});
 
 	return <Route {...props} component={component} />;

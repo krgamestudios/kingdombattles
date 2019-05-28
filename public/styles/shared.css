@@ -94,6 +94,7 @@ footer {
 	padding-bottom: .5rem;
 }
 
+/* components */
 .page {
 	flex: 1 1 auto;
 	display: flex;
@@ -108,6 +109,44 @@ footer {
 	justify-content: flex-start;
 }
 
+/* right-aligned panels */
+.panel.right {
+	align-items: center;
+}
+
+.panel.right form {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	align-self: stretch;
+}
+
+.panel.right form button {
+	align-self: stretch;
+	margin-top: .2em;
+	margin-bottom: .2em;
+}
+
+@media screen and (max-width: 480px) {
+	.panel.right h1 {
+		font-size: 16px;
+	}
+}
+
+/* constrained panels */
+.constrained {
+	align-self: center;
+	max-width: 320px;
+}
+
+@media screen and (max-width: 480px) {
+	.constrained {
+		align-self: stretch;
+		max-width: none;
+	}
+}
+
 /* warning message */
 .warning {
 	flex: 0 1 auto;
@@ -119,6 +158,10 @@ footer {
 	border-width: 2px;
 	border-color: #ff0000;
 	background: #ff6666;
+}
+
+.panel.right .warning {
+	align-self: stretch;
 }
 
 /* custom styling */
@@ -152,46 +195,6 @@ footer {
 	.sidePanel {
 		align-self: stretch;
 		width: auto;
-	}
-}
-
-.panel.right {
-	align-items: center;
-}
-
-.panel.right .warning {
-	align-self: stretch;
-}
-
-.panel.right form {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	align-self: stretch;
-}
-
-.panel.right form button {
-	align-self: stretch;
-	margin-top: .2em;
-	margin-bottom: .2em;
-}
-
-@media screen and (max-width: 480px) {
-	.panel.right h1 {
-		font-size: 16px;
-	}
-}
-
-.constrained {
-	align-self: center;
-	max-width: 320px;
-}
-
-@media screen and (max-width: 480px) {
-	.constrained {
-		align-self: stretch;
-		max-width: none;
 	}
 }
 
