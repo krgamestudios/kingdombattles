@@ -46,11 +46,22 @@ class Profile extends React.Component {
 		//main panel
 		let MainPanel;
 
-		if (this.state.username === this.props.username && this.state.username !== '') {
-			MainPanel = this.MyProfileMainPanel.bind(this);
+		if (this.props.id) {
+			//logged in
+			if (this.state.username === this.props.username) {
+				MainPanel = this.MyProfileMainPanel.bind(this);
+			} else {
+				//not logged in
+				if (this.state.username !== '') {
+					MainPanel = this.NotMyProfileMainPanel.bind(this);
+				} else {
+					MainPanel = this.ProfileNotFoundMainPanel.bind(this);
+				}
+			}
 		} else {
+			//not logged in
 			if (this.state.username !== '') {
-				MainPanel = this.NotMyProfileMainPanel.bind(this);
+				MainPanel = this.LoggedOutMainPanel.bind(this);
 			} else {
 				MainPanel = this.ProfileNotFoundMainPanel.bind(this);
 			}
@@ -242,10 +253,58 @@ class Profile extends React.Component {
 		);
 	}
 
+	LoggedOutMainPanel() {
+		return (
+			<div className='table'>
+				<div className='row'>
+					<p className='col'>Username:</p>
+					<p className='col'>{this.state.username}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Gold:</p>
+					<p className='col'>{this.state.gold}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Recruits:</p>
+					<p className='col'>{this.state.recruits}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Soldiers:</p>
+					<p className='col'>{this.state.soldiers}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Spies:</p>
+					<p className='col'>{this.state.spies}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+
+				<div className='row'>
+					<p className='col'>Scientists:</p>
+					<p className='col'>{this.state.scientists}</p>
+					<div className='col'></div>
+					<div className='col'></div>
+				</div>
+			</div>
+		);
+	}
+
 	ProfileNotFoundMainPanel() {
 		return (
 			<div>
-				<p>No profile found!</p>
+				<p className='centered'>No profile found!</p>
 			</div>
 		);
 	}
