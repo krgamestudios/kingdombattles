@@ -232,6 +232,14 @@ footer {
 .row {
 	flex: 1;
 	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+@media screen and (max-width: 480px) {
+	.row {
+		flex-direction: column;
+	}
 }
 
 .col {
@@ -250,4 +258,8 @@ footer {
 	background-color: lightblue;
 	margin-top: 1em;
 	margin-bottom: 2em;
+}
+
+.minWidth { /* hacky */
+	min-width: 80px;
 }

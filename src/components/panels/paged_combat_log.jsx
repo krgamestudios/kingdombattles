@@ -20,24 +20,24 @@ class PagedCombatLog extends React.Component {
 		return (
 			<div className='table'>
 				<div className='row'>
-					<p className='col centered'>When</p>
-					<p className='col centered'>Attacker</p>
-					<p className='col centered'>Attacking Force</p>
-					<p className='col centered'>Defending Force</p>
-					<p className='col centered'>Undefended?</p>
-					<p className='col centered'>Victor</p>
-					<p className='col centered'>Gold Lost</p>
-					<p className='col centered'>Victor Casualties</p>
+					<p className='col centered minWidth'>When</p>
+					<p className='col centered minWidth'>Attacker</p>
+					<p className='col centered minWidth'>Attacking Force</p>
+					<p className='col centered minWidth'>Defending Force</p>
+					<p className='col centered minWidth'>Undefended?</p>
+					<p className='col centered minWidth'>Victor</p>
+					<p className='col centered minWidth'>Gold Lost</p>
+					<p className='col centered minWidth'>Victor Casualties</p>
 				</div>
-				{Object.keys(this.state.data).map((key) => <div key={key} className={'row centered'}>
-					<p className='col centered'>{ this.parseDate(this.state.data[key].eventTime) }</p>
-					<p className='col centered'><Link to={`/profile?username=${this.state.data[key].attackerUsername}`} className={'col'}>{this.state.data[key].attackerUsername}</Link></p>
-					<p className='col centered'>{this.state.data[key].attackingUnits}</p>
-					<p className='col centered'>{this.state.data[key].defendingUnits}</p>
-					<p className='col centered'>{this.state.data[key].undefended ? 'yes' : 'no'}</p>
-					<p className='col centered'>{this.state.data[key].victor}</p>
-					<p className='col centered'>{this.state.data[key].spoilsGold}</p>
-					<p className='col centered'>{this.state.data[key].casualtiesVictor}</p>
+				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}>
+					<p className='col centered minWidth'>{ this.parseDate(this.state.data[key].eventTime) }</p>
+					<p className='col centered minWidth'><Link to={`/profile?username=${this.state.data[key].attackerUsername}`} className={'col'}>{this.state.data[key].attackerUsername}</Link></p>
+					<p className='col centered minWidth'>{this.state.data[key].attackingUnits}</p>
+					<p className='col centered minWidth'>{this.state.data[key].defendingUnits}</p>
+					<p className='col centered minWidth'>{this.state.data[key].undefended ? 'yes' : 'no'}</p>
+					<p className='col centered minWidth'>{this.state.data[key].victor}</p>
+					<p className='col centered minWidth'>{this.state.data[key].spoilsGold}</p>
+					<p className='col centered minWidth'>{this.state.data[key].casualtiesVictor}</p>
 				</div>)}
 			</div>
 		);
