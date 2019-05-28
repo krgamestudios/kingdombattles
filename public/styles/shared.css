@@ -246,6 +246,10 @@ footer {
 	flex: 1;
 }
 
+.table.noCollapse .row {
+	flex-direction: row;
+}
+
 /* bits and pieces */
 .logoutButton {
 	align-self: stretch;

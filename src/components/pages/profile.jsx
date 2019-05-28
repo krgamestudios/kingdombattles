@@ -149,7 +149,7 @@ class Profile extends React.Component {
 		return (
 			<div className='panel'>
 				<h1 className='centered'>Profile</h1>
-				<div className='table'>
+				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
 						<p className='col'>{this.state.username}</p>
@@ -211,7 +211,7 @@ class Profile extends React.Component {
 		return (
 			<div className='panel'>
 				<h1 className='centered'>Profile</h1>
-				<div className='table'>
+				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
 						<p className='col'>{this.state.username}</p>
@@ -269,7 +269,7 @@ class Profile extends React.Component {
 		return (
 			<div className='panel'>
 				<h1 className='centered'>Profile</h1>
-				<div className='table'>
+				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
 						<p className='col'>{this.state.username}</p>
