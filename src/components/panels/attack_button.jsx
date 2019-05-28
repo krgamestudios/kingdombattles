@@ -8,14 +8,22 @@ class AttackButton extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//
+			message: ''
 		};
+
+		this.sendAttackingStatusRequest();
 	}
 
 	render() {
-		return (
-			<button className={this.props.className} style={this.props.style} onClick={this.sendAttackRequest.bind(this)} disabled={this.props.disabled}>Attack</button>
-		);
+		if (this.state.message !== '') {
+			return (
+				<p>{this.state.message}</p>
+			);
+		} else {
+			return (
+				<button className={this.props.className} style={this.props.style} onClick={this.sendAttackRequest.bind(this)} disabled={this.props.disabled}>Attack</button>
+			);
+		}
 	}
 
 	sendAttackRequest() {
@@ -26,7 +34,7 @@ class AttackButton extends React.Component {
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					//DO NOTHING
+					this.setState({message: xhr.responseText});
 				} else if (xhr.status === 400) {
 					if (this.props.setWarning) {
 						this.props.setWarning(xhr.responseText);
@@ -38,7 +46,8 @@ class AttackButton extends React.Component {
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		xhr.send(JSON.stringify({
 			attacker: this.props.attacker,
-			defender: this.props.defender
+			defender: this.props.defender,
+			token: this.props.token
 		}));
 
 		if (this.props.onClick) {
@@ -46,6 +55,26 @@ class AttackButton extends React.Component {
 		}
 
 		this.props.setDisabled(true);
+	}
+
+	sendAttackingStatusRequest() {
+		let xhr = new XMLHttpRequest();
+		xhr.open('POST', '/attackstatusrequest', true);
+
+		xhr.onreadystatechange = () => {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					if (xhr.responseText === 'attacking') {
+						this.props.setDisabled(true);
+					}
+				}
+			}
+		}
+
+		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		xhr.send(JSON.stringify({
+			username: this.props.attacker
+		}));
 	}
 };
 
@@ -56,6 +85,7 @@ AttackButton.propTypes = {
 	setWarning: PropTypes.func,
 	attacker: PropTypes.string.isRequired,
 	defender: PropTypes.string.isRequired,
+	token: PropTypes.number.isRequired,
 
 	disabled: PropTypes.bool.isRequired,
 	setDisabled: PropTypes.func.isRequired

@@ -218,7 +218,7 @@ class Profile extends React.Component {
 				<div className='row'>
 					<p className='col'>Recruits:</p>
 					<p className='col'>{this.state.recruits}</p>
-					<AttackButton className='col' style={{flex: '2 1 1.5%'}} setWarning={this.setWarning.bind(this)} attacker={this.props.username} defender={this.state.username} />
+					<AttackButton className='col' style={{flex: '2 1 1.5%'}} setWarning={this.setWarning.bind(this)} attacker={this.props.username} defender={this.state.username} token={this.props.token} />
 				</div>
 
 				<div className='row'>

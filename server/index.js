@@ -42,6 +42,7 @@ profiles.runGoldTick(connection);
 
 let combat = require('./combat.js');
 app.post('/attackrequest', combat.attackRequest(connection));
+app.post('/attackstatusrequest', combat.attackStatusRequest(connection));
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );

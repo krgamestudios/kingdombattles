@@ -1,7 +1,7 @@
 import { SET_ATTACK_DISABLED } from '../actions/combat.js';
 
 const initialStore = {
-	attackDisabled: true
+	attackDisabled: false
 };
 
 export function combatReducer(store = initialStore, action) {
