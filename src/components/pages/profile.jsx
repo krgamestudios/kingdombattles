@@ -7,6 +7,7 @@ import queryString from 'query-string';
 //panels
 import CommonLinks from '../panels/common_links.jsx';
 import AttackButton from '../panels/attack_button.jsx';
+import CombatLog from '../panels/combat_log.jsx';
 
 class Profile extends React.Component {
 	constructor(props) {
@@ -19,6 +20,7 @@ class Profile extends React.Component {
 			soldiers: 0,
 			spies: 0,
 			scientists: 0,
+
 			warning: ''
 		};
 
@@ -145,46 +147,53 @@ class Profile extends React.Component {
 
 	MyProfileMainPanel() {
 		return (
-			<div className='table'>
-				<div className='row'>
-					<p className='col'>Username:</p>
-					<p className='col'>{this.state.username}</p>
-					<div className='col'></div>
-					<div className='col'></div>
+			<div className='panel'>
+				<h1 className='centered'>Profile</h1>
+				<div className='table'>
+					<div className='row'>
+						<p className='col'>Username:</p>
+						<p className='col'>{this.state.username}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
+
+					<div className='row'>
+						<p className='col'>Gold:</p>
+						<p className='col'>{this.state.gold}</p>
+						<div className='col' style={{flex: '2 1 1.5%'}}>(+1 gold for each recruit every half hour)</div>
+					</div>
+
+					<div className='row'>
+						<p className='col'>Recruits:</p>
+						<p className='col'>{this.state.recruits}</p>
+						<button className='col' style={{flex: '2 1 1.5%'}} onClick={() => this.sendRequest('/recruitrequest')}>Recruit More</button>
+					</div>
+
+					<div className='row'>
+						<p className='col'>Soldiers:</p>
+						<p className='col'>{this.state.soldiers}</p>
+						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'soldier')}>Train (100 gold)</button>
+						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'soldier')}>Untrain</button>
+					</div>
+
+					<div className='row'>
+						<p className='col'>Spies:</p>
+						<p className='col'>{this.state.spies}</p>
+						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'spy')}>Train (200 gold)</button>
+						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'spy')}>Untrain</button>
+					</div>
+
+					<div className='row'>
+						<p className='col'>Scientists:</p>
+						<p className='col'>{this.state.scientists}</p>
+						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'scientist')}>Train (120 gold)</button>
+						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'scientist')}>Untrain</button>
+					</div>
 				</div>
 
-				<div className='row'>
-					<p className='col'>Gold:</p>
-					<p className='col'>{this.state.gold}</p>
-					<div className='col' style={{flex: '2 1 1.5%'}}>(+1 gold for each recruit every half hour)</div>
-				</div>
-
-				<div className='row'>
-					<p className='col'>Recruits:</p>
-					<p className='col'>{this.state.recruits}</p>
-					<button className='col' style={{flex: '2 1 1.5%'}} onClick={() => this.sendRequest('/recruitrequest')}>Recruit More</button>
-				</div>
-
-				<div className='row'>
-					<p className='col'>Soldiers:</p>
-					<p className='col'>{this.state.soldiers}</p>
-					<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'soldier')}>Train (100 gold)</button>
-					<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'soldier')}>Untrain</button>
-				</div>
-
-				<div className='row'>
-					<p className='col'>Spies:</p>
-					<p className='col'>{this.state.spies}</p>
-					<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'spy')}>Train (200 gold)</button>
-					<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'spy')}>Untrain</button>
-				</div>
-
-				<div className='row'>
-					<p className='col'>Scientists:</p>
-					<p className='col'>{this.state.scientists}</p>
-					<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'scientist')}>Train (120 gold)</button>
-					<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'scientist')}>Untrain</button>
-				</div>
+				<br />
+				<h1 className='centered'>Combat Log</h1>
+				<CombatLog username={this.props.username} />
 			</div>
 		);
 	}
@@ -200,46 +209,49 @@ class Profile extends React.Component {
 
 	NotMyProfileMainPanel() {
 		return (
-			<div className='table'>
-				<div className='row'>
-					<p className='col'>Username:</p>
-					<p className='col'>{this.state.username}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+			<div className='panel'>
+				<h1 className='centered'>Profile</h1>
+				<div className='table'>
+					<div className='row'>
+						<p className='col'>Username:</p>
+						<p className='col'>{this.state.username}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Gold:</p>
-					<p className='col'>{this.state.gold}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Gold:</p>
+						<p className='col'>{this.state.gold}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Recruits:</p>
-					<p className='col'>{this.state.recruits}</p>
-					<AttackButton className='col' style={{flex: '2 1 1.5%'}} setWarning={this.setWarning.bind(this)} attacker={this.props.username} defender={this.state.username} token={this.props.token} />
-				</div>
+					<div className='row'>
+						<p className='col'>Recruits:</p>
+						<p className='col'>{this.state.recruits}</p>
+						<AttackButton className='col' style={{flex: '2 1 1.5%'}} setWarning={this.setWarning.bind(this)} attacker={this.props.username} defender={this.state.username} token={this.props.token} />
+					</div>
 
-				<div className='row'>
-					<p className='col'>Soldiers:</p>
-					<p className='col'>{this.state.soldiers}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Soldiers:</p>
+						<p className='col'>{this.state.soldiers}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Spies:</p>
-					<p className='col'>{this.state.spies}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Spies:</p>
+						<p className='col'>{this.state.spies}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Scientists:</p>
-					<p className='col'>{this.state.scientists}</p>
-					<div className='col'></div>
-					<div className='col'></div>
+					<div className='row'>
+						<p className='col'>Scientists:</p>
+						<p className='col'>{this.state.scientists}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 				</div>
 			</div>
 		);
@@ -255,47 +267,50 @@ class Profile extends React.Component {
 
 	LoggedOutMainPanel() {
 		return (
-			<div className='table'>
-				<div className='row'>
-					<p className='col'>Username:</p>
-					<p className='col'>{this.state.username}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+			<div className='panel'>
+				<h1 className='centered'>Profile</h1>
+				<div className='table'>
+					<div className='row'>
+						<p className='col'>Username:</p>
+						<p className='col'>{this.state.username}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Gold:</p>
-					<p className='col'>{this.state.gold}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Gold:</p>
+						<p className='col'>{this.state.gold}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Recruits:</p>
-					<p className='col'>{this.state.recruits}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Recruits:</p>
+						<p className='col'>{this.state.recruits}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Soldiers:</p>
-					<p className='col'>{this.state.soldiers}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Soldiers:</p>
+						<p className='col'>{this.state.soldiers}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Spies:</p>
-					<p className='col'>{this.state.spies}</p>
-					<div className='col'></div>
-					<div className='col'></div>
-				</div>
+					<div className='row'>
+						<p className='col'>Spies:</p>
+						<p className='col'>{this.state.spies}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 
-				<div className='row'>
-					<p className='col'>Scientists:</p>
-					<p className='col'>{this.state.scientists}</p>
-					<div className='col'></div>
-					<div className='col'></div>
+					<div className='row'>
+						<p className='col'>Scientists:</p>
+						<p className='col'>{this.state.scientists}</p>
+						<div className='col'></div>
+						<div className='col'></div>
+					</div>
 				</div>
 			</div>
 		);

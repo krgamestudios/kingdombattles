@@ -26,6 +26,7 @@ class Home extends React.Component {
 					</div>
 
 					<div className='mainPanel'>
+						<h1 className='centered'>About</h1>
 						<Blurb />
 						<h1 className='centered'>News</h1>
 						<NewsPanel />

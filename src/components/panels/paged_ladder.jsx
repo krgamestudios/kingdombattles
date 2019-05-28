@@ -20,12 +20,17 @@ class PagedLadder extends React.Component {
 		return (
 			<div className='table'>
 				<div className='row'>
-					<p className='col'>Username</p>
-					<p className='col'>Soldiers</p>
-					<p className='col'>Recruits</p>
-					<p className='col'>Gold</p>
+					<p className='col centered'>Username</p>
+					<p className='col centered'>Soldiers</p>
+					<p className='col centered'>Recruits</p>
+					<p className='col centered'>Gold</p>
 				</div>
-				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}> <Link to={`/profile?username=${this.state.data[key].username}`} className={'col'}>{this.state.data[key].username}</Link><p className={'col'}>{this.state.data[key].soldiers}</p><p className={'col'}>{this.state.data[key].recruits}</p><p className={'col'}>{this.state.data[key].gold}</p></div> )}
+				{Object.keys(this.state.data).map((key) => <div key={key} className={'row centered'}>
+					<p className={'col centered'}><Link to={`/profile?username=${this.state.data[key].username}`}>{this.state.data[key].username}</Link></p>
+					<p className={'col centered'}>{this.state.data[key].soldiers}</p>
+					<p className={'col centered'}>{this.state.data[key].recruits}</p>
+					<p className={'col centered'}>{this.state.data[key].gold}</p>
+				</div> )}
 			</div>
 		);
 	}

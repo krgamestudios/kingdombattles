@@ -1,14 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import CommonLinks from '../panels/common_links.jsx';
-import PagedLadder from '../panels/paged_ladder.jsx';
+import PagedCombatLog from './paged_combat_log.jsx';
 
-class Ladder extends React.Component {
+class CombatLog extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			start: 0,
-			length: 50,
+			start: props.start || 0,
+			length: props.length || 20,
 			fetch: null
 		};
 	}
@@ -21,20 +21,12 @@ class Ladder extends React.Component {
 		let ButtonHeader = this.buttonHeader.bind(this);
 
 		return (
-			<div className='page'>
-				<div className='sidePanelPage'>
-					<div className='sidePanel'>
-						<CommonLinks />
-					</div>
-
-					<div className='mainPanel'>
-						<h1 className='centered'>Game Ladder</h1>
-						<ButtonHeader />
-						<PagedLadder start={this.state.start} length={this.state.length} getFetch={this.getFetch.bind(this)} onReceived={this.onReceived.bind(this)} />
-						<ButtonHeader />
-					</div>
-				</div>
+			<div className='panel'>
+				<ButtonHeader />
+				<PagedCombatLog username={this.props.username} start={this.state.start} length={this.state.length} getFetch={this.getFetch.bind(this)} onReceived={this.onReceived.bind(this)} />
+				<ButtonHeader />
 			</div>
+
 		);
 	}
 
@@ -75,4 +67,8 @@ class Ladder extends React.Component {
 	}
 }
 
-export default Ladder;
+CombatLog.propTypes = {
+	username: PropTypes.string.isRequired
+};
+
+export default CombatLog;

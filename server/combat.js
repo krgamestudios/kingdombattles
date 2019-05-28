@@ -85,6 +85,16 @@ const attackStatusRequest = (connection) => (req, res) => {
 	});
 }
 
+const combatLogRequest = (connection) => (req, res) => {
+	let query = 'SELECT pastCombat.*, atk.username AS attackerUsername, def.username AS defenderUsername FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
+	connection.query(query, [req.body.username, req.body.start, req.body.length], (err, results) => {
+		if (err) throw err;
+
+		res.status(200).json(results);
+		log('Combat log sent', req.body.username, req.body.start, req.body.length, JSON.stringify(results));
+	});
+}
+
 const runCombatTick = (connection) => {
 	let combatTick = new CronJob('* * * * * *', () => {
 		//find each pending combat
@@ -178,6 +188,7 @@ const isAttacking = (connection, user, cb) => {
 module.exports = {
 	attackRequest: attackRequest,
 	attackStatusRequest: attackStatusRequest,
+	combatLogRequest: combatLogRequest,
 	runCombatTick: runCombatTick
 }
 

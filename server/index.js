@@ -43,6 +43,7 @@ profiles.runGoldTick(connection);
 let combat = require('./combat.js');
 app.post('/attackrequest', combat.attackRequest(connection));
 app.post('/attackstatusrequest', combat.attackStatusRequest(connection));
+app.post('/combatlogrequest', combat.combatLogRequest(connection));
 combat.runCombatTick(connection);
 
 //static directories
