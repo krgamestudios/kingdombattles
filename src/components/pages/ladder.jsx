@@ -1,4 +1,6 @@
 import React from 'react';
+import queryString from 'query-string';
+import { withRouter } from 'react-router-dom';
 
 import CommonLinks from '../panels/common_links.jsx';
 import PagedLadder from '../panels/paged_ladder.jsx';
@@ -6,15 +8,21 @@ import PagedLadder from '../panels/paged_ladder.jsx';
 class Ladder extends React.Component {
 	constructor(props) {
 		super(props);
+
+		let params = queryString.parse(props.location.search);
+
 		this.state = {
-			start: 0,
+			params: params,
+			start: parseInt(params.rank) || 0,
 			length: 50,
 			fetch: null
 		};
 	}
 
-	componentDidUpdate() {
-		this.state.fetch();
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
+			this.state.fetch();
+		}
 	}
 
 	render() {
@@ -52,15 +60,20 @@ class Ladder extends React.Component {
 	}
 
 	increment() {
-		this.setState({
-			start: this.state.start + this.state.length
-		});
+		let start = this.state.start + this.state.length;
+
+		this.props.history.push(`${this.props.location.pathname}?rank=${start}`);
 	}
 
 	decrement() {
-		this.setState({
-			start: Math.max(0, this.state.start - this.state.length)
-		});
+		let start = Math.max(0, this.state.start - this.state.length);
+
+		//don't decrement too far
+		if (start === this.state.start) {
+			return;
+		}
+
+		this.props.history.push(`${this.props.location.pathname}?rank=${start}`);
 	}
 
 	//bound callbacks
@@ -70,9 +83,16 @@ class Ladder extends React.Component {
 
 	onReceived(data) {
 		if (data.length === 0) {
-			this.decrement();
+			let start = Math.max(0, this.state.start - this.state.length);
+
+			//don't decrement too far
+			if (start === this.state.start) {
+				return;
+			}
+
+			this.props.history.replace(`${this.props.location.pathname}?rank=${start}`);
 		}
 	}
 }
 
-export default Ladder;
+export default withRouter(Ladder);

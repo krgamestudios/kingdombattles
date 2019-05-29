@@ -1,0 +1,6 @@
+{
+	"env": {
+		"REACT_APP_GA_TRACKING_ID": "",
+		"REACT_APP_GA_DEBUG": true
+	}
+}

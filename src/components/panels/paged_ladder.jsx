@@ -12,8 +12,6 @@ class PagedLadder extends React.Component {
 		if (props.getFetch) {
 			props.getFetch(this.fetchLadder.bind(this));
 		}
-
-		this.fetchLadder();
 	}
 
 	render() {
