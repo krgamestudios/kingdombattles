@@ -16,7 +16,7 @@ class GoogleAnalytics extends React.Component {
 	componentDidUpdate({location: prevLocation}) {
 		const { location: { pathname, search } } = this.props;
 		const isDifferentPathname = pathname !== prevLocation.pathname;
-		const idDifferentSearch = search !== prevLocation.search;
+		const isDifferentSearch = search !== prevLocation.search;
 
 		if (isDifferentPathname || isDifferentSearch) {
 			this.logPageChange(pathname, search);
