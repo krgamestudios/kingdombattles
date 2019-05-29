@@ -166,28 +166,28 @@ class Profile extends React.Component {
 					<div className='row'>
 						<p className='col'>Recruits:</p>
 						<p className='col'>{this.state.recruits}</p>
-						<button className='col' style={{flex: '2 1 1.5%'}} onClick={() => this.sendRequest('/recruitrequest')}>Recruit More</button>
+						<button className='col' style={{flex: '2 1 1.5%'}} onClick={() => this.sendRequest('/recruitrequest')}>Recruit More Units</button>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Soldiers:</p>
 						<p className='col'>{this.state.soldiers}</p>
-						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'soldier')}>Train (100 gold)</button>
-						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'soldier')}>Untrain</button>
+						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'soldier')}>Train Soldier (100 gold)</button>
+						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'soldier')}>Untrain Soldier</button>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Spies:</p>
 						<p className='col'>{this.state.spies}</p>
-						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'spy')}>Train (200 gold)</button>
-						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'spy')}>Untrain</button>
+						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'spy')}>Train Spy (200 gold)</button>
+						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'spy')}>Untrain Spy</button>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Scientists:</p>
 						<p className='col'>{this.state.scientists}</p>
-						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'scientist')}>Train (120 gold)</button>
-						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'scientist')}>Untrain</button>
+						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'scientist')}>Train Scientist (120 gold)</button>
+						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'scientist')}>Untrain Scientist</button>
 					</div>
 				</div>
 
