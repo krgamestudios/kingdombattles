@@ -126,6 +126,11 @@ const runCombatTick = (connection) => {
 						let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
 						let casualtiesVictor = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
 
+						//NOTE: there is a negative gold bug somewhere
+						if (spoilsGold <= 0) {
+							log('WARNING: spoilsGold <= 0', spoilsGold);
+						}
+
 						//save the combat
 						let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
 						connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor], (err) => {
