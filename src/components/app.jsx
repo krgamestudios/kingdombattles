@@ -4,6 +4,7 @@ import Loadable from 'react-loadable';
 
 //other stuff
 import Footer from './panels/footer.jsx';
+import GA from './utilities/google_analytics.jsx';
 
 //lazy route loading (with error handling)
 const LazyRoute = (props) => {
@@ -53,6 +54,7 @@ export default class App extends React.Component {
 			<div className = 'central'>
 				<img className='banner' src={'/img/flag_scaled.png'} />
 				<BrowserRouter>
+					{ GA.init() && <GA.RouteTracker /> }
 					<Switch>
 						<LazyRoute exact path='/' component={() => import('./pages/home.jsx')} />
 						<LazyRoute path='/signup' component={() => import('./pages/signup.jsx')} />
