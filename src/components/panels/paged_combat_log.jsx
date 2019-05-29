@@ -25,7 +25,7 @@ class PagedCombatLog extends React.Component {
 					<p className='col centered minWidth'>Defending Force</p>
 					<p className='col centered minWidth'>Undefended?</p>
 					<p className='col centered minWidth'>Victor</p>
-					<p className='col centered minWidth'>Gold Lost</p>
+					<p className='col centered minWidth'>Gold Transferred</p>
 					<p className='col centered minWidth'>Victor Casualties</p>
 				</div>
 				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}>
