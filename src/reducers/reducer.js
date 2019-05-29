@@ -5,6 +5,6 @@ import { combatReducer } from './combat.js';
 //compile all reducers together
 export default combineReducers({
 	account: accountReducer,
-	combat: combatReducer
+/*	combat: combatReducer */
 });
 
