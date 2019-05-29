@@ -28,12 +28,14 @@ const LazyRoute = (props) => {
 						</div>
 					</div>
 				);
-			} else {
+			} else if (props.pastDelay) {
 				return (
 					<div className='page'>
 						<p className='centered'>Loading...</p>
 					</div>
 				);
+			} else {
+				return null;
 			}
 		},
 		timeout: 10000

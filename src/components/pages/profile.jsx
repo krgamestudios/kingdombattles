@@ -12,8 +12,12 @@ import CombatLog from '../panels/combat_log.jsx';
 class Profile extends React.Component {
 	constructor(props) {
 		super(props);
+
+		let params = queryString.parse(props.location.search);
+
 		this.state = {
-			params: queryString.parse(props.location.search),
+			params: params,
+
 			username: '',
 			gold: 0,
 			recruits: 0,
@@ -21,7 +25,9 @@ class Profile extends React.Component {
 			spies: 0,
 			scientists: 0,
 
-			warning: ''
+			warning: '',
+
+			start: params.log
 		};
 
 		this.sendRequest('/profilerequest', this.state.params.username ? this.state.params.username : this.props.username);
@@ -193,7 +199,7 @@ class Profile extends React.Component {
 
 				<br />
 				<h1 className='centered'>Combat Log</h1>
-				<CombatLog username={this.props.username} />
+				<CombatLog username={this.props.username} start={this.state.start} length={this.state.length} />
 			</div>
 		);
 	}
@@ -319,7 +325,6 @@ class Profile extends React.Component {
 	ProfileNotFoundMainPanel() {
 		return (
 			<div>
-				<p className='centered'>No profile found!</p>
 			</div>
 		);
 	}

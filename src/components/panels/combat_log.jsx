@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 import PagedCombatLog from './paged_combat_log.jsx';
 
@@ -7,14 +8,16 @@ class CombatLog extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			start: props.start || 0,
-			length: props.length || 20,
+			start: parseInt(props.start) || 0,
+			length: parseInt(props.length) || 20,
 			fetch: null
 		};
 	}
 
-	componentDidUpdate() {
-		this.state.fetch();
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
+			this.state.fetch();
+		}
 	}
 
 	render() {
@@ -44,15 +47,20 @@ class CombatLog extends React.Component {
 	}
 
 	increment() {
-		this.setState({
-			start: this.state.start + this.state.length
-		});
+		let start = this.state.start + this.state.length;
+
+		this.props.history.push(`${this.props.location.pathname}?log=${start}`);
 	}
 
 	decrement() {
-		this.setState({
-			start: Math.max(0, this.state.start - this.state.length)
-		});
+		let start = Math.max(0, this.state.start - this.state.length);
+
+		//don't decrement too far
+		if (start === this.state.start) {
+			return;
+		}
+
+		this.props.history.push(`${this.props.location.pathname}?log=${start}`);
 	}
 
 	//bound callbacks
@@ -62,7 +70,14 @@ class CombatLog extends React.Component {
 
 	onReceived(data) {
 		if (data.length === 0) {
-			this.decrement();
+			let start = Math.max(0, this.state.start - this.state.length);
+
+			//don't decrement too far
+			if (start === this.state.start) {
+				return;
+			}
+
+			this.props.history.replace(`${this.props.location.pathname}?log=${start}`);
 		}
 	}
 }
@@ -71,4 +86,4 @@ CombatLog.propTypes = {
 	username: PropTypes.string.isRequired
 };
 
-export default CombatLog;
+export default withRouter(CombatLog);

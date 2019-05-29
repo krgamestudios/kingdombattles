@@ -12,8 +12,6 @@ class PagedCombatLog extends React.Component {
 		if (props.getFetch) {
 			props.getFetch(this.fetchCombatLog.bind(this));
 		}
-
-		this.fetchCombatLog();
 	}
 
 	render() {
