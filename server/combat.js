@@ -48,8 +48,10 @@ const attackRequest = (connection) => (req, res) => {
 				let attackingUnits = results[0].soldiers;
 
 				//verify that the attacker is not already attacking someone
-				isAttacking(connection, req.body.attacker, (isAttacking) => {
-					if (isAttacking) {
+				isAttacking(connection, req.body.attacker, (err, attacking) => {
+					if (err) throw err;
+
+					if (attacking) {
 						res.status(400).write(log('You are already attacking someone', req.body.attacker, req.body.defender));
 						res.end();
 						return;
@@ -75,9 +77,11 @@ const attackRequest = (connection) => (req, res) => {
 }
 
 const attackStatusRequest = (connection) => (req, res) => {
-	isAttacking(connection, req.body.username, (isAttacking, defender) => {
+	isAttacking(connection, req.body.username, (err, attacking, defender) => {
+		if (err) throw err;
+
 		res.status(200).json({
-			status: log(isAttacking ? 'attacking' : 'idle', req.body.username, defender),
+			status: log(attacking ? 'attacking' : 'idle', req.body.username, defender),
 			defender: defender
 		});
 
@@ -103,55 +107,73 @@ const runCombatTick = (connection) => {
 			if (err) throw err;
 
 			results.forEach((pendingCombat) => {
-				//get the defender's undefended status
-				isAttacking(connection, pendingCombat.defenderId, (undefended) => {
-					//get the defending unit count, gold
-					let query = 'SELECT soldiers, recruits, gold FROM profiles WHERE accountId = ?;';
+				//check that the attacker still has enough soliders
+				let query = 'SELECT soldiers FROM profiles WHERE accountId = ?;';
+				connection.query(query, [pendingCombat.attackerId], (err, results) => {
+					if (err) throw err;
 
-					connection.query(query, [pendingCombat.defenderId], (err, results) => {
+					if (results[0].soldiers < pendingCombat.attackingUnits) {
+						//delete the failed combat
+						let query = 'DELETE FROM pendingCombat WHERE id = ?;';
+						connection.query(query, [pendingCombat.id], (err) => {
+							if (err) throw err;
+							log('Not enough soldiers for attack', pendingCombat.attackerId, results[0].soldiers, pendingCombat.attackingUnits);
+						});
+						return;
+					}
+
+					//get the defender's undefended status
+					isAttacking(connection, pendingCombat.defenderId, (err, undefended) => {
 						if (err) throw err;
 
-						let defendingUnits;
-						if (!undefended && results[0].soldiers > 0) {
-							defendingUnits = results[0].soldiers;
-						} else {
-							defendingUnits = results[0].recruits;
-						}
+						//get the defending unit count, gold
+						let query = 'SELECT soldiers, recruits, gold FROM profiles WHERE accountId = ?;';
 
-						//determine the victor
-						let rand = Math.random() * (pendingCombat.attackingUnits + defendingUnits * (undefended ? 0.25 : 1));
-						let victor = rand <= pendingCombat.attackingUnits ? 'attacker' : 'defender';
-
-						//determine the spoils and casualties
-						let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
-						let casualtiesVictor = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
-
-						//NOTE: there is a negative gold bug somewhere
-						if (spoilsGold <= 0) {
-							log('WARNING: spoilsGold <= 0', pendingCombat.attackerId, pendingCombat.defenderId, spoilsGold);
-						}
-
-						//save the combat
-						let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
-						connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor], (err) => {
+						connection.query(query, [pendingCombat.defenderId], (err, results) => {
 							if (err) throw err;
 
-							//update the attacker profile
-							let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE id = ?;';
-							connection.query(query, [spoilsGold, casualtiesVictor, pendingCombat.attackerId], (err) => {
+							let defendingUnits;
+							if (!undefended && results[0].soldiers > 0) {
+								defendingUnits = results[0].soldiers;
+							} else {
+								defendingUnits = results[0].recruits;
+							}
+
+							//determine the victor
+							let rand = Math.random() * (pendingCombat.attackingUnits + defendingUnits * (undefended ? 0.25 : 1));
+							let victor = rand <= pendingCombat.attackingUnits ? 'attacker' : 'defender';
+
+							//determine the spoils and casualties
+							let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
+							let casualtiesVictor = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
+
+							//NOTE: there is a negative gold bug somewhere
+							if (spoilsGold <= 0) {
+								log('WARNING: spoilsGold <= 0', pendingCombat.attackerId, pendingCombat.defenderId, spoilsGold);
+							}
+
+							//save the combat
+							let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+							connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor], (err) => {
 								if (err) throw err;
 
-								//update the defender profile
-								let query = 'UPDATE profiles SET gold = gold - ? WHERE id = ?;';
-								connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
+								//update the attacker profile
+								let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE id = ?;';
+								connection.query(query, [spoilsGold, casualtiesVictor, pendingCombat.attackerId], (err) => {
 									if (err) throw err;
 
-									//delete the pending combat
-									let query = 'DELETE FROM pendingCombat WHERE id = ?;';
-									connection.query(query, [pendingCombat.id], (err) => {
+									//update the defender profile
+									let query = 'UPDATE profiles SET gold = gold - ? WHERE id = ?;';
+									connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
 										if (err) throw err;
 
-										log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor);
+										//delete the pending combat
+										let query = 'DELETE FROM pendingCombat WHERE id = ?;';
+										connection.query(query, [pendingCombat.id], (err) => {
+											if (err) throw err;
+
+											log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor);
+										});
 									});
 								});
 							});
@@ -165,26 +187,33 @@ const runCombatTick = (connection) => {
 	combatTick.start();
 }
 
+const isNormalInteger = (str) => {
+    let n = Math.floor(Number(str));
+    return n !== Infinity && String(n) == str && n >= 0;
+}
+
 const isAttacking = (connection, user, cb) => {
 	let query;
 
-	if (typeof(user) === 'string') {
-		query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
-	} else if (typeof(user) === 'number') {
+	if (isNormalInteger(user)) {
 		query = 'SELECT * FROM pendingCombat WHERE attackerId = ?;';
+	} else if (typeof(user) === 'string') {
+		query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
+	} else {
+		return cb('Unknown argument type for user');
 	}
 
 	connection.query(query, [user], (err, results) => {
 		if (err) throw err;
 
 		if (results.length === 0) {
-			cb(false);
+			return cb(undefined, false);
 		} else {
 			//get the username of the person being attacked
 			let query = 'SELECT username FROM accounts WHERE id = ?;';
 			connection.query(query, [results[0].defenderId], (err, results) => {
 				if (err) throw err;
-				cb(true, results[0].username);
+				return cb(undefined, true, results[0].username);
 			});
 		}
 	});
@@ -194,7 +223,8 @@ module.exports = {
 	attackRequest: attackRequest,
 	attackStatusRequest: attackStatusRequest,
 	combatLogRequest: combatLogRequest,
-	runCombatTick: runCombatTick
+	runCombatTick: runCombatTick,
+	isAttacking: isAttacking
 }
 
 /*

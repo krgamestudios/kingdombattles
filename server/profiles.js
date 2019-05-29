@@ -5,6 +5,8 @@ require('dotenv').config();
 let formidable = require('formidable');
 let CronJob = require('cron').CronJob;
 
+let { isAttacking } = require('./combat.js');
+
 //utilities
 let { log } = require('../common/utilities.js');
 
@@ -204,67 +206,78 @@ const trainRequest = (connection) => (req, res) => {
 				return;
 			}
 
-			//determine the cost of the training TODO: make these global for the client too
-			let cost = 0;
-			switch(fields.role) {
-				case 'soldier':
-					cost = 100;
-					break;
-
-				case 'spy':
-					cost = 200;
-					break;
-
-				case 'scientist':
-					cost = 120;
-					break;
-			}
-
-			//verify that the user has a high enough gold and recruit balance
-			let query = 'SELECT recruits, gold FROM profiles WHERE accountId = ?;';
-			connection.query(query, [fields.id], (err, results) => {
+			//can't train while attacking
+			isAttacking(connection, fields.id, (err, attacking) => {
 				if (err) throw err;
 
-				if (results[0].recruits <= 0) {
-					res.status(400).write(log('Not enough recruits', fields.username, results[0].recruits, fields.id, fields.token));
+				if (attacking) {
+					res.status(400).write(log('Can\'t train while attacking', fields.id));
 					res.end();
 					return;
 				}
 
-				if (results[0].gold < cost) {
-					res.status(400).write(log('Not enough gold', fields.username, results[0].gold, fields.id, fields.token));
-					res.end();
-					return;
+				//determine the cost of the training TODO: make these global for the client too
+				let cost = 0;
+				switch(fields.role) {
+					case 'soldier':
+						cost = 100;
+						break;
+
+					case 'spy':
+						cost = 200;
+						break;
+
+					case 'scientist':
+						cost = 120;
+						break;
 				}
 
-				//update the profile with new values
-				let query = 'UPDATE profiles SET gold = gold - ?, recruits = recruits - 1, soldiers = soldiers + ?, spies = spies + ?, scientists = scientists + ? WHERE accountId = ?;';
-				connection.query(query, [cost, fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
+				//verify that the user has a high enough gold and recruit balance
+				let query = 'SELECT recruits, gold FROM profiles WHERE accountId = ?;';
+				connection.query(query, [fields.id], (err, results) => {
 					if (err) throw err;
 
-					//send the new profile data as JSON (NOTE: possible duplication)
-					let query = 'SELECT * FROM profiles WHERE accountId = ?;';
-					connection.query(query, [fields.id], (err, results) => {
+					if (results[0].recruits <= 0) {
+						res.status(400).write(log('Not enough recruits', fields.username, results[0].recruits, fields.id, fields.token));
+						res.end();
+						return;
+					}
+
+					if (results[0].gold < cost) {
+						res.status(400).write(log('Not enough gold', fields.username, results[0].gold, fields.id, fields.token));
+						res.end();
+						return;
+					}
+
+					//update the profile with new values
+					let query = 'UPDATE profiles SET gold = gold - ?, recruits = recruits - 1, soldiers = soldiers + ?, spies = spies + ?, scientists = scientists + ? WHERE accountId = ?;';
+					connection.query(query, [cost, fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
 						if (err) throw err;
 
-						//check just in case
-						if (results.length !== 1) {
-							res.status(400).write(log('Invalid recruit credentials', fields.username, fields.id, fields.token));
-							res.end();
-							return;
-						}
+						//send the new profile data as JSON (NOTE: possible duplication)
+						let query = 'SELECT * FROM profiles WHERE accountId = ?;';
+						connection.query(query, [fields.id], (err, results) => {
+							if (err) throw err;
 
-						//results.length === 1
-						res.status(200).json({
-							username: fields.username, //TODO: join here
-							gold: results[0].gold,
-							recruits: results[0].recruits,
-							soldiers: results[0].soldiers,
-							spies: results[0].spies,
-							scientists: results[0].scientists
+							//check just in case
+							if (results.length !== 1) {
+								res.status(400).write(log('Invalid recruit credentials', fields.username, fields.id, fields.token));
+								res.end();
+								return;
+							}
+
+							//results.length === 1
+							res.status(200).json({
+								username: fields.username, //TODO: join here
+								gold: results[0].gold,
+								recruits: results[0].recruits,
+								soldiers: results[0].soldiers,
+								spies: results[0].spies,
+								scientists: results[0].scientists
+							});
+							res.end();
+							log('Train successful', fields.username, fields.role, fields.id, fields.token);
 						});
-						res.end();
-						log('Train successful', fields.username, fields.role, fields.id, fields.token);
 					});
 				});
 			});
@@ -298,57 +311,68 @@ const untrainRequest = (connection) => (req, res) => {
 				return;
 			}
 
-			//verify that the user has a high enough balance
-			let query = 'SELECT soldiers, spies, scientists FROM profiles WHERE accountId = ?;';
-			connection.query(query, [fields.id], (err, results) => {
+			//can't untrain while attacking
+			isAttacking(connection, fields.id, (err, attacking) => {
 				if (err) throw err;
-
-				if (fields.role === 'soldier' && results[0].soldiers <= 0) {
-					res.status(400).write(log('Not enough soldiers', fields.username, results[0].soldiers, fields.id, fields.token));
+			
+				if (attacking) {
+					res.status(400).write(log('Can\'t untrain while attacking', fields.id));
 					res.end();
 					return;
 				}
 
-				if (fields.role === 'spy' && results[0].spies <= 0) {
-					res.status(400).write(log('Not enough spies', fields.username, results[0].spies, fields.id, fields.token));
-					res.end();
-					return;
-				}
-
-				if (fields.role === 'scientist' && results[0].scientists <= 0) {
-					res.status(400).write(log('Not enough scientists', fields.username, results[0].scientists, fields.id, fields.token));
-					res.end();
-					return;
-				}
-
-				//update the profile with new values
-				let query = 'UPDATE profiles SET recruits = recruits + 1, soldiers = soldiers - ?, spies = spies - ?, scientists = scientists - ? WHERE accountId = ?;';
-				connection.query(query, [fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
+				//verify that the user has a high enough balance
+				let query = 'SELECT soldiers, spies, scientists FROM profiles WHERE accountId = ?;';
+				connection.query(query, [fields.id], (err, results) => {
 					if (err) throw err;
 
-					//send the new profile data as JSON (NOTE: possible duplication)
-					let query = 'SELECT * FROM profiles WHERE accountId = ?;';
-					connection.query(query, [fields.id], (err, results) => {
+					if (fields.role === 'soldier' && results[0].soldiers <= 0) {
+						res.status(400).write(log('Not enough soldiers', fields.username, results[0].soldiers, fields.id, fields.token));
+						res.end();
+						return;
+					}
+
+					if (fields.role === 'spy' && results[0].spies <= 0) {
+						res.status(400).write(log('Not enough spies', fields.username, results[0].spies, fields.id, fields.token));
+						res.end();
+						return;
+					}
+
+					if (fields.role === 'scientist' && results[0].scientists <= 0) {
+						res.status(400).write(log('Not enough scientists', fields.username, results[0].scientists, fields.id, fields.token));
+						res.end();
+						return;
+					}
+
+					//update the profile with new values
+					let query = 'UPDATE profiles SET recruits = recruits + 1, soldiers = soldiers - ?, spies = spies - ?, scientists = scientists - ? WHERE accountId = ?;';
+					connection.query(query, [fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
 						if (err) throw err;
 
-						//check just in case
-						if (results.length !== 1) {
-							res.status(400).write(log('Invalid untrain credentials', fields.username, fields.role, fields.id, fields.token));
-							res.end();
-							return;
-						}
+						//send the new profile data as JSON (NOTE: possible duplication)
+						let query = 'SELECT * FROM profiles WHERE accountId = ?;';
+						connection.query(query, [fields.id], (err, results) => {
+							if (err) throw err;
 
-						//results.length === 1
-						res.status(200).json({
-							username: fields.username, //TODO: join here
-							gold: results[0].gold,
-							recruits: results[0].recruits,
-							soldiers: results[0].soldiers,
-							spies: results[0].spies,
-							scientists: results[0].scientists
+							//check just in case
+							if (results.length !== 1) {
+								res.status(400).write(log('Invalid untrain credentials', fields.username, fields.role, fields.id, fields.token));
+								res.end();
+								return;
+							}
+
+							//results.length === 1
+							res.status(200).json({
+								username: fields.username, //TODO: join here
+								gold: results[0].gold,
+								recruits: results[0].recruits,
+								soldiers: results[0].soldiers,
+								spies: results[0].spies,
+								scientists: results[0].scientists
+							});
+							res.end();
+							log('Untrain successful', fields.username, fields.role, fields.id, fields.token);
 						});
-						res.end();
-						log('Untrain successful', fields.username, fields.role, fields.id, fields.token);
 					});
 				});
 			});

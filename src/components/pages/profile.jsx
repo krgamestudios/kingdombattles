@@ -324,8 +324,7 @@ class Profile extends React.Component {
 
 	ProfileNotFoundMainPanel() {
 		return (
-			<div>
-			</div>
+			<div className='page' />
 		);
 	}
 
