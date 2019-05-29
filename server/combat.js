@@ -86,8 +86,8 @@ const attackStatusRequest = (connection) => (req, res) => {
 }
 
 const combatLogRequest = (connection) => (req, res) => {
-	let query = 'SELECT pastCombat.*, atk.username AS attackerUsername, def.username AS defenderUsername FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
-	connection.query(query, [req.body.username, req.body.start, req.body.length], (err, results) => {
+	let query = 'SELECT pastCombat.*, atk.username AS attackerUsername, def.username AS defenderUsername FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE atk.username = ? OR def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
+	connection.query(query, [req.body.username, req.body.username, req.body.start, req.body.length], (err, results) => {
 		if (err) throw err;
 
 		res.status(200).json(results);
@@ -128,7 +128,7 @@ const runCombatTick = (connection) => {
 
 						//NOTE: there is a negative gold bug somewhere
 						if (spoilsGold <= 0) {
-							log('WARNING: spoilsGold <= 0', spoilsGold);
+							log('WARNING: spoilsGold <= 0', pendingCombat.attackerId, pendingCombat.defenderId, spoilsGold);
 						}
 
 						//save the combat

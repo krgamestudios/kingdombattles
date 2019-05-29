@@ -22,6 +22,7 @@ class PagedCombatLog extends React.Component {
 				<div className='row'>
 					<p className='col centered minWidth'>When</p>
 					<p className='col centered minWidth'>Attacker</p>
+					<p className='col centered minWidth'>Defender</p>
 					<p className='col centered minWidth'>Attacking Force</p>
 					<p className='col centered minWidth'>Defending Force</p>
 					<p className='col centered minWidth'>Undefended?</p>
@@ -32,6 +33,7 @@ class PagedCombatLog extends React.Component {
 				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}>
 					<p className='col centered minWidth'>{ this.parseDate(this.state.data[key].eventTime) }</p>
 					<p className='col centered minWidth'><Link to={`/profile?username=${this.state.data[key].attackerUsername}`} className={'col'}>{this.state.data[key].attackerUsername}</Link></p>
+					<p className='col centered minWidth'><Link to={`/profile?username=${this.state.data[key].defenderUsername}`} className={'col'}>{this.state.data[key].defenderUsername}</Link></p>
 					<p className='col centered minWidth'>{this.state.data[key].attackingUnits}</p>
 					<p className='col centered minWidth'>{this.state.data[key].defendingUnits}</p>
 					<p className='col centered minWidth'>{this.state.data[key].undefended ? 'yes' : 'no'}</p>
