@@ -7,6 +7,7 @@ import queryString from 'query-string';
 //panels
 import CommonLinks from '../panels/common_links.jsx';
 import AttackButton from '../panels/attack_button.jsx';
+import Equipment from '../panels/equipment.jsx';
 import CombatLog from '../panels/combat_log.jsx';
 
 class Profile extends React.Component {
@@ -27,10 +28,22 @@ class Profile extends React.Component {
 
 			warning: '',
 
-			start: params.log
+			//combat log
+			start: params.log,
+
+			//equipment
+			fetchStatistics: null,
+			fetchEquipment: null
 		};
 
 		this.sendRequest('/profilerequest', this.state.params.username ? this.state.params.username : this.props.username);
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
+//			if (this.state.fetchStatistics) this.state.fetchStatistics();
+//			if (this.state.fetchEquipment) this.state.fetchEquipment();
+		}
 	}
 
 	render() {
@@ -196,6 +209,10 @@ class Profile extends React.Component {
 						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'scientist')}>Untrain Scientist</button>
 					</div>
 				</div>
+
+				<br />
+				<h1 className='centered'>Equipment</h1>
+				<Equipment username={this.props.username} token={this.props.token} scientists={1} getFetchSattistics={ (fn) => this.setState({ fetchStatistics: fn }) } getFetchEquipment={ (fn) => this.setState({ fetchEquipment: fn}) } />
 
 				<br />
 				<h1 className='centered'>Combat Log</h1>

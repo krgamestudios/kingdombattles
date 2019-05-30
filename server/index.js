@@ -46,6 +46,10 @@ app.post('/attackstatusrequest', combat.attackStatusRequest(connection));
 app.post('/combatlogrequest', combat.combatLogRequest(connection));
 combat.runCombatTick(connection);
 
+let equipment = require('./equipment.js');
+app.post('/equipmentstatisticsrequest', equipment.statisticsRequest());
+app.post('/equipmentlistrequest', equipment.listRequest(connection));
+
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
 app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );

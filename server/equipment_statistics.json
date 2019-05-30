@@ -1,0 +1,15 @@
+{
+	"Weapons": {
+		"Stick": { "cost": 50, "combatBoost": 0.02, "scientists": 1 },
+		"Dagger": { "cost": 75, "combatBoost": 0.03, "scientists": 2 },
+		"Sword": { "cost": 100, "combatBoost": 0.04, "scientists": 3 },
+		"Longsword": { "cost": 150, "combatBoost": 0.05, "scientists": 4 },
+		"Frying Pan": { "cost": 200, "combatBoost": 0.06, "scientists": 5 }
+	},
+	"Armour": {
+		"Leather": { "cost": 75, "combatBoost": 0.02, "scientists": 2 },
+		"Gambeson": { "cost": 100, "combatBoost": 0.03, "scientists": 3 },
+		"Chainmail": { "cost": 150, "combatBoost": 0.04, "scientists": 4 },
+		"Platemail": { "cost": 200, "combatBoost": 0.05, "scientists": 5 }
+	}
+}
