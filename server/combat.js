@@ -172,7 +172,7 @@ const runCombatTick = (connection) => {
 										connection.query(query, [pendingCombat.id], (err) => {
 											if (err) throw err;
 
-											log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor);
+											log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor, spoilsGold);
 										});
 									});
 								});
