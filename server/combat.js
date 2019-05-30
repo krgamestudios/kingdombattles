@@ -226,18 +226,3 @@ module.exports = {
 	runCombatTick: runCombatTick,
 	isAttacking: isAttacking
 }
-
-/*
-> You can attack another player using your soldiers (it doesn't work without soldiers).
-> Doing so takes time, up to 10 seconds for every soldier you have.
-> Combat takes place at the end of the time delay, at which point you can attack people again (after reloading the page).
-> While attacking, you are undefended.
-> While undefended, your recruits act as combatants, otherwise your soldiers do.
-> The chance of success is determined by the ratio of each side's combatant strength.
-> Recruits have a strength equal to 0.25 times that of a soldier.
-> On a success, you steal 10% of the target's gold. On a failure, you steal 2% of the target's gold.
-> The attacking force will lose a percentage, rounded down, of their units - 5% on a success, 10% on a failure (edit: excluding the first 10 units).
-> If the server resets (which happens alot) combat still progresses as expected.
-* All combat is logged and presented to the player.
-*/
-

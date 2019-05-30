@@ -250,8 +250,8 @@ const trainRequest = (connection) => (req, res) => {
 					}
 
 					//update the profile with new values
-					let query = 'UPDATE profiles SET gold = gold - ?, recruits = recruits - 1, soldiers = soldiers + ?, spies = spies + ?, scientists = scientists + ? WHERE accountId = ?;';
-					connection.query(query, [cost, fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
+					let query = 'UPDATE profiles SET gold = gold - ?, recruits = recruits - 1, soldiers = soldiers + ?, spies = spies + ?, scientists = scientists + ? WHERE accountId = ? AND gold >= ? AND recruits > 0;';
+					connection.query(query, [cost, fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id, cost], (err) => {
 						if (err) throw err;
 
 						//send the new profile data as JSON (NOTE: possible duplication)
@@ -276,7 +276,7 @@ const trainRequest = (connection) => (req, res) => {
 								scientists: results[0].scientists
 							});
 							res.end();
-							log('Train successful', fields.username, fields.role, fields.id, fields.token);
+							log('Train executed', fields.username, fields.role, fields.id, fields.token);
 						});
 					});
 				});
@@ -344,8 +344,22 @@ const untrainRequest = (connection) => (req, res) => {
 						return;
 					}
 
+					//hacky
+					let role = null;
+					if (fields.role === 'soldier') {
+						role = 'soldiers';
+					} else if (fields.role === 'spy') {
+						role = 'spies';
+					} else if (fields.role === 'scientist') {
+						role = 'scientists';
+					} else {
+						res.status(400).write(log('Unknown role found', fields.role));
+						res.end();
+						return;
+					}
+
 					//update the profile with new values
-					let query = 'UPDATE profiles SET recruits = recruits + 1, soldiers = soldiers - ?, spies = spies - ?, scientists = scientists - ? WHERE accountId = ?;';
+					let query = `UPDATE profiles SET recruits = recruits + 1, soldiers = soldiers - ?, spies = spies - ?, scientists = scientists - ? WHERE accountId = ? AND ${role} > 0;`;
 					connection.query(query, [fields.role === 'soldier' ? 1 : 0, fields.role === 'spy' ? 1 : 0, fields.role === 'scientist' ? 1 : 0, fields.id], (err) => {
 						if (err) throw err;
 
@@ -371,7 +385,7 @@ const untrainRequest = (connection) => (req, res) => {
 								scientists: results[0].scientists
 							});
 							res.end();
-							log('Untrain successful', fields.username, fields.role, fields.id, fields.token);
+							log('Untrain executed', fields.username, fields.role, fields.id, fields.token);
 						});
 					});
 				});

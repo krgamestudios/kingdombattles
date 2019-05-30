@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS pendingCombat (
 
 	eventTime TIMESTAMP,
 
-	attackerId INTEGER UNSIGNED,
+	attackerId INTEGER UNSIGNED UNIQUE,
 	defenderId INTEGER UNSIGNED,
 	attackingUnits INTEGER UNSIGNED,
 
