@@ -5,7 +5,8 @@ import {
 	STORE_RECRUITS,
 	STORE_SOLDIERS,
 	STORE_SPIES,
-	STORE_SCIENTISTS
+	STORE_SCIENTISTS,
+	CLEAR_PROFILE
 } from '../actions/profile.js';
 
 const initialStore = {
@@ -52,6 +53,10 @@ export const profileReducer = (store = initialStore, action) => {
 
 		case STORE_SCIENTISTS:
 			newStore.scientists = action.scientists;
+		break;
+
+		case CLEAR_PROFILE:
+			newStore = JSON.parse(JSON.stringify(initialStore));
 		break;
 	};
 

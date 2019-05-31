@@ -5,6 +5,7 @@ export const STORE_RECRUITS = 'STORE_RECRUITS';
 export const STORE_SOLDIERS = 'STORE_SOLDIERS';
 export const STORE_SPIES = 'STORE_SPIES';
 export const STORE_SCIENTISTS = 'STORE_SCIENTISTS';
+export const CLEAR_PROFILE = 'CLEAR_PROFILE';
 
 export const storeProfile = (username, gold, recruits, soldiers, spies, scientists) => {
 	return {
@@ -57,5 +58,11 @@ export const storeScientists = (scientists) => {
 	return {
 		type: STORE_SCIENTISTS,
 		scientists: scientists
+	};
+}
+
+export const clearProfile = () => {
+	return {
+		type: CLEAR_PROFILE
 	};
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 
 //actions
-import { storeProfile } from '../../actions/profile.js';
+import { storeProfile, clearProfile } from '../../actions/profile.js';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
@@ -20,6 +20,10 @@ class Profile extends React.Component {
 		};
 
 		this.sendRequest('/profilerequest', {username: this.state.params.username ? this.state.params.username : this.props.account.username});
+	}
+
+	componentWillUnmount() {
+		this.props.clearProfile();
 	}
 
 	render() {
@@ -343,7 +347,8 @@ const mapStoreToProps = (store) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		storeProfile: (username, gold, recruits, soldiers, spies, scientists) => dispatch(storeProfile(username, gold, recruits, soldiers, spies, scientists))
+		storeProfile: (username, gold, recruits, soldiers, spies, scientists) => dispatch(storeProfile(username, gold, recruits, soldiers, spies, scientists)),
+		clearProfile: () => dispatch(clearProfile())
 	};
 };
 

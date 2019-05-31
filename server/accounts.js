@@ -69,7 +69,7 @@ const signupRequest = (connection) => (req, res) => {
 						//build the verification email
 						let addr = `http://${process.env.WEB_ADDRESS}/verifyrequest?email=${fields.email}&verify=${rand}`;
 						let msg = 'Hello! Please visit the following address to verify your account: ';
-						let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+//						let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
 
 						//BUGFIX: is gmail being cruel?
 						let sentinel = false;
@@ -80,7 +80,7 @@ const signupRequest = (connection) => (req, res) => {
 							to: fields.email,
 							subject: 'Email Verification',
 							text: msg + addr,
-							html: msgHtml
+//							html: msgHtml
 						}, (err, reply) => {
 							if (err) { //final check
 								let msg = log('Something went wrong (did you use a valid email?)', err);
@@ -90,7 +90,7 @@ const signupRequest = (connection) => (req, res) => {
 									res.end();
 								}
 							} else {
-								let msg = log('Verification email sent!', fields.email);
+								let msg = log('Verification email sent!', fields.email, fields.username, rand);
 
 								if (!sentinel) {
 									res.status(200).json({ msg: msg });
@@ -114,7 +114,6 @@ const verifyRequest = (connection) => (req, res) => {
 
 		//correct number of results
 		if (results.length !== 1) {
-console.log(req.query.email);
 			res.status(400).write(log('That account does not exist or this link has already been used.', req.query.email, req.query.verify));
 			res.end();
 			return;
@@ -127,21 +126,28 @@ console.log(req.query.email);
 			return;
 		}
 
-		//move the data from signups to accounts
-		let query = 'INSERT INTO accounts (email, username, salt, hash) VALUES (?, ?, ?, ?);';
-		connection.query(query, [results[0].email, results[0].username, results[0].salt, results[0].hash], (err) => {
-			if (err) throw err;
+		//BUGFIX: a delay to prevent the fail message appearing to the end user
+		setTimeout(() => {
+			log('Trying to create account', req.query.email);
 
-			//delete from signups
-			let query = 'DELETE FROM signups WHERE email = ?;';
-			connection.query(query, [results[0].email], (err) => {
+			//move the data from signups to accounts
+			let query = 'INSERT IGNORE INTO accounts (email, username, salt, hash) VALUES (?, ?, ?, ?);';
+			connection.query(query, [results[0].email, results[0].username, results[0].salt, results[0].hash], (err) => {
 				if (err) throw err;
 
-				//TODO: prettier verification page
-				res.status(200).write(log('Verification succeeded!', req.query.email));
-				res.end();
+				//delete from signups
+				let query = 'DELETE FROM signups WHERE email = ?;';
+				connection.query(query, [results[0].email], (err) => {
+					if (err) throw err;
+
+					log('Account created', req.query.email);
+				});
 			});
-		});
+		}, 3000); //3 second delay on account creation
+
+		//TODO: prettier verification page
+		res.status(200).write(log('Verification succeeded!', req.query.email));
+		res.end();
 	});
 };
 
