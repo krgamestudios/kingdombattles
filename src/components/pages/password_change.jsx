@@ -9,13 +9,12 @@ class PasswordChange extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			changeSent: false,
-			changeMsg: ''
+			changed: ''
 		}
 	}
 
 	componentDidMount() {
-		if (!this.props.id) {
+		if (!this.props.loggedIn) {
 			this.props.history.push('/');
 		}
 	}
@@ -23,13 +22,13 @@ class PasswordChange extends React.Component {
 	render() {
 		let Panel;
 
-		if (!this.state.changeSent) {
+		if (!this.state.changed) {
 			Panel = () => {
-				return (<PasswordChangePanel onPasswordChange={(msg) => this.setState({ changeSent: true, changeMsg: msg }) } />);
+				return (<PasswordChangePanel onSuccess={(msg) => this.setState({ changed: msg }) } />);
 			}
 		} else {
 			Panel = () => {
-				return (<p>{this.state.changeMsg}</p>);
+				return (<p>{this.state.changed}</p>);
 			}
 		}
 
@@ -42,17 +41,17 @@ class PasswordChange extends React.Component {
 	}
 };
 
-function mapStoreToProps(store) {
+const mapStoreToProps = (store) => {
 	return {
-		id: store.account.id
-	}
-}
+		loggedIn: store.account.id !== 0
+	};
+};
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
 	return {
 		//
-	}
-}
+	};
+};
 
 PasswordChange = connect(mapStoreToProps, mapDispatchToProps)(PasswordChange);
 

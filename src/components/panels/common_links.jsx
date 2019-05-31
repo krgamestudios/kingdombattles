@@ -8,14 +8,16 @@ import Logout from './logout.jsx';
 class CommonLinks extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			//
 		}
 	}
 
 	render() {
-		//render extra stuff
+		//render any extra stuff
 		let Extra;
+
 		if (this.props.extra) {
 			Extra = this.props.extra;
 		} else {
@@ -29,20 +31,21 @@ class CommonLinks extends React.Component {
 					<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
 					<p><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
 					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
+					<p><Link to='/combatlog' onClick={this.props.onClickCombatLog}>Combat Log</Link></p>
 					<p><Link to='/passwordchange' onClick={this.props.onClickPasswordChange}>Change Password</Link></p>
 
 					<Extra />
 
-					<Logout onClick={() => this.props.history.push('/')} />
+					<Logout onClick={ () => this.props.history.push('/') } />
 				</div>
 			);
 		} else { //if not logged in
 			return (
 				<div className='panel'>
+					<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
 					<p><Link to='/signup' onClick={this.props.onClickSignup}>Sign Up</Link></p>
 					<p><Link to='/login' onClick={this.props.onClickLogin}>Login</Link></p>
 					<p><Link to='/passwordrecover' onClick={this.props.onClickPasswordRecover}>Recover Password</Link></p>
-					<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
 					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
 
 					<Extra />
@@ -50,9 +53,11 @@ class CommonLinks extends React.Component {
 			);
 		}
 	}
-}
+};
 
 CommonLinks.propTypes = {
+	loggedIn: PropTypes.bool.isRequired,
+
 	onClickSignup: PropTypes.func,
 	onClickLogin: PropTypes.func,
 	onClickPasswordRecover: PropTypes.func,
@@ -66,13 +71,13 @@ function mapStoreToProps(store) {
 	return {
 		loggedIn: store.account.id !== undefined && store.account.id !== 0
 	}
-}
+};
 
 function mapDispatchToProps(dispatch) {
 	return {
 		//
 	}
-}
+};
 
 CommonLinks = connect(mapStoreToProps, mapDispatchToProps)(CommonLinks);
 

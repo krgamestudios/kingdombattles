@@ -21,5 +21,5 @@ export default class Blurb extends React.Component {
 			</div>
 		);
 	}
-}
+};
 

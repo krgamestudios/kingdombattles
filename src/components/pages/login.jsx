@@ -15,7 +15,7 @@ class Login extends React.Component {
 	render() {
 		return (
 			<div className='page constrained'>
-				<LoginPanel onSubmit={() => this.props.history.push('/profile')} />
+				<LoginPanel onSuccess={(msg) => this.props.history.push('/profile')} />
 				<Link to='/' className='centered'>Return Home</Link>
 			</div>
 		);

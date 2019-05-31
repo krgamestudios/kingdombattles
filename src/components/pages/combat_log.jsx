@@ -1,10 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import queryString from 'query-string';
+import PropTypes from 'prop-types';
 
+//panels
 import CommonLinks from '../panels/common_links.jsx';
-import PagedLadder from '../panels/paged_ladder.jsx';
+import PagedCombatLog from '../panels/paged_combat_log.jsx';
 
-class Ladder extends React.Component {
+class CombatLog extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -12,10 +15,19 @@ class Ladder extends React.Component {
 
 		this.state = {
 			params: params,
-			start: parseInt(params.rank) || 0,
-			length: 50,
-			fetch: null
+			start: parseInt(params.log) || 0,
+			length: parseInt(params.length) || 20,
+
+			fetch: null,
+
+			warning: ''
 		};
+	}
+
+	componentDidMount() {
+		if (!this.props.loggedIn) {
+			this.props.history.replace('/login');
+		}
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -25,19 +37,28 @@ class Ladder extends React.Component {
 	}
 
 	render() {
+		let warningStyle = {
+			display: this.state.warning.length > 0 ? 'flex' : 'none'
+		};
+
 		let ButtonHeader = this.buttonHeader.bind(this);
 
 		return (
-			<div className='page'>
+			<div className='panel'>
 				<div className='sidePanelPage'>
 					<div className='sidePanel'>
 						<CommonLinks />
 					</div>
 
 					<div className='mainPanel'>
-						<h1 className='centered'>Game Ladder</h1>
+						<div className='warning' style={warningStyle}>
+							<p>{this.state.warning}</p>
+						</div>
+
 						<ButtonHeader />
-						<PagedLadder
+						<PagedCombatLog
+							setWarning={this.setWarning.bind(this)}
+							username={this.props.username}
 							start={this.state.start}
 							length={this.state.length}
 							getFetch={this.getFetch.bind(this)}
@@ -47,6 +68,7 @@ class Ladder extends React.Component {
 					</div>
 				</div>
 			</div>
+
 		);
 	}
 
@@ -54,10 +76,10 @@ class Ladder extends React.Component {
 		return (
 			<div className='table'>
 				<div className='row'>
-					<button className='col' onClick={this.decrement.bind(this)}>{'< Back'}</button>
+					<button className='col' onClick={ this.decrement.bind(this) }>{'< Back'}</button>
 					<div className='col' />
 					<div className='col' />
-					<button className='col' onClick={this.increment.bind(this)}>{'Next >'}</button>
+					<button className='col' onClick={ this.increment.bind(this) }>{'Next >'}</button>
 				</div>
 			</div>
 		);
@@ -66,7 +88,7 @@ class Ladder extends React.Component {
 	increment() {
 		let start = this.state.start + this.state.length;
 
-		this.props.history.push(`${this.props.location.pathname}?rank=${start}`);
+		this.props.history.push(`${this.props.location.pathname}?log=${start}`);
 	}
 
 	decrement() {
@@ -77,7 +99,7 @@ class Ladder extends React.Component {
 			return;
 		}
 
-		this.props.history.push(`${this.props.location.pathname}?rank=${start}`);
+		this.props.history.push(`${this.props.location.pathname}?log=${start}`);
 	}
 
 	//bound callbacks
@@ -94,9 +116,32 @@ class Ladder extends React.Component {
 				return;
 			}
 
-			this.props.history.replace(`${this.props.location.pathname}?rank=${start}`);
+			this.props.history.replace(`${this.props.location.pathname}?log=${start}`);
 		}
+	}
+
+	setWarning(s) {
+		this.setState({ warning: s });
 	}
 };
 
-export default Ladder;
+CombatLog.propTypes = {
+	username: PropTypes.string.isRequired
+};
+
+const mapStoreToProps = (store) => {
+	return {
+		username: store.account.username,
+		loggedIn: store.account.id !== 0
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		//
+	};
+};
+
+CombatLog = connect(mapStoreToProps, mapDispatchToProps)(CombatLog);
+
+export default CombatLog;

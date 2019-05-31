@@ -59,6 +59,7 @@ export default class App extends React.Component {
 					{ GA.init() && <GA.RouteTracker /> }
 					<Switch>
 						<LazyRoute exact path='/' component={() => import('./pages/home.jsx')} />
+
 						<LazyRoute path='/signup' component={() => import('./pages/signup.jsx')} />
 						<LazyRoute path='/login' component={() => import('./pages/login.jsx')} />
 						<LazyRoute path='/passwordchange' component={() => import('./pages/password_change.jsx')} />
@@ -67,6 +68,7 @@ export default class App extends React.Component {
 
 						<LazyRoute path='/profile' component={() => import('./pages/profile.jsx')} />
 						<LazyRoute path='/ladder' component={() => import('./pages/ladder.jsx')} />
+						<LazyRoute path='/combatlog' component={() => import('./pages/combat_log.jsx')} />
 
 						<LazyRoute path='*' component={() => import('./pages/page_not_found.jsx')} />
 					</Switch>

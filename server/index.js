@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 
 //handle the news request
 let news = require('./news.js');
+app.get('/newsrequest', news.newsRequest());
 app.post('/newsrequest', news.newsRequest());
 
 //database
@@ -46,9 +47,9 @@ app.post('/attackstatusrequest', combat.attackStatusRequest(connection));
 app.post('/combatlogrequest', combat.combatLogRequest(connection));
 combat.runCombatTick(connection);
 
-let equipment = require('./equipment.js');
-app.post('/equipmentstatisticsrequest', equipment.statisticsRequest());
-app.post('/equipmentlistrequest', equipment.listRequest(connection));
+//let equipment = require('./equipment.js');
+//app.post('/equipmentstatisticsrequest', equipment.statisticsRequest());
+//app.post('/equipmentlistrequest', equipment.listRequest(connection));
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );

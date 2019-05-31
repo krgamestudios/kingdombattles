@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import queryString from 'query-string';
 
 //panels
@@ -10,8 +9,7 @@ class PasswordReset extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			reset: false,
-			resetMsg: '',
+			reset: '',
 			params: queryString.parse(props.location.search)
 		}
 	}
@@ -21,11 +19,11 @@ class PasswordReset extends React.Component {
 
 		if (!this.state.reset) {
 			Panel = () => {
-				return (<PasswordResetPanel email={this.state.params.email} token={this.state.params.token} onPasswordReset={(msg) => this.setState( {reset: true, resetMsg: msg} )}/>);
+				return (<PasswordResetPanel email={this.state.params.email} token={this.state.params.token} onSuccess={ (msg) => this.setState({reset: msg}) } />);
 			}
 		} else {
 			Panel = () => {
-				return (<p>{this.state.resetMsg}</p>);
+				return (<p>{this.state.reset}</p>);
 			}
 		}
 

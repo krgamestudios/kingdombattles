@@ -1,20 +1,31 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 class PagedCombatLog extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			data: {}
+			//
 		}
 
 		if (props.getFetch) {
-			props.getFetch(this.fetchCombatLog.bind(this));
+			props.getFetch(() => this.sendRequest('/combatlogrequest', {username: props.username, start: props.start, length: props.length}));
 		}
 	}
 
 	render() {
+		//make the enemy name a link
+		const PrettyName = (props) => {
+			if (props.name === this.props.username) {
+				return (<p {...props}>{props.name}</p>);
+			} else {
+				return (<p {...props}><Link to={`/profile?username=${props.name}`}>{props.name}</Link></p>);
+			}
+		};
+
 		return (
 			<div className='table'>
 				<div className='row'>
@@ -28,44 +39,51 @@ class PagedCombatLog extends React.Component {
 					<p className='col centered minWidth'>Gold Transferred</p>
 					<p className='col centered minWidth'>Victor Casualties</p>
 				</div>
-				{Object.keys(this.state.data).map((key) => <div key={key} className={'row'}>
-					<p className='col centered minWidth'>{ this.parseDate(this.state.data[key].eventTime) }</p>
-					<p className='col centered minWidth'><Link to={`/profile?username=${this.state.data[key].attackerUsername}`} className={'col'}>{this.state.data[key].attackerUsername}</Link></p>
-					<p className='col centered minWidth'><Link to={`/profile?username=${this.state.data[key].defenderUsername}`} className={'col'}>{this.state.data[key].defenderUsername}</Link></p>
-					<p className='col centered minWidth'>{this.state.data[key].attackingUnits}</p>
-					<p className='col centered minWidth'>{this.state.data[key].defendingUnits}</p>
-					<p className='col centered minWidth'>{this.state.data[key].undefended ? 'yes' : 'no'}</p>
-					<p className='col centered minWidth'>{this.state.data[key].victor}</p>
-					<p className='col centered minWidth'>{this.state.data[key].spoilsGold}</p>
-					<p className='col centered minWidth'>{this.state.data[key].casualtiesVictor}</p>
+
+				{Object.keys(this.state).map((key) => <div key={key} className={'row'}>
+					<p className='col centered minWidth'>{ this.parseDate(this.state[key].eventTime) }</p>
+					<PrettyName className='col centered minWidth' name={this.state[key].attacker} />
+					<PrettyName className='col centered minWidth' name={this.state[key].defender} />
+					<p className='col centered minWidth'>{this.state[key].attackingUnits}</p>
+					<p className='col centered minWidth'>{this.state[key].defendingUnits}</p>
+					<p className='col centered minWidth'>{this.state[key].undefended ? 'yes' : 'no'}</p>
+					<p className='col centered minWidth'>{this.state[key].victor}</p>
+					<p className='col centered minWidth'>{this.state[key].spoilsGold}</p>
+					<p className='col centered minWidth'>{this.state[key].casualtiesVictor}</p>
 				</div>)}
 			</div>
 		);
 	}
 
-	fetchCombatLog(username = this.props.username, start = this.props.start, length = this.props.length) {
+	//gameplay functions
+	sendRequest(url, args = {}) { //send a unified request, using my credentials
 		//build the XHR
 		let xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					let data = JSON.parse(xhr.responseText);
-					this.setState({data: data});
+					let json = JSON.parse(xhr.responseText);
+
+					//on success
+					this.setState(json);
 
 					if (this.props.onReceived) {
-						this.props.onReceived(data);
+						this.props.onReceived(json);
 					}
 				}
+				else if (xhr.status === 400 && this.props.setWarning) {
+					this.props.setWarning(xhr.responseText);
+				}
 			}
-		}
+		};
 
-		xhr.open('POST', '/combatlogrequest', true);
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		xhr.send(JSON.stringify({
-			username: username,
-			start: start,
-			length: length
+			id: this.props.id,
+			token: this.props.token,
+			...args
 		}));
 	}
 
@@ -75,14 +93,34 @@ class PagedCombatLog extends React.Component {
 		let date = new Date(eventTime);
 		return `${date.getDate()} ${month[date.getMonth()]}`;
 	}
-}
+};
 
 PagedCombatLog.propTypes = {
+	id: PropTypes.number.isRequired,
+	token: PropTypes.number.isRequired,
+
 	username: PropTypes.string.isRequired,
 	start: PropTypes.number.isRequired,
 	length: PropTypes.number.isRequired,
+
+	setWarning: PropTypes.func,
 	getFetch: PropTypes.func,
 	onReceived: PropTypes.func
 };
+
+const mapStoreToProps = (store) => {
+	return {
+		id: store.account.id,
+		token: store.account.token
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		//
+	};
+};
+
+PagedCombatLog = connect(mapStoreToProps, mapDispatchToProps)(PagedCombatLog);
 
 export default withRouter(PagedCombatLog);

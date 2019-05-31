@@ -6,11 +6,11 @@ class PagedLadder extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: {}
+			//
 		}
 
 		if (props.getFetch) {
-			props.getFetch(this.fetchLadder.bind(this));
+			props.getFetch( () => this.sendRequest('/ladderrequest', {start: this.props.start || 0, length: this.props.length || 20}) );
 		}
 	}
 
@@ -23,45 +23,51 @@ class PagedLadder extends React.Component {
 					<p className='col centered'>Recruits</p>
 					<p className='col centered'>Gold</p>
 				</div>
-				{Object.keys(this.state.data).map((key) => <div key={key} className={'row centered'}>
-					<p className={'col centered'}><Link to={`/profile?username=${this.state.data[key].username}`}>{this.state.data[key].username}</Link></p>
-					<p className={'col centered'}>{this.state.data[key].soldiers}</p>
-					<p className={'col centered'}>{this.state.data[key].recruits}</p>
-					<p className={'col centered'}>{this.state.data[key].gold}</p>
+				{Object.keys(this.state).map((key) => <div key={key} className={'row'}>
+					<p className={'col centered'}><Link to={`/profile?username=${this.state[key].username}`}>{this.state[key].username}</Link></p>
+					<p className={'col centered'}>{this.state[key].soldiers}</p>
+					<p className={'col centered'}>{this.state[key].recruits}</p>
+					<p className={'col centered'}>{this.state[key].gold}</p>
 				</div> )}
 			</div>
 		);
 	}
 
-	fetchLadder(start = this.props.start, length = this.props.length) {
+	sendRequest(url, args = {}) { //send a unified request, using my credentials
 		//build the XHR
 		let xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					let data = JSON.parse(xhr.responseText);
-					this.setState({data: data});
+					let json = JSON.parse(xhr.responseText);
+
+					//on success
+					this.setState(json);
 
 					if (this.props.onReceived) {
-						this.props.onReceived(data);
+						this.props.onReceived(json);
 					}
 				}
+				else if (xhr.status === 400 && this.props.setWarning) {
+					this.props.setWarning(xhr.responseText);
+				}
 			}
-		}
+		};
 
-		xhr.open('POST', '/ladderrequest', true);
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		xhr.send(JSON.stringify({
-			start: start,
-			length: length
+			//NOTE: No id or token needed for the news
+			...args
 		}));
 	}
-}
+};
 
 PagedLadder.propTypes = {
-	start: PropTypes.number.isRequired,
-	length: PropTypes.number.isRequired,
+	start: PropTypes.number,
+	length: PropTypes.number,
+	setWarning: PropTypes.func,
 	getFetch: PropTypes.func,
 	onReceived: PropTypes.func
 };

@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { login } from '../../actions/accounts.js';
+import PropTypes from 'prop-types';
+
+import { login } from '../../actions/account.js';
 import { validateEmail } from '../../../common/utilities.js';
 
 class Login extends React.Component {
@@ -14,7 +16,7 @@ class Login extends React.Component {
 	}
 
 	render() {
-		let warningStyle = {
+		let warningStyle = { //TODO: lift the warning out to the page?
 			display: this.state.warning.length > 0 ? 'flex' : 'none'
 		};
 
@@ -26,15 +28,15 @@ class Login extends React.Component {
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/loginrequest' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/loginrequest' method='post' onSubmit={ this.submit.bind(this) } >
 					<div>
 						<label>Email:</label>
-						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
+						<input type='text' name='email' value={this.state.email} onChange={ this.updateEmail.bind(this) } />
 					</div>
 
 					<div>
 						<label>Password:</label>
-						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
+						<input type='password' name='password' value={this.state.password} onChange={ this.updatePassword.bind(this) } />
 					</div>
 
 					<button type='submit' disabled={!this.state.email}>Login</button>
@@ -50,19 +52,26 @@ class Login extends React.Component {
 			return;
 		}
 
-		//build the XHR
+		//build the XHR (around an existing form object)
 		let form = e.target;
 		let formData = new FormData(form);
+
 		let xhr = new XMLHttpRequest();
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
-					this.props.login(json.id, json.email, json.username, json.token);
 
-					if (this.props.onSubmit) {
-						this.props.onSubmit();
+					this.props.login(
+						json.id,
+						json.email,
+						json.username,
+						json.token
+					);
+
+					if (this.props.onSuccess) {
+						this.props.onSuccess(json.msg); //NOTE: could use this as a redirect to a special offer or sonmething
 					}
 				}
 
@@ -94,43 +103,39 @@ class Login extends React.Component {
 	}
 
 	setWarning(s) {
-		this.setState({
-			warning: s
-		});
+		this.setState({ warning: s });
 	}
 
 	clearInput() {
-		this.setState({
-			email: '',
-			password: '',
-			warning: ''
-		});
+		this.setState({ email: '', password: '', warning: '' });
 	}
 
 	updateEmail(evt) {
-		this.setState({
-			email: evt.target.value
-		});
+		this.setState({ email: evt.target.value });
 	}
 
 	updatePassword(evt) {
-		this.setState({
-			password: evt.target.value
-		});
+		this.setState({ password: evt.target.value });
 	}
-}
+};
 
-function mapStoreToProps(store) {
+Login.propTypes = {
+	login: PropTypes.func.isRequired,
+
+	onSubmit: PropTypes.func
+};
+
+const mapStoreToProps = (store) => {
 	return {
 		//
 	}
-}
+};
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
 	return {
 		login: (id, email, username, token) => dispatch(login(id, email, username, token))
 	}
-}
+};
 
 Login = connect(mapStoreToProps, mapDispatchToProps)(Login);
 

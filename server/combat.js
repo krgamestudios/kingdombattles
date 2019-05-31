@@ -8,35 +8,33 @@ let CronJob = require('cron').CronJob;
 let { log } = require('../common/utilities.js');
 
 const attackRequest = (connection) => (req, res) => {
-	//verify the attacker's credentials
-	let query = 'SELECT accountId FROM sessions WHERE accountId IN (SELECT id FROM accounts WHERE username = ?) AND token = ?;';
-	connection.query(query, [req.body.attacker, req.body.token], (err, results) => {
+	//verify the attacker's credentials (only the attacker can launch an attack)
+	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND accountId IN (SELECT id FROM accounts WHERE username = ?) AND token = ?;';
+	connection.query(query, [req.body.id, req.body.attacker, req.body.token], (err, results) => {
 		if (err) throw err;
 
-		if (results.length !== 1) {
-			res.status(400).write(log('Invalid attack credentials', req.body.attacker, req.body.defender, req.body.token));
+		if (results[0].total !== 1) {
+			res.status(400).write(log('Invalid attack credentials', req.body.id, req.body.attacker, req.body.defender, req.body.token));
 			res.end();
 			return;
 		}
 
-		let attackerId = results[0].accountId;
-
-		//verify that the defender exists
-		let query = 'SELECT id FROM accounts WHERE username = ?;';
+		//verify that the defender's profile exists
+		let query = 'SELECT accountId FROM profiles WHERE accountId IN (SELECT id FROM accounts WHERE username = ?);';
 		connection.query(query, [req.body.defender], (err, results) => {
 			if (err) throw err;
 
 			if (results.length !== 1) {
-				res.status(400).write(log('Invalid defender credentials', req.body.attacker, req.body.defender));
+				res.status(400).write(log('Invalid defender credentials', req.body.id, req.body.attacker, req.body.defender, req.body.token));
 				res.end();
 				return;
 			}
 
-			let defenderId = results[0].id;
+			let defenderId = results[0].accountId;
 
 			//verify that the attacker has enough soldiers
 			let query = 'SELECT soldiers FROM profiles WHERE accountId = ?;';
-			connection.query(query, [attackerId], (err, results) => {
+			connection.query(query, [req.body.id], (err, results) => {
 				if (err) throw err;
 
 				if (results[0].soldiers <= 0) {
@@ -52,54 +50,57 @@ const attackRequest = (connection) => (req, res) => {
 					if (err) throw err;
 
 					if (attacking) {
-						res.status(400).write(log('You are already attacking someone', req.body.attacker, req.body.defender));
+						res.status(400).write(log('You are already attacking someone', req.body.id, req.body.attacker, req.body.token));
 						res.end();
 						return;
 					}
 
-					//create the pending attack value
+					//create the pending attack record
 					let query = 'INSERT INTO pendingCombat (eventTime, attackerId, defenderId, attackingUnits) VALUES (DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 60 * ? SECOND), ?, ?, ?);';
-					connection.query(query, [attackingUnits, attackerId, defenderId, attackingUnits], (err) => {
+					connection.query(query, [attackingUnits, req.body.id, defenderId, attackingUnits], (err) => {
 						if (err) throw err;
 
 						res.status(200).json({
 							status: 'attacking',
-							defender: req.body.defender
+							attacker: req.body.attacker,
+							defender: req.body.defender,
+							msg: log('Attacking', req.body.attacker, req.body.defender)
 						});
 						res.end();
-
-						log(`attacking ${req.body.defender}`, req.body.attacker, req.body.defender)
 					});
 				});
 			});
 		});
 	});
-}
+};
 
-const attackStatusRequest = (connection) => (req, res) => {
-	isAttacking(connection, req.body.username, (err, attacking, defender) => {
+const attackStatusRequest = (connection) => (req, res) => { //TODO: proper credentials
+	isAttacking(connection, req.body.attacker, (err, attacking, defender) => {
 		if (err) throw err;
 
 		res.status(200).json({
-			status: log(attacking ? 'attacking' : 'idle', req.body.username, defender),
-			defender: defender
+			status: attacking ? 'attacking' : 'idle',
+			attacker: req.body.attacker,
+			defender: defender,
+			msg: null
 		});
 
 		res.end();
 	});
-}
+};
 
 const combatLogRequest = (connection) => (req, res) => {
-	let query = 'SELECT pastCombat.*, atk.username AS attackerUsername, def.username AS defenderUsername FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE atk.username = ? OR def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
+	let query = 'SELECT pastCombat.*, atk.username AS attacker, def.username AS defender FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE atk.username = ? OR def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
 	connection.query(query, [req.body.username, req.body.username, req.body.start, req.body.length], (err, results) => {
 		if (err) throw err;
 
 		res.status(200).json(results);
-		log('Combat log sent', req.body.username, req.body.start, req.body.length, JSON.stringify(results));
+		log('Combat log sent', req.body.username, req.body.start, req.body.length);
 	});
-}
+};
 
 const runCombatTick = (connection) => {
+	//once per second
 	let combatTick = new CronJob('* * * * * *', () => {
 		//find each pending combat
 		let query = 'SELECT * FROM pendingCombat WHERE eventTime < CURRENT_TIMESTAMP();';
@@ -140,6 +141,7 @@ const runCombatTick = (connection) => {
 							}
 
 							//determine the victor
+							//TODO: add equipment effectiveness
 							let rand = Math.random() * (pendingCombat.attackingUnits + defendingUnits * (undefended ? 0.25 : 1));
 							let victor = rand <= pendingCombat.attackingUnits ? 'attacker' : 'defender';
 
@@ -147,23 +149,18 @@ const runCombatTick = (connection) => {
 							let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
 							let casualtiesVictor = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
 
-							//NOTE: there is a negative gold bug somewhere
-							if (spoilsGold <= 0) {
-								log('WARNING: spoilsGold <= 0', pendingCombat.attackerId, pendingCombat.defenderId, spoilsGold);
-							}
-
 							//save the combat
 							let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
 							connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor], (err) => {
 								if (err) throw err;
 
 								//update the attacker profile
-								let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE id = ?;';
+								let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE accountId = ?;';
 								connection.query(query, [spoilsGold, casualtiesVictor, pendingCombat.attackerId], (err) => {
 									if (err) throw err;
 
 									//update the defender profile
-									let query = 'UPDATE profiles SET gold = gold - ? WHERE id = ?;';
+									let query = 'UPDATE profiles SET gold = gold - ? WHERE accountId = ?;';
 									connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
 										if (err) throw err;
 
@@ -185,12 +182,12 @@ const runCombatTick = (connection) => {
 	});
 
 	combatTick.start();
-}
+};
 
 const isNormalInteger = (str) => {
     let n = Math.floor(Number(str));
     return n !== Infinity && String(n) == str && n >= 0;
-}
+};
 
 const isAttacking = (connection, user, cb) => {
 	let query;
@@ -200,7 +197,7 @@ const isAttacking = (connection, user, cb) => {
 	} else if (typeof(user) === 'string') {
 		query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
 	} else {
-		return cb('Unknown argument type for user');
+		return cb(`Unknown argument type for user: ${typeof(user)}`);
 	}
 
 	connection.query(query, [user], (err, results) => {
@@ -217,7 +214,7 @@ const isAttacking = (connection, user, cb) => {
 			});
 		}
 	});
-}
+};
 
 module.exports = {
 	attackRequest: attackRequest,
@@ -225,4 +222,4 @@ module.exports = {
 	combatLogRequest: combatLogRequest,
 	runCombatTick: runCombatTick,
 	isAttacking: isAttacking
-}
+};

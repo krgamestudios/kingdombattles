@@ -1,23 +1,28 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
 import Blurb from '../panels/blurb.jsx';
-import NewsPanel from '../panels/news_panel.jsx';
+import News from '../panels/news.jsx';
 
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//
+			warning: '', //TODO: unified warning?
+			fetch: null
 		};
 	}
 
-	//rendering function
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		this.state.fetch();
+	}
+
 	render() {
-		//return the home page
+		let warningStyle = {
+			display: this.state.warning.length > 0 ? 'flex' : 'none'
+		};
+
 		return (
 			<div className='page'>
 				<div className='sidePanelPage'>
@@ -26,29 +31,23 @@ class Home extends React.Component {
 					</div>
 
 					<div className='mainPanel'>
+						<div className='warning' style={warningStyle}>
+							<p>{this.state.warning}</p>
+						</div>
+
 						<h1 className='centered'>About</h1>
 						<Blurb />
 						<h1 className='centered'>News</h1>
-						<NewsPanel />
+						<News setWarning={this.setWarning.bind(this)} getFetch={ (fn) => this.setState({ fetch: fn }) } />
 					</div>
 				</div>
 			</div>
 		);
 	}
-}
 
-function mapStoreToProps(store) {
-	return {
-		id: store.account.id
+	setWarning(s) {
+		this.setState({ warning: s });
 	}
-}
+};
 
-function mapDispatchToProps(dispatch) {
-	return {
-		//
-	}
-}
-
-Home = connect(mapStoreToProps, mapDispatchToProps)(Home);
-
-export default withRouter(Home);
+export default Home;

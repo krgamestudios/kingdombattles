@@ -1,8 +1,8 @@
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
-export const SESSIONCHANGE = 'SESSIONCHANGE';
+export const SESSION_CHANGE = 'SESSION_CHANGE';
 
-export function login(id, email, username, token) {
+export const login = (id, email, username, token) => {
 	return {
 		type: LOGIN,
 		id: id,
@@ -12,15 +12,15 @@ export function login(id, email, username, token) {
 	};
 }
 
-export function logout() {
+export const logout = () => {
 	return {
 		type: LOGOUT
 	};
 }
 
-export function sessionChange(token) {
+export const sessionChange = (token) => {
 	return {
-		type: SESSIONCHANGE,
+		type: SESSION_CHANGE,
 		token: token
 	};
 }

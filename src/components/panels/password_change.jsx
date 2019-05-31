@@ -1,10 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { sessionChange } from '../../actions/accounts.js';
+import PropTypes from 'prop-types';
+
+import { sessionChange } from '../../actions/account.js';
 
 class PasswordChange extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			password: '',
 			retype: '',
@@ -13,7 +16,7 @@ class PasswordChange extends React.Component {
 	}
 
 	render() {
-		let warningStyle = {
+		let warningStyle = { //TODO: lift the warning out to the page?
 			display: this.state.warning.length > 0 ? 'flex' : 'none'
 		};
 
@@ -25,7 +28,7 @@ class PasswordChange extends React.Component {
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/passwordchangerequest' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/passwordchangerequest' method='post' onSubmit={this.submit.bind(this)}>
 					<div>
 						<label>Password:</label>
 						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
@@ -49,23 +52,25 @@ class PasswordChange extends React.Component {
 			return;
 		}
 
-		//build the XHR
+		//build the XHR (around an existing form object)
 		let form = e.target;
 		let formData = new FormData(form);
-		let xhr = new XMLHttpRequest();
 
-		formData.append('email', this.props.email);
+		formData.append('id', this.props.id);
 		formData.append('token', this.props.token);
+
+		let xhr = new XMLHttpRequest();
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
+
+					//on success
 					this.props.sessionChange(json.token);
 
-					//DEBUGGING
-					if (this.props.onPasswordChange) {
-						this.props.onPasswordChange(json.msg);
+					if (this.props.onSuccess) {
+						this.props.onSuccess(json.msg);
 					}
 				}
 
@@ -78,6 +83,8 @@ class PasswordChange extends React.Component {
 		//send the XHR
 		xhr.open('POST', form.action, true);
 		xhr.send(formData);
+
+		this.clearInput();
 	}
 
 	validateInput(e) {
@@ -94,45 +101,43 @@ class PasswordChange extends React.Component {
 		return true;
 	}
 
-	setWarning(s) {
-		this.setState({
-			warning: s
-		});
-	}
-
 	clearInput() {
-		this.setState({
-			password: '',
-			retype: '',
-			warning: ''
-		});
+		this.setState({ password: '', retype: '', warning: '' });
 	}
 
 	updatePassword(evt) {
-		this.setState({
-			password: evt.target.value
-		});
+		this.setState({ password: evt.target.value });
 	}
 
 	updateRetype(evt) {
-		this.setState({
-			retype: evt.target.value
-		});
+		this.setState({ retype: evt.target.value });
 	}
-}
 
-function mapStoreToProps(store) {
+	setWarning(s) {
+		this.setState({ warning: s });
+	}
+};
+
+PasswordChange.propTypes = {
+	id: PropTypes.number.isRequired,
+	token: PropTypes.number.isRequired,
+	sessionChange: PropTypes.func.isRequired,
+
+	onSuccess: PropTypes.func
+};
+
+const mapStoreToProps = (store) => {
 	return {
-		email: store.account.email,
+		id: store.account.id,
 		token: store.account.token
-	}
-}
+	};
+};
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
 	return {
-		sessionChange: (token) => { dispatch(sessionChange(token)); }
-	}
-}
+		sessionChange: (token) => dispatch(sessionChange(token))
+	};
+};
 
 PasswordChange = connect(mapStoreToProps, mapDispatchToProps)(PasswordChange);
 

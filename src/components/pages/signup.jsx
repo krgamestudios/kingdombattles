@@ -8,8 +8,7 @@ class Signup extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			signupSent: false,
-			signupMsg: ''
+			signedUp: ''
 		}
 
 		//TODO: referral links
@@ -18,13 +17,13 @@ class Signup extends React.Component {
 	render() {
 		let Panel;
 
-		if (!this.state.signupSent) {
+		if (!this.state.signedUp) {
 			Panel = () => {
-				return (<SignupPanel onSignup={(msg) => this.setState( {signupSent: true, signupMsg: msg} )} />);
+				return (<SignupPanel onSuccess={ (msg) => this.setState({signedUp: msg}) } />);
 			}
 		} else {
 			Panel = () => {
-				return (<p>{this.state.signupMsg}</p>);
+				return (<p className='centered'>{this.state.signedUp}</p>);
 			}
 		}
 

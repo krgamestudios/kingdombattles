@@ -42,8 +42,8 @@ function handleDisconnect() {
 
 	//finally
 	return connection;
-}
+};
 
 module.exports = {
 	connectToDatabase: handleDisconnect
-}
+};

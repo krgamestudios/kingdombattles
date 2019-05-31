@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 class Signup extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			email: '',
 			username: '',
@@ -27,7 +28,7 @@ class Signup extends React.Component {
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/signuprequest' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/signuprequest' method='post' onSubmit={this.submit.bind(this)}>
 					<div>
 						<label>Email:</label>
 						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
@@ -64,14 +65,16 @@ class Signup extends React.Component {
 		//build the XHR
 		let form = e.target;
 		let formData = new FormData(form);
+
 		let xhr = new XMLHttpRequest();
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					if (this.props.onSignup) {
-						this.props.onSignup(xhr.responseText);
-						console.log('trying to...');
+					let json = JSON.parse(xhr.responseText);
+
+					if (this.props.onSuccess) {
+						this.props.onSuccess(json.msg);
 					}
 				}
 
@@ -114,48 +117,32 @@ class Signup extends React.Component {
 	}
 
 	setWarning(s) {
-		this.setState({
-			warning: s
-		});
+		this.setState({ warning: s });
 	}
 
 	clearInput() {
-		this.setState({
-			email: '',
-			username: '',
-			password: '',
-			retype: '',
-			warning: ''
-		});
+		this.setState({ email: '', username: '', password: '', retype: '', warning: '' });
 	}
 
 	updateEmail(evt) {
-		this.setState({
-			email: evt.target.value
-		});
+		this.setState({ email: evt.target.value });
 	}
 
 	updateUsername(evt) {
-		this.setState({
-			username: evt.target.value
-		});
+		this.setState({ username: evt.target.value });
 	}
 
 	updatePassword(evt) {
-		this.setState({
-			password: evt.target.value
-		});
+		this.setState({ password: evt.target.value });
 	}
 
 	updateRetype(evt) {
-		this.setState({
-			retype: evt.target.value
-		});
+		this.setState({ retype: evt.target.value });
 	}
-}
+};
 
 Signup.propTypes = {
-	onSignup: PropTypes.func
+	onSuccess: PropTypes.func
 };
 
 export default Signup;

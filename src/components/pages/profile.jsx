@@ -1,49 +1,25 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import queryString from 'query-string';
+
+//actions
+import { storeProfile } from '../../actions/profile.js';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
 import AttackButton from '../panels/attack_button.jsx';
-import Equipment from '../panels/equipment.jsx';
-import CombatLog from '../panels/combat_log.jsx';
 
 class Profile extends React.Component {
 	constructor(props) {
 		super(props);
 
-		let params = queryString.parse(props.location.search);
-
 		this.state = {
-			params: params,
-
-			username: '',
-			gold: 0,
-			recruits: 0,
-			soldiers: 0,
-			spies: 0,
-			scientists: 0,
-
-			warning: '',
-
-			//combat log
-			start: params.log,
-
-			//equipment
-			fetchStatistics: null,
-			fetchEquipment: null
+			params: queryString.parse(props.location.search),
+			warning: '', //TODO: unified warning?
 		};
 
-		this.sendRequest('/profilerequest', this.state.params.username ? this.state.params.username : this.props.username);
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
-//			if (this.state.fetchStatistics) this.state.fetchStatistics();
-//			if (this.state.fetchEquipment) this.state.fetchEquipment();
-		}
+		this.sendRequest('/profilerequest', {username: this.state.params.username ? this.state.params.username : this.props.account.username});
 	}
 
 	render() {
@@ -54,8 +30,8 @@ class Profile extends React.Component {
 		//side panel stuff
 		let SidePanel;
 
-		if (this.props.id) {
-			if (this.props.username === this.state.username) {
+		if (this.props.account.id) {
+			if (this.props.account.username === this.props.profile.username) {
 				SidePanel = this.MyProfileSidePanel.bind(this);
 			} else {
 				SidePanel = this.NotMyProfileSidePanel.bind(this);
@@ -67,13 +43,12 @@ class Profile extends React.Component {
 		//main panel
 		let MainPanel;
 
-		if (this.props.id) {
+		if (this.props.account.id) {
 			//logged in
-			if (this.state.username === this.props.username) {
+			if (this.props.account.username === this.props.profile.username) {
 				MainPanel = this.MyProfileMainPanel.bind(this);
 			} else {
-				//not logged in
-				if (this.state.username !== '') {
+				if (this.props.profile.username) {
 					MainPanel = this.NotMyProfileMainPanel.bind(this);
 				} else {
 					MainPanel = this.ProfileNotFoundMainPanel.bind(this);
@@ -81,7 +56,7 @@ class Profile extends React.Component {
 			}
 		} else {
 			//not logged in
-			if (this.state.username !== '') {
+			if (this.props.profile.username) {
 				MainPanel = this.LoggedOutMainPanel.bind(this);
 			} else {
 				MainPanel = this.ProfileNotFoundMainPanel.bind(this);
@@ -107,23 +82,17 @@ class Profile extends React.Component {
 	}
 
 	//gameplay functions
-	sendRequest(url, username = this.props.username, role = '') { //NOTE: merged all requests here
-		//request this profile's info, using my credentials
-		let formData = new FormData();
-
-		formData.append('id', this.props.id);
-		formData.append('token', this.props.token);
-
-		formData.append('username', username);
-		formData.append('role', role);
-
+	sendRequest(url, args = {}) { //send a unified request, using my credentials
 		//build the XHR
 		let xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
+
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
-					this.storeProfile(
+
+					this.props.storeProfile(
 						json.username,
 						json.gold,
 						json.recruits,
@@ -136,27 +105,18 @@ class Profile extends React.Component {
 					this.setWarning(xhr.responseText);
 				}
 			}
-		}
+		};
 
-		//send
-		xhr.open('POST', url, true);
-		xhr.send(formData);
-	}
-
-	storeProfile(username, gold, recruits, soldiers, spies, scientists) {
-		this.setState({
-			username: username,
-			gold: gold,
-			recruits: recruits,
-			soldiers: soldiers,
-			spies: spies,
-			scientists: scientists
-		});
+		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		xhr.send(JSON.stringify({
+			id: this.props.account.id,
+			token: this.props.account.token,
+			...args
+		}));
 	}
 
 	//panel functions
 	MyProfileSidePanel() {
-		//return the side panel
 		return (
 			<div className='sidePanel'>
 				<CommonLinks />
@@ -171,52 +131,50 @@ class Profile extends React.Component {
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
-						<p className='col'>{this.state.username}</p>
+						<p className='col'>{this.props.profile.username}</p>
+
 						<div className='col'></div>
 						<div className='col'></div>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Gold:</p>
-						<p className='col'>{this.state.gold}</p>
-						<div className='col' style={{flex: '2 1 1.5%'}}>(+1 gold for each recruit every half hour)</div>
+						<p className='col'>{this.props.profile.gold}</p>
+
+						<p className='col' style={{flex: '2 1 1%'}}>(+1 gold for each recruit every half hour)</p>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Recruits:</p>
-						<p className='col'>{this.state.recruits}</p>
-						<button className='col' style={{flex: '2 1 1.5%'}} onClick={() => this.sendRequest('/recruitrequest')}>Recruit More Units</button>
+						<p className='col'>{this.props.profile.recruits}</p>
+
+						<button className='col' style={{flex: '2 1 1%'}} onClick={ () => this.sendRequest('/recruitrequest') }>Recruit More Units</button>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Soldiers:</p>
-						<p className='col'>{this.state.soldiers}</p>
-						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'soldier')}>Train Soldier (100 gold)</button>
-						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'soldier')}>Untrain Soldier</button>
+						<p className='col'>{this.props.profile.soldiers}</p>
+
+						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>Train Soldier (100 gold)</button>
+						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain Soldier</button>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Spies:</p>
-						<p className='col'>{this.state.spies}</p>
-						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'spy')}>Train Spy (200 gold)</button>
-						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'spy')}>Untrain Spy</button>
+						<p className='col'>{this.props.profile.spies}</p>
+
+						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (200 gold)</button>
+						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Scientists:</p>
-						<p className='col'>{this.state.scientists}</p>
-						<button className='col' onClick={() => this.sendRequest('/trainrequest', this.props.username, 'scientist')}>Train Scientist (120 gold)</button>
-						<button className='col' onClick={() => this.sendRequest('/untrainrequest', this.props.username, 'scientist')}>Untrain Scientist</button>
+						<p className='col'>{this.props.profile.scientists}</p>
+
+						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>Train Scientist (120 gold)</button>
+						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
 					</div>
 				</div>
-
-				<br />
-				<h1 className='centered'>Equipment</h1>
-				<Equipment username={this.props.username} token={this.props.token} scientists={1} getFetchSattistics={ (fn) => this.setState({ fetchStatistics: fn }) } getFetchEquipment={ (fn) => this.setState({ fetchEquipment: fn}) } />
-
-				<br />
-				<h1 className='centered'>Combat Log</h1>
-				<CombatLog username={this.props.username} start={this.state.start} length={this.state.length} />
 			</div>
 		);
 	}
@@ -225,7 +183,12 @@ class Profile extends React.Component {
 		//return the side panel
 		return (
 			<div className='sidePanel'>
-				<CommonLinks onClickProfile={() => {e.preventDefault(); this.sendRequest('/profilerequest', this.props.username); this.setWarning(''); this.props.history.push('/profile');}} />
+				<CommonLinks onClickProfile={(e) => {
+					e.preventDefault();
+					this.sendRequest('/profilerequest', {username: this.props.account.username});
+					this.setWarning('');
+					this.props.history.push('/profile');
+				}} />
 			</div>
 		);
 	}
@@ -233,47 +196,60 @@ class Profile extends React.Component {
 	NotMyProfileMainPanel() {
 		return (
 			<div className='panel'>
-				<h1 className='centered'>{this.state.username}'s Kingdom</h1>
+				<h1 className='centered'>{this.props.profile.username}'s Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
-						<p className='col'>{this.state.username}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.username}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Gold:</p>
-						<p className='col'>{this.state.gold}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.gold}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Recruits:</p>
-						<p className='col'>{this.state.recruits}</p>
-						<AttackButton className='col' style={{flex: '2 1 1.5%'}} setWarning={this.setWarning.bind(this)} attacker={this.props.username} defender={this.state.username} token={this.props.token} />
+						<p className='col'>{this.props.profile.recruits}</p>
+
+						<AttackButton
+							className='col'
+							style={{flex: '2 1 1%'}}
+							setWarning={this.setWarning.bind(this)}
+							attacker={this.props.account.username}
+							defender={this.props.profile.username}
+							token={this.props.account.token}
+						/>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Soldiers:</p>
-						<p className='col'>{this.state.soldiers}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.soldiers}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Spies:</p>
-						<p className='col'>{this.state.spies}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.spies}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Scientists:</p>
-						<p className='col'>{this.state.scientists}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.scientists}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 				</div>
 			</div>
@@ -291,48 +267,54 @@ class Profile extends React.Component {
 	LoggedOutMainPanel() {
 		return (
 			<div className='panel'>
-				<h1 className='centered'>{this.state.username}'s Kingdom</h1>
+				<h1 className='centered'>{this.props.profile.username}'s Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
-						<p className='col'>{this.state.username}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.username}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Gold:</p>
-						<p className='col'>{this.state.gold}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.gold}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Recruits:</p>
-						<p className='col'>{this.state.recruits}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.recruits}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Soldiers:</p>
-						<p className='col'>{this.state.soldiers}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.soldiers}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Spies:</p>
-						<p className='col'>{this.state.spies}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.spies}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 
 					<div className='row'>
 						<p className='col'>Scientists:</p>
-						<p className='col'>{this.state.scientists}</p>
-						<div className='col'></div>
-						<div className='col'></div>
+						<p className='col'>{this.props.profile.scientists}</p>
+
+						<div className='col' />
+						<div className='col' />
 					</div>
 				</div>
 			</div>
@@ -341,38 +323,29 @@ class Profile extends React.Component {
 
 	ProfileNotFoundMainPanel() {
 		return (
-			<div className='page' />
+			<div className='page'>
+				<p className='centered'>Profile Not Found!</p>
+			</div>
 		);
 	}
 
 	setWarning(s) {
-		this.setState({
-			warning: s
-		});
+		this.setState({ warning: s });
 	}
-}
-
-Profile.propTypes = {
-	id: PropTypes.number.isRequired,
-	email: PropTypes.string.isRequired,
-	username: PropTypes.string.isRequired,
-	token: PropTypes.number.isRequired
 };
 
-function mapStoreToProps(store) {
+const mapStoreToProps = (store) => {
 	return {
-		id: store.account.id,
-		email: store.account.email,
-		username: store.account.username,
-		token: store.account.token
-	}
-}
+		account: store.account,
+		profile: store.profile,
+	};
+};
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
 	return {
-		//
-	}
-}
+		storeProfile: (username, gold, recruits, soldiers, spies, scientists) => dispatch(storeProfile(username, gold, recruits, soldiers, spies, scientists))
+	};
+};
 
 Profile = connect(mapStoreToProps, mapDispatchToProps)(Profile);
 

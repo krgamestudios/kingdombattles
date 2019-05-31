@@ -10,7 +10,9 @@ let equipmentStatistics = require('./equipment_statistics.json');
 const statisticsRequest = () => (req, res) => {
 	res.status(200).json(equipmentStatistics);
 	res.end();
-}
+};
+
+//TODO: incomplete
 
 const listRequest = (connection) => (req, res) => {
 	//verify identity
@@ -37,7 +39,7 @@ const listRequest = (connection) => (req, res) => {
 			res.end();
 		});
 	});
-}
+};
 
 module.exports = {
 	statisticsRequest: statisticsRequest,

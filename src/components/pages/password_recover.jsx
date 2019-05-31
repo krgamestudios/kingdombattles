@@ -8,21 +8,20 @@ class PasswordRecover extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			recoverSent: false,
-			recoverMsg: ''
+			recovered: ''
 		}
 	}
 
 	render() {
 		let Panel;
 
-		if (!this.state.recoverSent) {
+		if (!this.state.recovered) {
 			Panel = () => {
-				return (<PasswordRecoverPanel onEmailSent={(msg) => this.setState( {recoverSent: true, recoverMsg: msg} )} />);
+				return (<PasswordRecoverPanel onSuccess={(msg) => this.setState( {recovered: msg} )} />);
 			}
 		} else {
 			Panel = () => {
-				return (<p>{this.state.recoverMsg}</p>);
+				return (<p>{this.state.recovered}</p>);
 			}
 		}
 

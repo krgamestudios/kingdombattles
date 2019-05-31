@@ -4,7 +4,7 @@ require('dotenv').config();
 //libraries
 let bcrypt = require('bcrypt');
 let formidable = require('formidable');
-let sendmail = require('sendmail')();
+let sendmail = require('sendmail')({silent: true});
 
 //utilities
 let { log, validateEmail } = require('../common/utilities.js');
@@ -20,7 +20,7 @@ const signupRequest = (connection) => (req, res) => {
 
 		//prevent too many clicks
 		if (isThrottled(fields.email)) {
-			res.status(400).write(log('signup throttled', fields.email));
+			res.status(400).write(log('Signup throttled', fields.email));
 			res.end();
 			return;
 		}
@@ -65,10 +65,14 @@ const signupRequest = (connection) => (req, res) => {
 					connection.query(query, [fields.email, fields.username, salt, hash, rand], (err) => {
 						if (err) throw err;
 
+						//TODO: make the verification email prettier
 						//build the verification email
 						let addr = `http://${process.env.WEB_ADDRESS}/verifyrequest?email=${fields.email}&verify=${rand}`;
 						let msg = 'Hello! Please visit the following address to verify your account: ';
 						let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+
+						//BUGFIX: is gmail being cruel?
+						let sentinel = false;
 
 						//send the verification email
 						sendmail({
@@ -78,32 +82,39 @@ const signupRequest = (connection) => (req, res) => {
 							text: msg + addr,
 							html: msgHtml
 						}, (err, reply) => {
-							//final check
-							if (err) {
-								res.status(400).write(log('Something went wrong (did you use a valid email?)', err));
-								res.end();
-								return;
-							}
+							if (err) { //final check
+								let msg = log('Something went wrong (did you use a valid email?)', err);
 
-							res.status(200).write(log('Verification email sent!', fields.email));
-							res.end();
+								if (!sentinel) {
+									res.status(400).write(msg);
+									res.end();
+								}
+							} else {
+								let msg = log('Verification email sent!', fields.email);
+
+								if (!sentinel) {
+									res.status(200).json({ msg: msg });
+									res.end();
+								}
+							}
+							sentinel = true;
 						});
 					});
 				});
 			});
 		});
 	});
-}
+};
 
 const verifyRequest = (connection) => (req, res) => {
 	//get the saved data
-	let query = 'SELECT email, username, salt, hash, verify FROM signups WHERE email = ?;';
-
+	let query = 'SELECT * FROM signups WHERE email = ?;';
 	connection.query(query, [req.query.email], (err, results) => {
 		if (err) throw err;
 
 		//correct number of results
-		if (results.length != 1) {
+		if (results.length !== 1) {
+console.log(req.query.email);
 			res.status(400).write(log('That account does not exist or this link has already been used.', req.query.email, req.query.verify));
 			res.end();
 			return;
@@ -126,12 +137,13 @@ const verifyRequest = (connection) => (req, res) => {
 			connection.query(query, [results[0].email], (err) => {
 				if (err) throw err;
 
+				//TODO: prettier verification page
 				res.status(200).write(log('Verification succeeded!', req.query.email));
 				res.end();
 			});
 		});
 	});
-}
+};
 
 const loginRequest = (connection) => (req, res) => {
 	//formidable handles forms
@@ -155,7 +167,7 @@ const loginRequest = (connection) => (req, res) => {
 
 			//found this email?
 			if (results.length === 0) {
-				res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this email'));
+				res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this email')); //NOTE: deliberately obscure incorrect email or password
 				res.end();
 				return;
 			}
@@ -183,25 +195,25 @@ const loginRequest = (connection) => (req, res) => {
 						id: results[0].id,
 						email: fields.email,
 						username: results[0].username,
-						token: rand
+						token: rand,
+						msg: log('Logged in', fields.email, rand)
 					});
 					res.end();
-					log('Logged in', fields.email, rand);
 				});
 			});
 		});
 	});
-}
+};
 
 const logoutRequest = (connection) => (req, res) => {
-	let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?) AND token = ?;';
-	connection.query(query, [req.body.email, req.body.token], (err) => {
+	let query = 'DELETE FROM sessions WHERE sessions.accountId = ? AND token = ?;'; //NOTE: The user now loses this access token
+	connection.query(query, [req.body.id, req.body.token], (err) => {
 		if (err) throw err;
-		log('Logged out', req.body.email, req.body.token);
+		log('Logged out', req.body.id, req.body.token);
 	});
 
-	res.end();
-}
+	res.end(); //NOTE: don't send a response
+};
 
 const passwordChangeRequest = (connection) => (req, res) => {
 	//formidable handles forms
@@ -212,23 +224,19 @@ const passwordChangeRequest = (connection) => (req, res) => {
 		if (err) throw err;
 
 		//validate password, retype
-		if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
-			res.status(400).write(log('Invalid password change data', fields.email));
+		if (fields.password.length < 8 || fields.password !== fields.retype) {
+			res.status(400).write(log('Invalid password change data', fields.id));
 			res.end();
 			return;
 		}
 
 		//validate token
-		query = 'SELECT sessions.token FROM sessions WHERE sessions.accountId IN (SELECT id FROM accounts WHERE email = ?);';
-		connection.query(query, [fields.email], (err, results) => {
+		query = 'SELECT COUNT(*) AS total FROM sessions WHERE sessions.accountId = ? AND sessions.token = ?;';
+		connection.query(query, [fields.id, fields.token], (err, results) => {
 			if (err) throw err;
 
-			let found = false;
-
-			results.map((result) => { if (result.token == fields.token) found = true; });
-
-			if (!found) {
-				res.status(400).write(log('Invalid password change authentication', fields.email, fields.token));
+			if (results[0].total !== 1) {
+				res.status(400).write(log('Invalid password change credentials', fields.id, fields.token));
 				res.end();
 				return;
 			}
@@ -239,26 +247,26 @@ const passwordChangeRequest = (connection) => (req, res) => {
 				bcrypt.hash(fields.password, salt, (err, hash) => {
 					if (err) throw err;
 
-					let query = 'UPDATE accounts SET salt = ?, hash = ? WHERE email = ?;';
-					connection.query(query, [salt, hash, fields.email], (err) => {
+					let query = 'UPDATE accounts SET salt = ?, hash = ? WHERE id = ?;';
+					connection.query(query, [salt, hash, fields.id], (err) => {
 						if (err) throw err;
 
 						//clear all session data for this user (a 'feature')
-						let query = 'DELETE FROM sessions WHERE sessions.accountId IN (SELECT accounts.id FROM accounts WHERE email = ?);';
-						connection.query(query, [fields.email], (err) => {
+						let query = 'DELETE FROM sessions WHERE sessions.accountId = ?;';
+						connection.query(query, [fields.id], (err) => {
 							if (err) throw err;
 
 							//create the new session
 							let rand = Math.floor(Math.random() * 100000);
 
-							let query = 'INSERT INTO sessions (accountId, token) VALUES ((SELECT accounts.id FROM accounts WHERE email = ?), ?);';
-							connection.query(query, [fields.email, rand], (err) => {
+							let query = 'INSERT INTO sessions (accountId, token) VALUES (?, ?);';
+							connection.query(query, [fields.id, rand], (err) => {
 								if (err) throw err;
 
 								//send json containing the account info
 								res.status(200).json({
 									token: rand,
-									msg: log('Password changed!', fields.email)
+									msg: log('Password changed!', fields.id)
 								});
 								res.end();
 							});
@@ -268,7 +276,7 @@ const passwordChangeRequest = (connection) => (req, res) => {
 			});
 		});
 	});
-}
+};
 
 const passwordRecoverRequest = (connection) => (req, res) => {
 	//formidable handles forms
@@ -280,14 +288,14 @@ const passwordRecoverRequest = (connection) => (req, res) => {
 
 		//prevent too many clicks
 		if (isThrottled(fields.email)) {
-			res.status(400).write(log('recover throttled', fields.email));
+			res.status(400).write(log('Recover throttled', fields.email));
 			res.end();
 			return;
 		}
 
 		throttle(fields.email);
 
-		//validate email, username and password
+		//validate email
 		if (!validateEmail(fields.email)) {
 			res.status(400).write(log('Invalid recover data', fields.email));
 			res.end();
@@ -312,10 +320,14 @@ const passwordRecoverRequest = (connection) => (req, res) => {
 			connection.query(query, [results[0].id, rand], (err) => {
 				if (err) throw err;
 
+				//TODO: prettier recovery email
 				//build the recovery email
 				let addr = `http://${process.env.WEB_ADDRESS}/passwordreset?email=${fields.email}&token=${rand}`;
 				let msg = 'Hello! Please visit the following address to set a new password (if you didn\'t request a password recovery, ignore this email): ';
 				let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+
+				//BUGFIX: is gmail being cruel?
+				let sentinel = false;
 
 				//send the verification email
 				sendmail({
@@ -327,18 +339,25 @@ const passwordRecoverRequest = (connection) => (req, res) => {
 				}, (err, reply) => {
 					//final check
 					if (err) {
-						res.status(400).write(log('Something went wrong (did you use a valid email?)', err));
+						if (!sentinel) {
+							let msg = log('Something went wrong (did you use a valid email?)', err);
+
+							res.status(400).write(msg);
+							res.end();
+						}
+					} else {
+						let msg = log('Recovery email sent!', fields.email);
+
+						res.status(200).json({ msg: msg });
 						res.end();
-						return;
 					}
 
-					res.status(200).write(log('Recovery email sent!', fields.email));
-					res.end();
+					sentinel = true;
 				});
 			});
 		});
 	});
-}
+};
 
 const passwordResetRequest = (connection) => (req, res) => {
 	//formidable handles forms
@@ -348,7 +367,7 @@ const passwordResetRequest = (connection) => (req, res) => {
 	form.parse(req, (err, fields) => {
 		if (err) throw err;
 
-		//validate email, username and password
+		//validate email and password
 		if (!validateEmail(fields.email) || fields.password.length < 8 || fields.password !== fields.retype) {
 			res.status(400).write(log('Invalid reset data (invalid email/password)', fields.email));
 			res.end();
@@ -383,7 +402,7 @@ const passwordResetRequest = (connection) => (req, res) => {
 						connection.query(query, [fields.email], (err) => {
 							if (err) throw err;
 
-							res.status(200).write(log('Password updated!', fields.email));
+							res.status(200).json({ msg: log('Password updated!', fields.email) });
 							res.end();
 							return;
 						});
@@ -392,7 +411,7 @@ const passwordResetRequest = (connection) => (req, res) => {
 			});
 		});
 	});
-}
+};
 
 module.exports = {
 	signupRequest: signupRequest,

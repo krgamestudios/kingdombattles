@@ -1,9 +1,11 @@
 import React from 'react';
-import { validateEmail } from '../../../common/utilities.js';
+import { validateEmail } from '../../../common/utilities.js'; //TODO: move utilities to a better position
+import PropTypes from 'prop-types';
 
 class PasswordRecover extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			email: '',
 			warning: ''
@@ -23,7 +25,7 @@ class PasswordRecover extends React.Component {
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/passwordrecoverrequest' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/passwordrecoverrequest' method='post' onSubmit={this.submit.bind(this)}>
 					<div>
 						<label>Email:</label>
 						<input type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
@@ -42,17 +44,19 @@ class PasswordRecover extends React.Component {
 			return;
 		}
 
-		//build the XHR
+		//build the XHR (around an existing form object)
 		let form = e.target;
 		let formData = new FormData(form);
+
 		let xhr = new XMLHttpRequest();
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					//DEBUGGING
-					if (this.props.onEmailSent) {
-						this.props.onEmailSent(xhr.responseText);
+					let json = JSON.parse(xhr.responseText);
+
+					if (this.props.onSuccess) {
+						this.props.onSuccess(json.msg);
 					}
 				}
 
@@ -79,23 +83,20 @@ class PasswordRecover extends React.Component {
 	}
 
 	setWarning(s) {
-		this.setState({
-			warning: s
-		});
+		this.setState({ warning: s });
 	}
 
 	clearInput() {
-		this.setState({
-			email: '',
-			warning: ''
-		});
+		this.setState({ email: '', warning: '' });
 	}
 
 	updateEmail(evt) {
-		this.setState({
-			email: evt.target.value
-		});
+		this.setState({ email: evt.target.value });
 	}
-}
+};
+
+PasswordRecover.propTypes = {
+	onSuccess: PropTypes.func
+};
 
 export default PasswordRecover;

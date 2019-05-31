@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { sessionChange } from '../../actions/accounts.js';
+import { sessionChange } from '../../actions/account.js';
 import PropTypes from 'prop-types';
 
 class PasswordReset extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			password: '',
 			retype: '',
@@ -26,7 +27,7 @@ class PasswordReset extends React.Component {
 					<p>{this.state.warning}</p>
 				</div>
 
-				<form action='/passwordresetrequest' method='post' onSubmit={(e) => this.submit(e)}>
+				<form action='/passwordresetrequest' method='post' onSubmit={this.submit.bind(this)}>
 					<div>
 						<label>Password:</label>
 						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
@@ -53,16 +54,19 @@ class PasswordReset extends React.Component {
 		//build the XHR
 		let form = e.target;
 		let formData = new FormData(form);
-		let xhr = new XMLHttpRequest();
 
 		formData.append('email', this.props.email);
 		formData.append('token', this.props.token);
 
+		let xhr = new XMLHttpRequest();
+
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					if (this.props.onPasswordReset) {
-						this.props.onPasswordReset(xhr.responseText);
+					let json = JSON.parse(xhr.responseText);
+
+					if (this.props.onSuccess) {
+						this.props.onSuccess(json.msg);
 					}
 				}
 
@@ -92,35 +96,27 @@ class PasswordReset extends React.Component {
 	}
 
 	setWarning(s) {
-		this.setState({
-			warning: s
-		});
+		this.setState({ warning: s });
 	}
 
 	clearInput() {
-		this.setState({
-			password: '',
-			retype: '',
-			warning: ''
-		});
+		this.setState({ password: '', retype: '', warning: '' });
 	}
 
 	updatePassword(evt) {
-		this.setState({
-			password: evt.target.value
-		});
+		this.setState({ password: evt.target.value });
 	}
 
 	updateRetype(evt) {
-		this.setState({
-			retype: evt.target.value
-		});
+		this.setState({ retype: evt.target.value });
 	}
-}
+};
 
 PasswordReset.propTypes = {
 	email: PropTypes.string.isRequired,
-	token: PropTypes.number.isRequired
+	token: PropTypes.number.isRequired,
+
+	onSuccess: PropTypes.func
 };
 
 export default PasswordReset;

@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
-import { accountReducer } from './accounts.js';
-import { combatReducer } from './combat.js';
+import { accountReducer } from './account.js';
+import { profileReducer } from './profile.js';
 
 //compile all reducers together
 export default combineReducers({
 	account: accountReducer,
-/*	combat: combatReducer */
+	profile: profileReducer
 });
 
