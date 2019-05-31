@@ -239,15 +239,23 @@ footer {
 @media screen and (max-width: 480px) {
 	.row {
 		flex-direction: column;
+		border-style: solid;
+		border-color: lightblue;
+		border-top: 0;
+		border-left: 0;
+		border-right: 0;
+		border-bottom: 1;
 	}
 }
 
 .col {
 	flex: 1;
+	min-width: 80px;
 }
 
 .table.noCollapse .row {
 	flex-direction: row;
+	border-style: none;
 }
 
 /* bits and pieces */
@@ -262,10 +270,6 @@ footer {
 	background-color: lightblue;
 	margin-top: 1em;
 	margin-bottom: 2em;
-}
-
-.minWidth { /* hacky */
-	min-width: 80px;
 }
 
 pre {
