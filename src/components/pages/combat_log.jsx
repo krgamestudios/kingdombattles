@@ -44,28 +44,26 @@ class CombatLog extends React.Component {
 		let ButtonHeader = this.buttonHeader.bind(this);
 
 		return (
-			<div className='panel'>
-				<div className='sidePanelPage'>
-					<div className='sidePanel'>
-						<CommonLinks />
+			<div className='sidePanelPage'>
+				<div className='sidePanel'>
+					<CommonLinks />
+				</div>
+
+				<div className='mainPanel'>
+					<div className='warning' style={warningStyle}>
+						<p>{this.state.warning}</p>
 					</div>
 
-					<div className='mainPanel'>
-						<div className='warning' style={warningStyle}>
-							<p>{this.state.warning}</p>
-						</div>
-
-						<ButtonHeader />
-						<PagedCombatLog
-							setWarning={this.setWarning.bind(this)}
-							username={this.props.username}
-							start={this.state.start}
-							length={this.state.length}
-							getFetch={this.getFetch.bind(this)}
-							onReceived={this.onReceived.bind(this)}
-						/>
-						<ButtonHeader />
-					</div>
+					<ButtonHeader />
+					<PagedCombatLog
+						setWarning={this.setWarning.bind(this)}
+						username={this.props.username}
+						start={this.state.start}
+						length={this.state.length}
+						getFetch={this.getFetch.bind(this)}
+						onReceived={this.onReceived.bind(this)}
+					/>
+					<ButtonHeader />
 				</div>
 			</div>
 
@@ -126,7 +124,8 @@ class CombatLog extends React.Component {
 };
 
 CombatLog.propTypes = {
-	username: PropTypes.string.isRequired
+	username: PropTypes.string.isRequired,
+	loggedIn: PropTypes.bool.isRequired
 };
 
 const mapStoreToProps = (store) => {

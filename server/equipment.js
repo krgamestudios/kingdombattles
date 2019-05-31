@@ -4,44 +4,95 @@ require('dotenv').config();
 //utilities
 let { log } = require('../common/utilities.js');
 
-//the statistics
-let equipmentStatistics = require('./equipment_statistics.json');
+const statistics = (connection, req, res, cb) => {
+	return cb(undefined, { 'statistics': require('./equipment_statistics.json') });
+}
 
-const statisticsRequest = () => (req, res) => {
-	res.status(200).json(equipmentStatistics);
-	res.end();
-};
-
-//TODO: incomplete
-
-const listRequest = (connection) => (req, res) => {
-	//verify identity
-	let query = 'SELECT accountId FROM sessions WHERE accountId IN (SELECT id FROM accounts WHERE username = ?) AND token = ?;';
-	connection.query(query, [req.body.username, req.body.token], (err, results) => {
+const owned = (connection, req, res, cb) => {
+	//verify the credentials
+	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND token = ?;';
+	connection.query(query, [req.body.id, req.body.token], (err, results) => {
 		if (err) throw err;
 
-		let query = 'SELECT name, quantity, type FROM equipment WHERE accountId = ?;';
-		connection.query(query, [results[0].accountId], (err, results) => {
+		if (results[0].total !== 1) {
+			return cb('Invalid equipment owned credentials');
+		}
+
+		let query = 'SELECT name, quantity FROM equipment WHERE accountId = ?;';
+		connection.query(query, [req.body.id], (err, results) => {
 			if (err) throw err;
 
-			//transform the results into a sendable array
-			let list = {};
+			let res = {}
 
-			results.map((record) => {
-				//initialize this type
-				list[record.type] = list[record.type] || {};
-
-				//send the quantity of every type
-				list[record.type][record.name] = record.quantity;
+			Object.keys(results).map((key) => {
+				if (res[results[key].name] !== undefined) {
+					log('WARNING: Invalid database state, equipment owned', JSON.stringify(results));
+				}
+				res[results[key].name] = results[key].quantity;
 			});
 
-			res.status(200).json(list);
-			res.end();
+			return cb(undefined, { 'owned': res });
 		});
 	});
-};
+}
+
+const equipmentRequest = (connection) => (req, res) => {
+	//if no field received, send everything
+	if (!req.body.field) {
+		//compose the returned objects
+		statistics(connection, req, res, (err, statisticsObj) => {
+			if (err) {
+				res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
+				res.end();
+				return;
+			}
+
+			return owned(connection, req, res, (err, ownedObj) => {
+				if (err) {
+					res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
+					res.end();
+					return;
+				}
+
+				//finally, compose the resulting objects
+				res.status(200).json(Object.assign({}, statisticsObj, ownedObj));
+				res.end();
+			});
+		});
+
+		return;
+	}
+
+	//send specific fields
+	switch(req.body.field) {
+		case 'statistics':
+			return statistics(connection, req, res, (err, obj) => {
+				if (err) {
+					res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
+				} else {
+					res.status(200).json(obj);
+				}
+
+				res.end();
+			});
+
+		case 'owned':
+			return owned(connection, req, res, (err, obj) => {
+				if (err) {
+					res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
+				} else {
+					res.status(200).json(obj);
+				}
+
+				res.end();
+			});
+
+		default:
+			res.status(400).write(log('Unknown field received', req.body.id, req.body.token, req.body.field));
+			res.end();
+	}
+}
 
 module.exports = {
-	statisticsRequest: statisticsRequest,
-	listRequest: listRequest
+	equipmentRequest: equipmentRequest
 }

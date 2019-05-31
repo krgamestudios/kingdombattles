@@ -1,114 +1,141 @@
 import React from 'react';
+import { withRouter, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
-//TODO: incomplete
 
 class Equipment extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			statistics: {},
-			equipment: {}
+			//
 		};
 
-		if (this.props.getFetchStatistics) {
-//			this.props.getFetchStatistics(this.fetchStatistics.bind(this));
+		if (this.props.getFetch) {
+			this.props.getFetch((field) => this.sendRequest('/equipmentrequest', {field: field} ));
 		}
-
-		this.fetchStatistics();
-
-		if (this.props.getFetchEquipment) {
-//			this.props.getFetchEquipment(this.fetchEquipmentList.bind(this));
-		}
-
-		this.fetchEquipmentList();
 	}
 
 	render() {
-		//print the purchasable weapons, then purchasable armour, then stuff you can't buy
-		let statistics = JSON.parse(JSON.stringify(this.state.statistics));
+		//if there are no scientists
+		if (this.props.scientists <= 0) {
+			return (
+				<div className='panel'>
+					<p className='centered'>You have no scientists!</p>
+					<p className='centered'>Go and <Link to='/profile'>train some!</Link></p>
+				</div>
+			);
+		}
 
-		//filter out what you can't get at your current scientist count
-		Object.keys(statistics).forEach((typeKey) => {
-			Object.keys(statistics[typeKey]).forEach((nameKey) => {
-				if (statistics[typeKey][nameKey].scientists > this.props.scientists) {
-					delete statistics[typeKey][nameKey];
-				}
-				if (Object.keys(statistics[typeKey]).length === 0) {
-					delete statistics[typeKey];
-				}
-			});
-		});
-
-		console.log(this.state.statistics);
-		console.log(statistics);
+		let display = this.flattenStructure(this.state, this.props.scientists);
 
 		return (
 			<div className='panel'>
 				<div className='table'>
-
 					<div className='row'>
-						<p className='col'>Equipment Name</p>
-						<p className='col'>Equipment Type</p>
-						<p className='col'>Quantity</p>
-						<p className='col'>Cost</p>
-						<p className='col'>Buy</p>
-						<p className='col'>Sell</p>
+						<p className='col centered'>Name</p>
+						<p className='col centered'>Type</p>
+						<p className='col centered'>Owned</p>
+						<p className='col centered'>Cost</p>
+						<p className='col centered'>Buy</p>
+						<p className='col centered'>Sell</p>
 					</div>
 
-
-
+					{Object.keys(display).map((key) => <div className='row' key={key}>
+						<p className='col centered'>{display[key].name}</p>
+						<p className='col centered'>{display[key].type}</p>
+						<p className='col centered'>{display[key].owned}</p>
+						<p className='col centered'>{display[key].cost}</p>
+						<button className='col centered' disabled={display[key].cost > this.props.gold}>+ Buy +</button>
+						<button className='col centered' disabled={display[key].owned === 0}>- Sell -</button>
+					</div>)}
 				</div>
 			</div>
 		);
 	}
 
-	fetchStatistics() {
+	//gameplay functions
+	sendRequest(url, args = {}) { //send a unified request, using my credentials
 		//build the XHR
 		let xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
 
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					let data = JSON.parse(xhr.responseText);
-					this.setState({ statistics: data });
+					let json = JSON.parse(xhr.responseText);
+
+					//on success
+					this.setState(json);
+				}
+				else if (xhr.status === 400 && this.props.setWarning) {
+					this.setWarning(xhr.responseText);
 				}
 			}
-		}
+		};
 
-		xhr.open('POST', '/equipmentstatisticsrequest', true);
-		xhr.send();
-	}
-
-	fetchEquipmentList(username = this.props.username, token = this.props.token) {
-		//build the XHR
-		let xhr = new XMLHttpRequest();
-
-		xhr.onreadystatechange = () => {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					let data = JSON.parse(xhr.responseText);
-					this.setState({ equipment: data });
-				}
-			}
-		}
-
-		xhr.open('POST', '/equipmentlistrequest', true);
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		xhr.send(JSON.stringify({
-			username: username,
-			token: token
+			id: this.props.id,
+			token: this.props.token,
+			...args
 		}));
+	}
+
+	flattenStructure(structure, scientists) {
+		if (!structure || !structure.statistics) {
+			return [];
+		}
+
+		let ret = []; //return value: ret[0] = { name: '', type: '', owned: 0, cost: 0 }
+
+		Object.keys(structure.statistics).map((type) => {
+			Object.keys(structure.statistics[type]).map((name) => {
+				//don't render high level items
+				if (structure.statistics[type][name].scientistsRequired > scientists) {
+					return;
+				}
+
+				//if you can't buy it and you down own it, don't render it (for legendary items)
+				if (!structure.statistics[type][name].purchasable && !structure.owned[name]) {
+					return;
+				}
+
+				//finally
+				ret.push({
+					name: name,
+					type: type,
+					owned: (structure.owned && structure.owned[name]) || 0,
+					cost: structure.statistics[type][name].cost
+				});
+			});
+		});
+
+		return ret;
 	}
 };
 
 Equipment.propTypes = {
-	username: PropTypes.string.isRequired,
+	id: PropTypes.number.isRequired,
 	token: PropTypes.number.isRequired,
-	scientists: PropTypes.number.isRequired,
 
-	getFetchStatistics: PropTypes.func,
-	getFetchEquipmentList: PropTypes.func
+	setWarning: PropTypes.func,
+	getFetch: PropTypes.func
 };
 
-export default Equipment;
+const mapStoreToProps = (store) => {
+	return {
+		id: store.account.id,
+		token: store.account.token
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		//
+	};
+};
+
+Equipment = connect(mapStoreToProps, mapDispatchToProps)(Equipment);
+
+export default withRouter(Equipment);
