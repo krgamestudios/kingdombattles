@@ -46,8 +46,8 @@ class Equipment extends React.Component {
 						<p className='col centered'>{display[key].type}</p>
 						<p className='col centered'>{display[key].owned}</p>
 						<p className='col centered'>{display[key].cost}</p>
-						<button className='col centered' disabled={display[key].cost > this.props.gold}>+ Buy +</button>
-						<button className='col centered' disabled={display[key].owned === 0}>- Sell -</button>
+						<button className='col centered' disabled={true || display[key].cost > this.props.gold}>+ Buy +</button>
+						<button className='col centered' disabled={true || display[key].owned === 0}>- Sell -</button>
 					</div>)}
 				</div>
 			</div>

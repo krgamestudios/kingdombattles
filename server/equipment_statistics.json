@@ -11,5 +11,8 @@
 		"Gambeson": { "cost": 100, "combatBoost": 0.03, "scientistsRequired": 3, "purchasable": true },
 		"Chainmail": { "cost": 150, "combatBoost": 0.04, "scientistsRequired": 4, "purchasable": true },
 		"Platemail": { "cost": 200, "combatBoost": 0.05, "scientistsRequired": 5, "purchasable": true }
+	},
+	"Consumables": {
+		"Potion":  { "cost": 100, "combatBoost": 0.04, "scientistsRequired": 1, "purchasable": true }
 	}
 }
