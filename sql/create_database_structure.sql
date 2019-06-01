@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS pastCombat (
 
 	spoilsGold INTEGER,
 
-	casualtiesVictor INTEGER,
+	attackerCasualties INTEGER,
 
 	CONSTRAINT FOREIGN KEY fk_attackerId(attackerId) REFERENCES accounts(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT FOREIGN KEY fk_defenderId(defenderId) REFERENCES accounts(id) ON UPDATE CASCADE ON DELETE CASCADE

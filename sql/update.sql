@@ -1,0 +1,1 @@
+ALTER TABLE pastCombat CHANGE casualtiesVictor attackerCasualties INTEGER;
