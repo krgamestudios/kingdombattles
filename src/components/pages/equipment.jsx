@@ -56,8 +56,7 @@ class Equipment extends React.Component {
 					</div>
 
 					<h1 className='centered'>Equipment</h1>
-					<p className='centered'>Equipment sells for half it's cost!</p>
-					<p className='centered'>Scientists: {this.props.scientists} - Gold: {this.props.gold}</p>
+					<p className='centered'>Your Scientists: {this.props.scientists} / Your Gold: {this.props.gold}</p>
 
 					<EquipmentPanel
 						getFetch={this.getFetch.bind(this)}
