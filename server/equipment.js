@@ -6,7 +6,7 @@ let { log } = require('../common/utilities.js');
 
 const statistics = (connection, req, res, cb) => {
 	return cb(undefined, { 'statistics': require('./equipment_statistics.json') });
-}
+};
 
 const owned = (connection, req, res, cb) => {
 	//verify the credentials
@@ -34,7 +34,7 @@ const owned = (connection, req, res, cb) => {
 			return cb(undefined, { 'owned': res });
 		});
 	});
-}
+};
 
 const equipmentRequest = (connection) => (req, res) => {
 	//if no field received, send everything
@@ -91,8 +91,8 @@ const equipmentRequest = (connection) => (req, res) => {
 			res.status(400).write(log('Unknown field received', req.body.id, req.body.token, req.body.field));
 			res.end();
 	}
-}
+};
 
 module.exports = {
 	equipmentRequest: equipmentRequest
-}
+};

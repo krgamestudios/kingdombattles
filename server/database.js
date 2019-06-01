@@ -9,7 +9,7 @@ let { log } = require('../common/utilities.js');
 
 let connection;
 
-function handleDisconnect() {
+const handleDisconnect = () => {
 	//use the config
 	connection = mysql.createConnection({
 		host: process.env.DB_HOST,
