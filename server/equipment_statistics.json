@@ -1,18 +1,18 @@
 {
 	"Weapons": {
-		"Stick": { "cost": 50, "combatBoost": 0.02, "scientistsRequired": 1, "purchasable": true },
-		"Dagger": { "cost": 75, "combatBoost": 0.03, "scientistsRequired": 2, "purchasable": true },
-		"Sword": { "cost": 100, "combatBoost": 0.04, "scientistsRequired": 3, "purchasable": true },
-		"Longsword": { "cost": 150, "combatBoost": 0.05, "scientistsRequired": 4, "purchasable": true },
-		"Frying Pan": { "cost": 200, "combatBoost": 0.06, "scientistsRequired": 5, "purchasable": true }
+		"Stick": { "cost": 50, "purchasable": true, "saleable": true, "scientistsRequired": 1, "combatBoost": 0.02 },
+		"Dagger": { "cost": 75, "purchasable": true, "saleable": true, "scientistsRequired": 2, "combatBoost": 0.03 },
+		"Sword": { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 3, "combatBoost": 0.04 },
+		"Longsword": { "cost": 150, "purchasable": true, "saleable": true, "scientistsRequired": 4, "combatBoost": 0.05 },
+		"Frying Pan": { "cost": 200, "purchasable": true, "saleable": true, "scientistsRequired": 5, "combatBoost": 0.06 }
 	},
 	"Armour": {
-		"Leather": { "cost": 75, "combatBoost": 0.02, "scientistsRequired": 2, "purchasable": true },
-		"Gambeson": { "cost": 100, "combatBoost": 0.03, "scientistsRequired": 3, "purchasable": true },
-		"Chainmail": { "cost": 150, "combatBoost": 0.04, "scientistsRequired": 4, "purchasable": true },
-		"Platemail": { "cost": 200, "combatBoost": 0.05, "scientistsRequired": 5, "purchasable": true }
+		"Leather": { "cost": 75, "purchasable": false, "saleable": true, "scientistsRequired": 2, "combatBoost": 0.02 },
+		"Gambeson": { "cost": 100, "purchasable": false, "saleable": true, "scientistsRequired": 3, "combatBoost": 0.03 },
+		"Chainmail": { "cost": 150, "purchasable": false, "saleable": true, "scientistsRequired": 4, "combatBoost": 0.04 },
+		"Platemail": { "cost": 200, "purchasable": false, "saleable": true, "scientistsRequired": 5, "combatBoost": 0.05 }
 	},
 	"Consumables": {
-		"Potion":  { "cost": 100, "combatBoost": 0.04, "scientistsRequired": 1, "purchasable": true }
+		"Potion":  { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 1, "combatBoost": 0.04 }
 	}
 }

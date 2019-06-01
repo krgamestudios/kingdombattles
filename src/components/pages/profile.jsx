@@ -145,14 +145,14 @@ class Profile extends React.Component {
 						<p className='col'>Gold:</p>
 						<p className='col'>{this.props.profile.gold}</p>
 
-						<p className='col' style={{flex: '2 1 1%'}}>(+1 gold for each recruit every half hour)</p>
+						<p className='col truncate' style={{flex: '2 1 2%'}}>(+1 gold for each recruit every half hour)</p>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Recruits:</p>
 						<p className='col'>{this.props.profile.recruits}</p>
 
-						<button className='col' style={{flex: '2 1 1%'}} onClick={ () => this.sendRequest('/recruitrequest') }>Recruit More Units</button>
+						<button className='col' style={{flex: '2 1 2%'}} onClick={ () => this.sendRequest('/recruitrequest') }>Recruit More Units</button>
 					</div>
 
 					<div className='row'>
@@ -224,7 +224,7 @@ class Profile extends React.Component {
 
 						<AttackButton
 							className='col'
-							style={{flex: '2 1 1%'}}
+							style={{flex: '2 1 2%'}}
 							setWarning={this.setWarning.bind(this)}
 							attacker={this.props.account.username}
 							defender={this.props.profile.username}

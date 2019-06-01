@@ -29,27 +29,27 @@ class PagedCombatLog extends React.Component {
 		return (
 			<div className='table'>
 				<div className='row'>
-					<p className='col centered'>When</p>
-					<p className='col centered'>Attacker</p>
-					<p className='col centered'>Defender</p>
-					<p className='col centered'>Attacking Force</p>
-					<p className='col centered'>Defending Force</p>
-					<p className='col centered'>Undefended?</p>
-					<p className='col centered'>Victor</p>
-					<p className='col centered'>Gold Transferred</p>
-					<p className='col centered'>Victor Casualties</p>
+					<p className='col centered badwrap'>When</p>
+					<p className='col centered badwrap'>Attacker</p>
+					<p className='col centered badwrap'>Defender</p>
+					<p className='col centered badwrap'>Attacking Force</p>
+					<p className='col centered badwrap'>Defending Force</p>
+					<p className='col centered badwrap'>Undefended?</p>
+					<p className='col centered badwrap'>Victor</p>
+					<p className='col centered badwrap'>Gold Stolen</p>
+					<p className='col centered badwrap'>Attacker Deaths</p>
 				</div>
 
 				{Object.keys(this.state).map((key) => <div key={key} className={'row'}>
-					<p className='col centered'>{ this.parseDate(this.state[key].eventTime) }</p>
-					<PrettyName className='col centered' name={this.state[key].attacker} />
-					<PrettyName className='col centered' name={this.state[key].defender} />
-					<p className='col centered'>{this.state[key].attackingUnits}</p>
-					<p className='col centered'>{this.state[key].defendingUnits}</p>
-					<p className='col centered'>{this.state[key].undefended ? 'yes' : 'no'}</p>
-					<p className='col centered'>{this.state[key].victor}</p>
-					<p className='col centered'>{this.state[key].spoilsGold}</p>
-					<p className='col centered'>{this.state[key].casualtiesVictor}</p>
+					<p className='col centered truncate'>{ this.parseDate(this.state[key].eventTime) }</p>
+					<PrettyName className='col centered truncate' name={this.state[key].attacker} />
+					<PrettyName className='col centered truncate' name={this.state[key].defender} />
+					<p className='col centered truncate'>{this.state[key].attackingUnits}</p>
+					<p className='col centered truncate'>{this.state[key].defendingUnits}</p>
+					<p className='col centered truncate'>{this.state[key].undefended ? 'yes' : 'no'}</p>
+					<p className='col centered truncate'>{this.state[key].victor}</p>
+					<p className='col centered truncate'>{this.state[key].spoilsGold}</p>
+					<p className='col centered truncate'>{this.state[key].attackerCasualties}</p>
 				</div>)}
 			</div>
 		);

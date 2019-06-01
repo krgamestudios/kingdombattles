@@ -33,21 +33,21 @@ class Equipment extends React.Component {
 			<div className='panel'>
 				<div className='table'>
 					<div className='row'>
-						<p className='col centered'>Name</p>
-						<p className='col centered'>Type</p>
-						<p className='col centered'>Owned</p>
-						<p className='col centered'>Cost</p>
-						<p className='col centered'>Buy</p>
-						<p className='col centered'>Sell</p>
+						<p className='col centered truncate'>Name</p>
+						<p className='col centered truncate'>Type</p>
+						<p className='col centered truncate'>Owned</p>
+						<p className='col centered truncate'>Cost</p>
+						<p className='col centered truncate'>Buy</p>
+						<p className='col centered truncate'>Sell</p>
 					</div>
 
 					{Object.keys(display).map((key) => <div className='row' key={key}>
-						<p className='col centered'>{display[key].name}</p>
-						<p className='col centered'>{display[key].type}</p>
-						<p className='col centered'>{display[key].owned}</p>
-						<p className='col centered'>{display[key].cost}</p>
-						<button className='col centered' disabled={true || display[key].cost > this.props.gold}>+ Buy +</button>
-						<button className='col centered' disabled={true || display[key].owned === 0}>- Sell -</button>
+						<p className='col centered truncate'>{display[key].name}</p>
+						<p className='col centered truncate'>{display[key].type}</p>
+						<p className='col centered truncate'>{display[key].owned}</p>
+						<p className='col centered truncate'>{display[key].cost}</p>
+						{display[key].purchasable ? <button className='col centered truncate' disabled={true || display[key].cost > this.props.gold}>+ Buy +</button> : <div className='col centered truncate' />}
+						{display[key].saleable ? <button className='col centered truncate' disabled={true || display[key].owned === 0}>- Sell -</button> : <div className='col centered truncate' />}
 					</div>)}
 				</div>
 			</div>
@@ -106,7 +106,7 @@ class Equipment extends React.Component {
 					name: name,
 					type: type,
 					owned: (structure.owned && structure.owned[name]) || 0,
-					cost: structure.statistics[type][name].cost
+					...structure.statistics[type][name]
 				});
 			});
 		});

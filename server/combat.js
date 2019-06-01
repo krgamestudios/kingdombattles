@@ -147,16 +147,16 @@ const runCombatTick = (connection) => {
 
 							//determine the spoils and casualties
 							let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
-							let casualtiesVictor = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
+							let attackerCasualties = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
 
 							//save the combat
-							let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
-							connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, casualtiesVictor], (err) => {
+							let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+							connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties], (err) => {
 								if (err) throw err;
 
 								//update the attacker profile
 								let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE accountId = ?;';
-								connection.query(query, [spoilsGold, casualtiesVictor, pendingCombat.attackerId], (err) => {
+								connection.query(query, [spoilsGold, attackerCasualties, pendingCombat.attackerId], (err) => {
 									if (err) throw err;
 
 									//update the defender profile

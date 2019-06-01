@@ -64,6 +64,17 @@ a {
 	text-align: right;
 }
 
+.truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.badwrap {
+	overflow: wrap;
+	overflow-wrap: break-word;
+}
+
 /* footer */
 footer {
 	flex: 0 1 auto;
@@ -249,8 +260,8 @@ footer {
 }
 
 .col {
-	flex: 1;
-	min-width: 80px;
+	flex: 1 1 1%;
+	min-width: 0;
 }
 
 .table.noCollapse .row {
