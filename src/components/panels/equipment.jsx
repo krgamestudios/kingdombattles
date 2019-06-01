@@ -36,7 +36,6 @@ class Equipment extends React.Component {
 						<p className='col centered truncate'>Name</p>
 						<p className='col centered truncate'>Type</p>
 						<p className='col centered truncate'>Owned</p>
-						<p className='col centered truncate'>Cost</p>
 						<p className='col centered truncate'>Buy</p>
 						<p className='col centered truncate'>Sell</p>
 					</div>
@@ -45,9 +44,8 @@ class Equipment extends React.Component {
 						<p className='col centered truncate'>{display[key].name}</p>
 						<p className='col centered truncate'>{display[key].type}</p>
 						<p className='col centered truncate'>{display[key].owned}</p>
-						<p className='col centered truncate'>{display[key].cost}</p>
-						{display[key].purchasable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentpurchaserequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].cost > this.props.gold}>+ Buy +</button> : <div className='col centered truncate' />}
-						{display[key].saleable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentsellrequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].owned === 0}>- Sell -</button> : <div className='col centered truncate' />}
+						{display[key].purchasable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentpurchaserequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].cost > this.props.gold}>Buy ({display[key].cost} gold)</button> : <div className='col centered truncate' />}
+						{display[key].saleable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentsellrequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].owned === 0}>Sell ({Math.floor(display[key].cost/2)} gold)</button> : <div className='col centered truncate' />}
 					</div>)}
 				</div>
 			</div>
