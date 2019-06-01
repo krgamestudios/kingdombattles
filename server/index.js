@@ -49,6 +49,8 @@ combat.runCombatTick(connection);
 
 let equipment = require('./equipment.js');
 app.post('/equipmentrequest', equipment.equipmentRequest(connection));
+app.post('/equipmentpurchaserequest', equipment.purchaseRequest(connection));
+app.post('/equipmentsellrequest', equipment.sellRequest(connection));
 
 //static directories
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );

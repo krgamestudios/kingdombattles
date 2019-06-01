@@ -55,11 +55,16 @@ class Equipment extends React.Component {
 						<p>{this.state.warning}</p>
 					</div>
 
+					<h1 className='centered'>Equipment</h1>
+					<p className='centered'>Equipment sells for half it's cost!</p>
+					<p className='centered'>Scientists: {this.props.scientists} - Gold: {this.props.gold}</p>
+
 					<EquipmentPanel
 						getFetch={this.getFetch.bind(this)}
 						setWarning={this.setWarning.bind(this)}
 						scientists={this.props.scientists}
 						gold={this.props.gold}
+						onSuccess={ () => this.sendRequest('/profilerequest', {username: this.props.username}) }
 					/>
 				</div>
 			</div>

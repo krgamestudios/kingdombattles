@@ -21,7 +21,14 @@ let excluded = [ //messages that should not be logged
 	'News sent',
 
 	'Can\'t train while attacking',
-	'Can\'t untrain while attacking'
+	'Can\'t untrain while attacking',
+	'Can\'t purchase while attacking',
+	'Can\'t sell while attacking',
+
+	'Purchase made',
+	'Sale made',
+
+	'Cleaned database'
 ];
 
 const log = (msg, ...args) => {

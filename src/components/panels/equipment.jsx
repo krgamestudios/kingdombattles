@@ -46,8 +46,8 @@ class Equipment extends React.Component {
 						<p className='col centered truncate'>{display[key].type}</p>
 						<p className='col centered truncate'>{display[key].owned}</p>
 						<p className='col centered truncate'>{display[key].cost}</p>
-						{display[key].purchasable ? <button className='col centered truncate' disabled={true || display[key].cost > this.props.gold}>+ Buy +</button> : <div className='col centered truncate' />}
-						{display[key].saleable ? <button className='col centered truncate' disabled={true || display[key].owned === 0}>- Sell -</button> : <div className='col centered truncate' />}
+						{display[key].purchasable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentpurchaserequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].cost > this.props.gold}>+ Buy +</button> : <div className='col centered truncate' />}
+						{display[key].saleable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentsellrequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].owned === 0}>- Sell -</button> : <div className='col centered truncate' />}
 					</div>)}
 				</div>
 			</div>
@@ -67,9 +67,13 @@ class Equipment extends React.Component {
 
 					//on success
 					this.setState(json);
+
+					if (this.props.onSuccess) {
+						this.props.onSuccess(json);
+					}
 				}
 				else if (xhr.status === 400 && this.props.setWarning) {
-					this.setWarning(xhr.responseText);
+					this.props.setWarning(xhr.responseText);
 				}
 			}
 		};
@@ -121,7 +125,8 @@ Equipment.propTypes = {
 	token: PropTypes.number.isRequired,
 
 	setWarning: PropTypes.func,
-	getFetch: PropTypes.func
+	getFetch: PropTypes.func,
+	onSuccess: PropTypes.func
 };
 
 const mapStoreToProps = (store) => {

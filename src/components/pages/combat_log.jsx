@@ -54,6 +54,8 @@ class CombatLog extends React.Component {
 						<p>{this.state.warning}</p>
 					</div>
 
+					<h1 className='centered'>Combat Log</h1>
+
 					<ButtonHeader />
 					<PagedCombatLog
 						setWarning={this.setWarning.bind(this)}
