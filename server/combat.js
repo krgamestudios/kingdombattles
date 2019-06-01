@@ -7,6 +7,8 @@ let CronJob = require('cron').CronJob;
 //utilities
 let { log } = require('../common/utilities.js');
 
+let { getStatistics, isAttacking } = require('./utilities.js');
+
 const attackRequest = (connection) => (req, res) => {
 	//verify the attacker's credentials (only the attacker can launch an attack)
 	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND accountId IN (SELECT id FROM accounts WHERE username = ?) AND token = ?;';
@@ -140,36 +142,102 @@ const runCombatTick = (connection) => {
 								defendingUnits = results[0].recruits;
 							}
 
-							//determine the victor
-							//TODO: add equipment effectiveness
-							let rand = Math.random() * (pendingCombat.attackingUnits + defendingUnits * (undefended ? 0.25 : 1));
-							let victor = rand <= pendingCombat.attackingUnits ? 'attacker' : 'defender';
-
-							//determine the spoils and casualties
-							let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
-							let attackerCasualties = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits - 10 : 0) * (victor === 'attacker' ? 0.05 : 0.1));
-
-							//save the combat
-							let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
-							connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties], (err) => {
+							//get the attacker equipment
+							let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Weapon";';
+							connection.query(query, [pendingCombat.attackerId], (err, attackerEquipment) => {
 								if (err) throw err;
 
-								//update the attacker profile
-								let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE accountId = ?;';
-								connection.query(query, [spoilsGold, attackerCasualties, pendingCombat.attackerId], (err) => {
+								//get the defender equipment
+								let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Armour";';
+								connection.query(query, [pendingCombat.defenderId], (err, defenderEquipment) => {
 									if (err) throw err;
 
-									//update the defender profile
-									let query = 'UPDATE profiles SET gold = gold - ? WHERE accountId = ?;';
-									connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
+									//get the attacker consumables
+									let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Consumable";';
+									connection.query(query, [pendingCombat.attackerId], (err, attackerConsumables) => {
 										if (err) throw err;
 
-										//delete the pending combat
-										let query = 'DELETE FROM pendingCombat WHERE id = ?;';
-										connection.query(query, [pendingCombat.id], (err) => {
+										//get the defender consumables
+										let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Consumable";';
+										connection.query(query, [pendingCombat.defenderId], (err, defenderConsumables) => {
 											if (err) throw err;
 
-											log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor, spoilsGold);
+											//get the global equipment stats
+											getStatistics((err, { statistics }) => {
+												if (err) throw err;
+
+												//get the combat boosts from equipment, from highest to lowest
+												attackerEquipment.sort((a, b) => statistics[a.type][a.name].combatBoost < statistics[b.type][b.name].combatBoost);
+												let attackerEquipmentBoost = 0;
+												for (let i = 0; i < pendingCombat.attackingUnits; i++) {
+													attackerEquipmentBoost += attackerEquipment[i] ? statistics[attackerEquipment[i].type][attackerEquipment[i].name].combatBoost : 0;
+												}
+
+												defenderEquipment.sort((a, b) => statistics[a.type][a.name].combatBoost < statistics[b.type][b.name].combatBoost);
+												let defenderEquipmentBoost = 0;
+												for (let i = 0; i < defendingUnits; i++) {
+													defenderEquipmentBoost += defenderEquipment[i] ? statistics[defenderEquipment[i].type][defenderEquipment[i].name].combatBoost : 0;
+												}
+
+												//get the boosts from consumables
+												attackerConsumables.sort((a, b) => statistics[a.type][a.name].combatBoost < statistics[b.type][b.name].combatBoost);
+												let attackerConsumablesBoost = 0;
+												for (let i = 0; i < pendingCombat.attackingUnits; i++) {
+													attackerConsumablesBoost += attackerConsumables[i] ? statistics[attackerConsumables[i].type][attackerConsumables[i].name].combatBoost : 0;
+												}
+
+												defenderConsumables.sort((a, b) => { statistics[a.type][a.name].combatBoost < statistics[b.type][b.name].combatBoost});
+												let defenderConsumablesBoost = 0;
+												for (let i = 0; i < defendingUnits; i++) {
+													defenderConsumablesBoost += defenderConsumables[i] ? statistics[defenderConsumables[i].type][defenderConsumables[i].name].combatBoost : 0;
+												}
+
+												//determine the victor (defender wants high rand, attacker wants low rand)
+												let rand = Math.random() * (pendingCombat.attackingUnits + defenderEquipmentBoost + defenderConsumablesBoost + defendingUnits * (undefended ? 0.25 : 1));
+												let victor = rand <= attackerEquipmentBoost + attackerConsumablesBoost + pendingCombat.attackingUnits ? 'attacker' : 'defender';
+
+												//determine the spoils and casualties
+												let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
+												let attackerCasualties = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits : 0) * (victor === 'attacker' ? Math.random() / 5 : Math.random() / 2));
+
+												//save the combat
+												let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+												connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties], (err) => {
+													if (err) throw err;
+
+													//update the attacker profile
+													let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE accountId = ?;';
+													connection.query(query, [spoilsGold, attackerCasualties, pendingCombat.attackerId], (err) => {
+														if (err) throw err;
+
+														//update the defender profile
+														let query = 'UPDATE profiles SET gold = gold - ? WHERE accountId = ?;';
+														connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
+															if (err) throw err;
+
+															//remove used consumables (moved because callback hell is rediculous)
+															removeConsumables(connection, attackerConsumables, pendingCombat.attackingUnits);
+															removeConsumables(connection, defenderConsumables, defendingUnits);
+
+															//delete the pending combat
+															let query = 'DELETE FROM pendingCombat WHERE id = ?;';
+															connection.query(query, [pendingCombat.id], (err) => {
+																if (err) throw err;
+
+																log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor, spoilsGold);
+
+																//clean the database
+																let query = 'DELETE FROM equipment WHERE quantity <= 0;';
+																connection.query(query, (err) => {
+																	if (err) throw err;
+
+																	log('Cleaned database', 'Combat consumables');
+																});
+															});
+														});
+													});
+												});
+											});
 										});
 									});
 								});
@@ -184,42 +252,37 @@ const runCombatTick = (connection) => {
 	combatTick.start();
 };
 
-const isNormalInteger = (str) => {
-    let n = Math.floor(Number(str));
-    return n !== Infinity && String(n) == str && n >= 0;
-};
-
-const isAttacking = (connection, user, cb) => {
-	let query;
-
-	if (isNormalInteger(user)) {
-		query = 'SELECT * FROM pendingCombat WHERE attackerId = ?;';
-	} else if (typeof(user) === 'string') {
-		query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
-	} else {
-		return cb(`Unknown argument type for user: ${typeof(user)}`);
-	}
-
-	connection.query(query, [user], (err, results) => {
-		if (err) throw err;
-
-		if (results.length === 0) {
-			return cb(undefined, false);
-		} else {
-			//get the username of the person being attacked
-			let query = 'SELECT username FROM accounts WHERE id = ?;';
-			connection.query(query, [results[0].defenderId], (err, results) => {
+//Part of runCombatTick
+let removeConsumables = (connection, consumables, number) => {
+	if (number > 0 && consumables.length > 0) {
+		//if not rolling to the next stack after this
+		if (number - consumables[0].quantity <= 0) {
+			let query = 'UPDATE equipment SET quantity = quantity - ? WHERE id = ?;';
+			connection.query(query, [number, consumables[0].id], (err) => {
 				if (err) throw err;
-				return cb(undefined, true, results[0].username);
+			});
+
+			return;
+		} else { //will be rolling to the next stack after this
+			let query = 'UPDATE equipment SET quantity = 0 WHERE id = ?;';
+
+			connection.query(query, [consumables[0].id], (err) => {
+				if (err) throw err;
+
+				//tick
+				number -= consumables[0].quantity;
+				consumables.shift();
+
+				//it took me two hours to write this line; you can't make functions inside loops	
+				return removeConsumables(connection, consumables, number);
 			});
 		}
-	});
+	}
 };
 
 module.exports = {
 	attackRequest: attackRequest,
 	attackStatusRequest: attackStatusRequest,
 	combatLogRequest: combatLogRequest,
-	runCombatTick: runCombatTick,
-	isAttacking: isAttacking
+	runCombatTick: runCombatTick
 };

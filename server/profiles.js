@@ -4,7 +4,7 @@ require('dotenv').config();
 //libraries
 let CronJob = require('cron').CronJob;
 
-let { isAttacking } = require('./combat.js');
+let { isAttacking } = require('./utilities.js');
 
 //utilities
 let { log } = require('../common/utilities.js');

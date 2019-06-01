@@ -4,30 +4,7 @@ require('dotenv').config();
 //utilities
 let { log } = require('../common/utilities.js');
 
-let { isAttacking } = require('./combat.js');
-
-const getStatistics = (cb) => {
-	//TODO: apiVisible field
-	return cb(undefined, { 'statistics': require('./equipment_statistics.json') });
-};
-
-const getOwned = (connection, id, cb) => {
-	let query = 'SELECT name, quantity FROM equipment WHERE accountId = ?;';
-	connection.query(query, [id], (err, results) => {
-		if (err) throw err;
-
-		let ret = {};
-
-		Object.keys(results).map((key) => {
-			if (ret[results[key].name] !== undefined) {
-				log('WARNING: Invalid database state, equipment owned', id, JSON.stringify(results));
-			}
-			ret[results[key].name] = results[key].quantity;
-		});
-
-		return cb(undefined, { 'owned': ret });
-	});
-};
+let { getStatistics, getOwned, isAttacking } = require('./utilities.js');
 
 const equipmentRequest = (connection) => (req, res) => {
 	//validate the credentials
