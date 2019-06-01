@@ -106,6 +106,8 @@ class Equipment extends React.Component {
 };
 
 Equipment.propTypes = {
+	id: PropTypes.number.isRequired,
+	token: PropTypes.number.isRequired,
 	username: PropTypes.string.isRequired,
 	loggedIn: PropTypes.bool.isRequired,
 	storeScientists: PropTypes.func.isRequired,
@@ -115,6 +117,8 @@ Equipment.propTypes = {
 
 const mapStoreToProps = (store) => {
 	return {
+		id: store.account.id,
+		token: store.account.token,
 		username: store.account.username,
 		loggedIn: store.account.id !== 0,
 		scientists: store.profile.scientists,

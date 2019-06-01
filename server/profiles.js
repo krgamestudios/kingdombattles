@@ -75,17 +75,29 @@ function profileRequestInner(connection, req, res, body) {
 				}
 			});
 		} else {
-			//results.length === 1
-			res.status(200).json({
-				username: body.username,
-				gold: results[0].gold,
-				recruits: results[0].recruits,
-				soldiers: results[0].soldiers,
-				spies: results[0].spies,
-				scientists: results[0].scientists
+			//validate the credentials
+			let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND token = ?;';
+			connection.query(query, [body.id, body.token], (err, credentials) => {
+				if (err) throw err;
+
+				if (credentials[0].total !== 1) {
+					res.status(400).write(log('Invalid profile request credentials', JSON.stringify(body), body.id, body.token));
+					res.end();
+					return;
+				}
+
+				//results.length === 1
+				res.status(200).json({
+					username: body.username,
+					gold: results[0].gold,
+					recruits: results[0].recruits,
+					soldiers: results[0].soldiers,
+					spies: results[0].spies,
+					scientists: results[0].scientists
+				});
+				res.end();
+				log('Profile sent', body.username, body.id, body.token);
 			});
-			res.end();
-			log('Profile sent', body.username, body.id, body.token);
 		}
 	});
 };

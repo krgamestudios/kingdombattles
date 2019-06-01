@@ -9,7 +9,7 @@ const statistics = (connection, req, res, cb) => {
 };
 
 const owned = (connection, req, res, cb) => {
-	//verify the credentials
+	//validate the credentials
 	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND token = ?;';
 	connection.query(query, [req.body.id, req.body.token], (err, results) => {
 		if (err) throw err;
