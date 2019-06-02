@@ -1,7 +1,7 @@
 Major
 ---
 
-* Spies need to be implemented.
+* Implement spies.
 * Write game instructions on profile page.
 * Implement countdown timers for combat and training.
 
