@@ -10,21 +10,21 @@
     "node": "node server/index.js",
     "webpack": "webpack --mode=development",
     "webpack-production": "webpack --mode=production",
-    "update": "git pull && npm run webpack-production && npm restart"
+    "pull": "git pull && npm run webpack-production && npm restart"
   },
   "author": "Kayne Ruse",
   "license": "",
   "dependencies": {
-    "@babel/core": "^7.4.4",
+    "@babel/core": "^7.4.5",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.5",
+    "babel-loader": "^8.0.6",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "cron": "^1.7.1",
     "dotenv": "^8.0.0",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "forever": "^1.0.0",
     "formidable": "^1.2.1",
     "mysql": "^2.17.1",
@@ -43,7 +43,7 @@
     "redux-devtools-log-monitor": "^1.4.0",
     "redux-thunk": "^2.3.0",
     "sendmail": "^1.4.1",
-    "webpack": "^4.30.0",
+    "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2"
   }
 }
