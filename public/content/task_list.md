@@ -18,6 +18,7 @@ Patch
 ---
 
 * Game Balance.
+* Images to social media instead of links.
 
 Wishlist
 ---
