@@ -54,7 +54,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className = 'central'>
-				<img className='banner' src={'/img/flag_scaled.png'} />
+				<a className='banner' href='/'><img src={'/img/flag_scaled.png'} /></a>
 				<BrowserRouter>
 					{ GA.init() && <GA.RouteTracker /> }
 					<Switch>

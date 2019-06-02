@@ -18,16 +18,20 @@ body {
 }
 
 .banner {
-	max-width: 320px;
-	height: auto;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: .5em;
 	margin-bottom: 2em;
+	text-align: center;
+}
+
+.banner img {
+	max-width: 320px;
+	height: auto;
 }
 
 @media screen and (max-width: 480px) {
-	.banner {
+	.banner img {
 		max-width: 80%;
 	}
 }

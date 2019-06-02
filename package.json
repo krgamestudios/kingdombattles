@@ -9,7 +9,8 @@
     "stop": "forever stop server/index.js",
     "node": "node server/index.js",
     "webpack": "webpack --mode=development",
-    "webpack-production": "webpack --mode=production"
+    "webpack-production": "webpack --mode=production",
+    "update": "git pull && npm run webpack-production && npm restart"
   },
   "author": "Kayne Ruse",
   "license": "",

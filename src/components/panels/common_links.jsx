@@ -28,7 +28,6 @@ class CommonLinks extends React.Component {
 		if (this.props.loggedIn) {
 			return (
 				<div className='panel'>
-					<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
 					<p><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
 					<p><Link to='/equipment' onClick={this.props.onClickCombatLog}>Your Equipment</Link></p>
 					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
@@ -45,7 +44,6 @@ class CommonLinks extends React.Component {
 		} else { //if not logged in
 			return (
 				<div className='panel'>
-					<p><Link to='/' onClick={this.props.onClickHome}>Return Home</Link></p>
 					<p><Link to='/signup' onClick={this.props.onClickSignup}>Sign Up</Link></p>
 					<p><Link to='/login' onClick={this.props.onClickLogin}>Login</Link></p>
 					<p><Link to='/passwordrecover' onClick={this.props.onClickPasswordRecover}>Recover Password</Link></p>
