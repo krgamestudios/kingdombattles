@@ -18,3 +18,7 @@ Patch
 
 * Game Balance.
 
+Wishlist
+---
+
+* In-game events.
