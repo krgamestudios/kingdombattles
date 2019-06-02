@@ -26,3 +26,7 @@ Wishlist
 * In-game events.
 * Hire a graphic designer.
 
+Event Ideas
+---
+
+* Capture the flag.
