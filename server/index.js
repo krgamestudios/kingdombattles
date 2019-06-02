@@ -53,8 +53,9 @@ app.post('/equipmentpurchaserequest', equipment.purchaseRequest(connection));
 app.post('/equipmentsellrequest', equipment.sellRequest(connection));
 
 //static directories
-app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
+app.use('/content', express.static(path.resolve(__dirname + '/../public/content')) );
 app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );
+app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
 
 //the app file(s)
 app.get('/*app.bundle.js', (req, res) => {

@@ -34,6 +34,7 @@ class CommonLinks extends React.Component {
 					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
 					<p><Link to='/combatlog' onClick={this.props.onClickCombatLog}>Combat Log</Link></p>
 					<p><Link to='/passwordchange' onClick={this.props.onClickPasswordChange}>Change Password</Link></p>
+					<p><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
 
 					<Extra />
 
@@ -48,6 +49,7 @@ class CommonLinks extends React.Component {
 					<p><Link to='/login' onClick={this.props.onClickLogin}>Login</Link></p>
 					<p><Link to='/passwordrecover' onClick={this.props.onClickPasswordRecover}>Recover Password</Link></p>
 					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
+					<p><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
 
 					<Extra />
 				</div>
@@ -65,7 +67,8 @@ CommonLinks.propTypes = {
 	onClickHome: PropTypes.func,
 	onClickProfile: PropTypes.func,
 	onClickLadder: PropTypes.func,
-	onClickPasswordChange: PropTypes.func
+	onClickPasswordChange: PropTypes.func,
+	onClickTaskList: PropTypes.func
 };
 
 function mapStoreToProps(store) {

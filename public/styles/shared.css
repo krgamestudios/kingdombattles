@@ -272,6 +272,7 @@ footer {
 /* bits and pieces */
 .logoutButton {
 	align-self: stretch;
+	margin-bottom: .5rem;
 }
 
 .newsLine {
