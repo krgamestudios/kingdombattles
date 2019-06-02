@@ -13,8 +13,8 @@ body {
 	flex-direction: column;
 	overflow-x: hidden;
 	overflow-y: auto;
-	background-color: #111111;
-	color: white;
+	background-color: #131416;
+	color: #EEEEEE;
 }
 
 .banner {
@@ -286,7 +286,7 @@ footer {
 
 pre {
 	color: pink;
-	background-color: #222222;
+	background-color: #1a253a;
 	margin-top: 1em;
 	margin-bottom: 1em;
 }

@@ -12,6 +12,7 @@ Minor
 * Implement combat log rows.
 * Implement game ladder sorting.
 * Implement badges.
+* Implement Patreon thank you page.
 
 Patch
 ---
@@ -22,3 +23,5 @@ Wishlist
 ---
 
 * In-game events.
+* Hire a graphic designer.
+
