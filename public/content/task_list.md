@@ -1,17 +1,17 @@
 Major
 ---
 
-* Spies have no use right now.
-* Game instructions on the profile page.
-* Timers for count downs.
+* Spies need to be implemented.
+* Write game instructions on profile page.
+* Implement countdown timers for combat and training.
 
 Minor
 ---
 
-* Attack button isn't being disabled with no soldiers.
-* Better combat log.
-* Game Ladder sorting.
-* Badges.
+* Disable attack button with no soldiers.
+* Implement combat log rows.
+* Implement game ladder sorting.
+* Implement badges.
 
 Patch
 ---
