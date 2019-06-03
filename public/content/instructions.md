@@ -61,3 +61,29 @@ Scientists don't fight. Instead, they offer other means of gaining advantage ove
 
 --Coming Soon--
 
+<div class="break" />
+
+---
+
+<div class="break" />
+
+### Equipment
+
+<div class="break" />
+
+New equipment becomes accessible as soon as you train a new scientist, and purchased equipment remains in your inventory if the scientist is untrained. Each soldier uses one weapon during attacks, or one piece of armour when attacked. They also use consumables when attacking or attacked, which are then lost. Recruits also use armour and consumables when attacked.
+
+<div class="break" />
+
+---
+
+<div class="break" />
+
+### Badges
+
+<div class="break" />
+
+--Coming Soon--
+
+<div class="break" />
+
