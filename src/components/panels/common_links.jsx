@@ -28,13 +28,13 @@ class CommonLinks extends React.Component {
 		if (this.props.loggedIn) {
 			return (
 				<div className='panel'>
-					<p><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
-					<p><Link to='/equipment' onClick={this.props.onClickCombatLog}>Your Equipment</Link></p>
-					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
-					<p><Link to='/combatlog' onClick={this.props.onClickCombatLog}>Combat Log</Link></p>
-					<p><Link to='/passwordchange' onClick={this.props.onClickPasswordChange}>Change Password</Link></p>
-					<p><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
-					<p><Link to='/patronlist' onClick={this.props.onClickTaskList}>Patron List</Link></p>
+					<p className='mobile centered'><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
+					<p className='mobile centered'><Link to='/equipment' onClick={this.props.onClickCombatLog}>Your Equipment</Link></p>
+					<p className='mobile centered'><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
+					<p className='mobile centered'><Link to='/combatlog' onClick={this.props.onClickCombatLog}>Combat Log</Link></p>
+					<p className='mobile centered'><Link to='/passwordchange' onClick={this.props.onClickPasswordChange}>Change Password</Link></p>
+					<p className='mobile centered'><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
+					<p className='mobile centered'><Link to='/patronlist' onClick={this.props.onClickTaskList}>Patron List</Link></p>
 
 					<Extra />
 
@@ -44,12 +44,12 @@ class CommonLinks extends React.Component {
 		} else { //if not logged in
 			return (
 				<div className='panel'>
-					<p><Link to='/signup' onClick={this.props.onClickSignup}>Sign Up</Link></p>
-					<p><Link to='/login' onClick={this.props.onClickLogin}>Login</Link></p>
-					<p><Link to='/passwordrecover' onClick={this.props.onClickPasswordRecover}>Recover Password</Link></p>
-					<p><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
-					<p><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
-					<p><Link to='/patronlist' onClick={this.props.onClickTaskList}>Patron List</Link></p>
+					<p className='mobile centered'><Link to='/signup' onClick={this.props.onClickSignup}>Sign Up</Link></p>
+					<p className='mobile centered'><Link to='/login' onClick={this.props.onClickLogin}>Login</Link></p>
+					<p className='mobile centered'><Link to='/passwordrecover' onClick={this.props.onClickPasswordRecover}>Recover Password</Link></p>
+					<p className='mobile centered'><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
+					<p className='mobile centered'><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
+					<p className='mobile centered'><Link to='/patronlist' onClick={this.props.onClickTaskList}>Patron List</Link></p>
 
 					<Extra />
 				</div>

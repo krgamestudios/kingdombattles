@@ -17,7 +17,6 @@ Patch
 
 * Game Balance.
 * Images to social media instead of links.
-* Center the common links on mobile.
 
 Wishlist
 ---

@@ -301,6 +301,10 @@ pre {
 	display: none;
 }
 
+.centered.mobile {
+	text-align: initial;
+}
+
 @media screen and (max-width: 480px) {
 	.show.mobile {
 		display: block;
@@ -308,6 +312,10 @@ pre {
 
 	.hide.mobile {
 		display: none;
+	}
+
+	.centered.mobile {
+		text-align: center;
 	}
 }
 
