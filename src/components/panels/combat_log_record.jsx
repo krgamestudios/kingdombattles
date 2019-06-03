@@ -23,7 +23,7 @@ class CombatLogRecord extends React.Component {
 				</div>
 
 				<div className='row'>
-					<p className='col truncate'>Victor: {this.capitalizeFirstLetter(this.props.victor)} {this.props.undefended ? '(undefended)' : ''}</p>
+					<p className='col truncate'><span className='mobile hide'>Victor: </span>{this.capitalizeFirstLetter(this.props.victor)} {this.props.undefended ? '(undefended)' : ''}</p>
 					<p className='col truncate'>Gold: {this.props.spoilsGold}</p>
 					<p className='col truncate'>Atk. Deaths: {this.props.attackerCasualties}</p>
 				</div>
