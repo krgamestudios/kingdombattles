@@ -46,6 +46,12 @@ h2 {
 	color: lightblue;
 }
 
+h3 {
+	font-size: 12pt;
+	font-weight: bold;
+	color: pink;
+}
+
 br {
 	padding-bottom: .5em;
 }

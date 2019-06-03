@@ -2,6 +2,7 @@ Major
 ---
 
 * Implement spies.
+* Write the instructions for spies.
 * Write game instructions on profile page.
 * Implement countdown timers for combat and training.
 
@@ -17,6 +18,11 @@ Patch
 
 * Game Balance.
 * Images to social media instead of links.
+
+Potential And Confirmed Bugs
+---
+
+* What happens to consumables when recruits are attacked?
 
 Wishlist
 ---

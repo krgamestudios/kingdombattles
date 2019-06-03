@@ -9,7 +9,6 @@ export default class Blurb extends React.Component {
 				<p className='centered'><em>A game in early development.</em></p>
 				<br />
 				<p>This is a resource accumulation game, with some similarities to idle games. The idea is that you recruit new units once per day, train them as soldiers, and send them to attack other players. You can also train spies and scientists, which each grant their own benefits.</p>
-				<p>Untrained recruits gain you 1 gold piece evey half hour - the only unit type that grants a passive income.</p>
 				<p>You can follow the developer KR Game Studios here:</p>
 				<ul>
 					<li><Link to='https://facebook.com/KRGameStudios' /></li>

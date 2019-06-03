@@ -140,6 +140,7 @@ const runCombatTick = (connection) => {
 								defendingUnits = results[0].soldiers;
 							} else {
 								defendingUnits = results[0].recruits;
+								undefended = true; //recruits only
 							}
 
 							//get the attacker equipment

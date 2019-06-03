@@ -9,6 +9,7 @@ import { storeProfile, clearProfile } from '../../actions/profile.js';
 //panels
 import CommonLinks from '../panels/common_links.jsx';
 import AttackButton from '../panels/attack_button.jsx';
+import Markdown from '../panels/markdown.jsx';
 
 class Profile extends React.Component {
 	constructor(props) {
@@ -164,21 +165,25 @@ class Profile extends React.Component {
 					</div>
 
 					<div className='row'>
-						<p className='col'>Spies:</p>
-						<p className='col'>{this.props.profile.spies}</p>
-
-						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (200 gold)</button>
-						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
-					</div>
-
-					<div className='row'>
 						<p className='col'>Scientists:</p>
 						<p className='col'>{this.props.profile.scientists}</p>
 
 						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>Train Scientist (120 gold)</button>
 						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
 					</div>
+
+					<div className='row'>
+						<p className='col'>Spies:</p>
+						<p className='col'>{this.props.profile.spies}</p>
+
+						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (200 gold)</button>
+						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
+					</div>
 				</div>
+
+				<div className='break' />
+
+				<Markdown url='/content/instructions.md' setWarning={this.setWarning.bind(this)} />
 			</div>
 		);
 	}
@@ -241,16 +246,16 @@ class Profile extends React.Component {
 					</div>
 
 					<div className='row'>
-						<p className='col'>Spies:</p>
-						<p className='col'>{this.props.profile.spies}</p>
+						<p className='col'>Scientists:</p>
+						<p className='col'>{this.props.profile.scientists}</p>
 
 						<div className='col' />
 						<div className='col' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Scientists:</p>
-						<p className='col'>{this.props.profile.scientists}</p>
+						<p className='col'>Spies:</p>
+						<p className='col'>{this.props.profile.spies}</p>
 
 						<div className='col' />
 						<div className='col' />
@@ -306,16 +311,16 @@ class Profile extends React.Component {
 					</div>
 
 					<div className='row'>
-						<p className='col'>Spies:</p>
-						<p className='col'>{this.props.profile.spies}</p>
+						<p className='col'>Scientists:</p>
+						<p className='col'>{this.props.profile.scientists}</p>
 
 						<div className='col' />
 						<div className='col' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Scientists:</p>
-						<p className='col'>{this.props.profile.scientists}</p>
+						<p className='col'>Spies:</p>
+						<p className='col'>{this.props.profile.spies}</p>
 
 						<div className='col' />
 						<div className='col' />
