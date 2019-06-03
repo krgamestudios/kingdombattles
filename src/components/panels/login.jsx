@@ -30,13 +30,13 @@ class Login extends React.Component {
 
 				<form action='/loginrequest' method='post' onSubmit={ this.submit.bind(this) } >
 					<div>
-						<label>Email:</label>
-						<input type='text' name='email' value={this.state.email} onChange={ this.updateEmail.bind(this) } />
+						<label for='email'>Email:</label>
+						<input id='email' type='text' name='email' value={this.state.email} onChange={ this.updateEmail.bind(this) } />
 					</div>
 
 					<div>
-						<label>Password:</label>
-						<input type='password' name='password' value={this.state.password} onChange={ this.updatePassword.bind(this) } />
+						<label for='password'>Password:</label>
+						<input id='password' type='password' name='password' value={this.state.password} onChange={ this.updatePassword.bind(this) } />
 					</div>
 
 					<button type='submit' disabled={!this.state.email}>Login</button>

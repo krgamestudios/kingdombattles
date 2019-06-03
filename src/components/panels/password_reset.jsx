@@ -29,13 +29,13 @@ class PasswordReset extends React.Component {
 
 				<form action='/passwordresetrequest' method='post' onSubmit={this.submit.bind(this)}>
 					<div>
-						<label>Password:</label>
-						<input type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
+						<label for='password'>Password:</label>
+						<input id='password' type='password' name='password' value={this.state.password} onChange={this.updatePassword.bind(this)} />
 					</div>
 
 					<div>
-						<label>Retype Password:</label>
-						<input type='password' name='retype' value={this.state.retype} onChange={this.updateRetype.bind(this)} />
+						<label for='retype'>Retype Password:</label>
+						<input id='retype' type='password' name='retype' value={this.state.retype} onChange={this.updateRetype.bind(this)} />
 					</div>
 
 					<button type='submit'>Change Password</button>
