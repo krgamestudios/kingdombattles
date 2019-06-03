@@ -5,6 +5,7 @@ require('dotenv').config();
 let CronJob = require('cron').CronJob;
 
 //utilities
+let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
 let { getStatistics, isAttacking } = require('./utilities.js');
@@ -226,6 +227,7 @@ const runCombatTick = (connection) => {
 																if (err) throw err;
 
 																log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor, spoilsGold);
+																logDiagnostics(connection, 'death', attackerCasualties);
 
 																//clean the database
 																let query = 'DELETE FROM equipment WHERE quantity <= 0;';

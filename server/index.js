@@ -22,6 +22,10 @@ app.post('/newsrequest', news.newsRequest());
 let { connectToDatabase } = require('./database.js');
 let connection = connectToDatabase(); //uses .env
 
+//handle diagnostics
+let diagnostics = require('./diagnostics.js');
+diagnostics.runDailyDiagnostics(connection);
+
 //handle accounts
 let accounts = require('./accounts.js');
 app.post('/signuprequest', accounts.signupRequest(connection));

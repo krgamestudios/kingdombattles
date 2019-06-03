@@ -7,6 +7,7 @@ let CronJob = require('cron').CronJob;
 let { isAttacking } = require('./utilities.js');
 
 //utilities
+let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
 //profile creation & requesting
@@ -152,6 +153,7 @@ const recruitRequest = (connection) => (req, res) => {
 					res.end();
 
 					log('Recruit successful', results[0].username, req.body.id, req.body.token);
+					logDiagnostics(connection, 'recruit', 1);
 				});
 			});
 		});
