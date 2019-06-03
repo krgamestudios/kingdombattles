@@ -12,7 +12,6 @@ Minor
 
 * Disable attack button with no soldiers.
 * Implement game ladder sorting.
-* Implement diagnostic tracker (daily player count, etc.).
 * Write unit tests (ensure that the game doesn't break from an update).
 
 Patch
