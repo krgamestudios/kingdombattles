@@ -35,21 +35,25 @@ class Equipment extends React.Component {
 					<div className='row'>
 						<p className='col centered truncate'>Name</p>
 						<p className='col centered truncate'>Type</p>
+						<p className='col centered truncate'>Boost</p>
 						<p className='col centered truncate'>Owned</p>
 						<p className='col centered truncate mobile hide alwaysCentered'>Buy</p>
 						<p className='col centered truncate mobile hide alwaysCentered'>Sell</p>
 					</div>
 
 					<hr className='mobile show' />
+					<div className='break mobile show' />
 
 					{Object.keys(display).map((key) => <div key={key}>
 						<hr className='mobile hide'/>
-						<div className='break' />
+						<div className='break mobile hide' />
 						<div className='row'>
 							<p className='col centered truncate equipmentTextPadding'>{display[key].name}</p>
 							<p className='col centered truncate equipmentTextPadding'>{display[key].type}</p>
+							<p className='col centered truncate equipmentTextPadding'>{display[key].combatBoost * 100}%</p>
 							<p className='col centered truncate equipmentTextPadding'>{display[key].owned}</p>
-							<div className='col row noCollapse' style={{flex: '1 1 20%'}}>
+							<div className='break mobile show' />
+							<div className='col row noCollapse' style={{flex: '1 1 17.5%'}}>
 								{display[key].purchasable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentpurchaserequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].cost > this.props.gold}>Buy ({display[key].cost} gold)</button> : <div className='col centered truncate' />}
 								{display[key].saleable ? <button className='col centered truncate' onClick={() => this.sendRequest('/equipmentsellrequest', { name: display[key].name, type: display[key].type }) } disabled={display[key].owned === 0}>Sell ({Math.floor(display[key].cost/2)} gold)</button> : <div className='col centered truncate' />}
 							</div>
