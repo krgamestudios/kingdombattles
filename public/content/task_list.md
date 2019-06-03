@@ -3,9 +3,10 @@ Major
 
 * Implement spies.
 * Write the instructions for spies.
-* Implement countdown timers for combat and training.
 * Implement badges.
 * Write the instructions for badges.
+* Implement countdown timers for combat and training.
+* Implement referral links.
 
 Minor
 ---
