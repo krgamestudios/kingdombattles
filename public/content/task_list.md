@@ -3,7 +3,6 @@ Major
 
 * Implement spies.
 * Write the instructions for spies.
-* Write game instructions on profile page.
 * Implement countdown timers for combat and training.
 
 Minor
