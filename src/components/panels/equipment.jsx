@@ -36,8 +36,8 @@ class Equipment extends React.Component {
 						<p className='col centered truncate'>Name</p>
 						<p className='col centered truncate'>Type</p>
 						<p className='col centered truncate'>Owned</p>
-						<p className='col centered truncate mobile hide'>Buy</p>
-						<p className='col centered truncate mobile hide'>Sell</p>
+						<p className='col centered truncate mobile hide alwaysCentered'>Buy</p>
+						<p className='col centered truncate mobile hide alwaysCentered'>Sell</p>
 					</div>
 
 					<hr className='mobile show' />

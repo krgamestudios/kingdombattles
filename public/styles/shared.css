@@ -307,6 +307,10 @@ pre {
 	display: none;
 }
 
+.centered.mobile {
+	text-align: initial;
+}
+
 @media screen and (max-width: 480px) {
 	.show.mobile {
 		display: block;
@@ -324,4 +328,8 @@ pre {
 .central p.equipmentTextPadding {
 	padding-top: .25em;
 	padding-bottom: .25em;
+}
+
+.alwaysCentered {
+	text-align: center !important;
 }
