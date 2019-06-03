@@ -74,11 +74,11 @@ class CombatLog extends React.Component {
 
 	buttonHeader() {
 		return (
-			<div className='table'>
+			<div className='table noCollapse'>
 				<div className='row'>
 					<button className='col' onClick={ this.decrement.bind(this) }>{'< Back'}</button>
-					<div className='col' />
-					<div className='col' />
+					<div className='col hide mobile' />
+					<div className='col hide mobile' />
 					<button className='col' onClick={ this.increment.bind(this) }>{'Next >'}</button>
 				</div>
 			</div>

@@ -37,6 +37,7 @@ class Ladder extends React.Component {
 					<div className='mainPanel'>
 						<h1 className='centered'>Game Ladder</h1>
 						<ButtonHeader />
+						<br />
 						<PagedLadder
 							start={this.state.start}
 							length={this.state.length}
@@ -52,11 +53,11 @@ class Ladder extends React.Component {
 
 	buttonHeader() {
 		return (
-			<div className='table'>
+			<div className='table noCollapse'>
 				<div className='row'>
 					<button className='col' onClick={this.decrement.bind(this)}>{'< Back'}</button>
-					<div className='col' />
-					<div className='col' />
+					<div className='col hide mobile' />
+					<div className='col hide mobile' />
 					<button className='col' onClick={this.increment.bind(this)}>{'Next >'}</button>
 				</div>
 			</div>
