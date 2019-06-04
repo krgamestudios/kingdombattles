@@ -94,8 +94,7 @@ const attackStatusRequest = (connection) => (req, res) => {
 
 			res.status(200).json({
 				status: attacking ? 'attacking' : 'idle',
-				defender: defender,
-				msg: null
+				defender: defender
 			});
 
 			res.end();

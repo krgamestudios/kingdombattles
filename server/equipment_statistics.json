@@ -1,18 +1,18 @@
 {
 	"Weapon": {
-		"Stick": { "cost": 50, "purchasable": true, "saleable": true, "scientistsRequired": 1, "visible": true, "combatBoost": 0.04 },
-		"Dagger": { "cost": 75, "purchasable": true, "saleable": true, "scientistsRequired": 2, "visible": true, "combatBoost": 0.06 },
-		"Sword": { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 3, "visible": true, "combatBoost": 0.08 },
-		"Longsword": { "cost": 150, "purchasable": true, "saleable": true, "scientistsRequired": 4, "visible": true, "combatBoost": 0.10 },
-		"Frying Pan": { "cost": 200, "purchasable": true, "saleable": true, "scientistsRequired": 5, "visible": true, "combatBoost": 0.12 }
+		"Stick": { "cost": 50, "purchasable": true, "saleable": true, "scientistsRequired": 1, "visible": true, "stealable": true, "combatBoost": 0.04 },
+		"Dagger": { "cost": 75, "purchasable": true, "saleable": true, "scientistsRequired": 2, "visible": true, "stealable": true, "combatBoost": 0.06 },
+		"Sword": { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 3, "visible": true, "stealable": true, "combatBoost": 0.08 },
+		"Longsword": { "cost": 150, "purchasable": true, "saleable": true, "scientistsRequired": 4, "visible": true, "stealable": true, "combatBoost": 0.10 },
+		"Frying Pan": { "cost": 200, "purchasable": true, "saleable": true, "scientistsRequired": 5, "visible": true, "stealable": true, "combatBoost": 0.12 }
 	},
 	"Armour": {
-		"Leather": { "cost": 75, "purchasable": true, "saleable": true, "scientistsRequired": 2, "visible": true, "combatBoost": 0.04 },
-		"Gambeson": { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 3, "visible": true, "combatBoost": 0.06 },
-		"Chainmail": { "cost": 150, "purchasable": true, "saleable": true, "scientistsRequired": 4, "visible": true, "combatBoost": 0.08 },
-		"Platemail": { "cost": 200, "purchasable": true, "saleable": true, "scientistsRequired": 5, "visible": true, "combatBoost": 0.10 }
+		"Leather": { "cost": 75, "purchasable": true, "saleable": true, "scientistsRequired": 2, "visible": true, "stealable": true, "combatBoost": 0.04 },
+		"Gambeson": { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 3, "visible": true, "stealable": true, "combatBoost": 0.06 },
+		"Chainmail": { "cost": 150, "purchasable": true, "saleable": true, "scientistsRequired": 4, "visible": true, "stealable": true, "combatBoost": 0.08 },
+		"Platemail": { "cost": 200, "purchasable": true, "saleable": true, "scientistsRequired": 5, "visible": true, "stealable": true, "combatBoost": 0.10 }
 	},
 	"Consumable": {
-		"Potion":  { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 1, "visible": true, "combatBoost": 0.45 }
+		"Potion":  { "cost": 100, "purchasable": true, "saleable": true, "scientistsRequired": 1, "visible": true, "stealable": true, "combatBoost": 0.45 }
 	}
 }
