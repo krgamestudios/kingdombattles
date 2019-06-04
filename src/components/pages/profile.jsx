@@ -256,6 +256,7 @@ class Profile extends React.Component {
 							pendingStatus={'spying'}
 							pendingMsg={'Your spies are spying on'}
 							parseUnits={(json) => json.spies}
+							disabled={true}
 						>Send Spies</AttackButton>
 					</div>
 
