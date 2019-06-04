@@ -34,7 +34,7 @@ class Signup extends React.Component {
 				<div className='break' />
 				<p className='centered'>Remember to verify your email!</p>
 				<div className='break' />
-				<p className='centered'>See the recent news post on<br /><Link to='/news/2019-06-05-01.md'>Moderation Of Usernames</Link>.</p>
+				<p className='centered'>Check our rules concerning<br /><Link to='/rules'>conduct in this game</Link>.</p>
 			</div>
 		);
 	}
