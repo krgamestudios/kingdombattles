@@ -15,6 +15,7 @@ Minor
 * Write unit tests (ensure that the game doesn't break from an update).
 * Implement banning mechanism.
 * Implement post scrolling for news page.
+* Everyone who signed up within the first month will get an exclusive badge (based on diagnostics data).
 
 Patch
 ---
