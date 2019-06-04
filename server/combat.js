@@ -104,12 +104,30 @@ const attackStatusRequest = (connection) => (req, res) => {
 };
 
 const combatLogRequest = (connection) => (req, res) => {
-	let query = 'SELECT pastCombat.*, atk.username AS attacker, def.username AS defender FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE atk.username = ? OR def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
-	connection.query(query, [req.body.username, req.body.username, req.body.start, req.body.length], (err, results) => {
+	//verify the user's credentials
+	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND token = ?;';
+	connection.query(query, [req.body.id, req.body.token], (err, results) => {
 		if (err) throw err;
 
-		res.status(200).json(results);
-		log('Combat log sent', req.body.username, req.body.start, req.body.length);
+		if (results[0].total !== 1) {
+			res.status(400).write(log('Invalid combat log credentials', req.body.id, req.body.token));
+			res.end();
+			return;
+		}
+
+		//grab the username based on the ID
+		let query = 'SELECT username FROM accounts WHERE id = ?;';
+		connection.query(query, [req.body.id], (err, results) => {
+			if (err) throw err;
+
+			let query = 'SELECT pastCombat.*, atk.username AS attacker, def.username AS defender FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE atk.username = ? OR def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
+			connection.query(query, [results[0].username, results[0].username, req.body.start, req.body.length], (err, results) => {
+				if (err) throw err;
+
+				res.status(200).json(results);
+				log('Combat log sent', results[0].username, req.body.id, req.body.token, req.body.start, req.body.length);
+			});
+		});
 	});
 };
 
