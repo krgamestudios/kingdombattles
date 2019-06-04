@@ -158,7 +158,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 				let chanceSeen = totalEyes / pendingSpying.attackingUnits;
 
 				//if seen
-				if (Math.random() * 100 <= chanceSeen) {
+				if (Math.random() * 100 <= chanceSeen) { //TODO: balance this
 					let query = 'INSERT INTO pastSpying (eventTime, attackerId, defenderId, attackingUnits, success, spoilsGold) VALUES (?, ?, ?, ?, "failure", 0);';
 					connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits], (err) => {
 						if (err) throw err;
@@ -199,7 +199,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 
 									log('Spy succeeded', pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits, totalEyes, spoilsGold);
 
-									spyStealEquipment(connection, pendingSpying, spoilsGold);
+//									spyStealEquipment(connection, pendingSpying, spoilsGold);
 								});
 							});
 						});
@@ -209,34 +209,35 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 		});;
 	});
 };
-
+/*
 const spyStealEquipment = (connection, pendingSpying, spoilsGold) => {
 	let query = 'SELECT id FROM pastSpying WHERE eventTime = ? AND attackerId = ? AND defenderId = ? AND spoilsGold = ?;'; //make it VERY hard to grab the wrong one
 	connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, spoilsGold], (err, results) => {
 		if (err) throw err;
 
+		let successfulSpies = 0;
+
 		for (let i = 0; i < pendingSpying.attackingUnits; i++) {
 			//50% chance of stealing equipment
 			if (Math.random() >= 0.5 || true) { //DEBUG
-log('Attempting to steal');
-				spyStealEquipmentInner(connection, pendingSpying.attackerId, pendingSpying.defenderId, results[0].id);
-			} else {
-log('Skipping steal');
+				successfulSpies += 1;
 			}
 		}
+
+		spyStealEquipmentInner(connection, pendingSpying.attackerId, pendingSpying.defenderId, successfulSpies, results[0].id);
 	});
 };
 
-const spyStealEquipmentInner = (connection, attackerId, defenderId, pastSpyingId) => {
+const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUnits, pastSpyingId) => {
 	//NOTE: steal equipment that isn't being carried by soldiers
-	isAttacking(connection, defenderId, (err, isAttacking) => {
+	isAttacking(connection, defenderId, (err, attacking) => {
 		let query = 'SELECT * FROM equipment WHERE accountId = ?;';
-		connection.query(query, [defenderId], (err, results) => { //NOTE: async from here on out
+		connection.query(query, [defenderId], (err, results) => {
 			if (err) throw err;
 
 			//if he's not attacking, skip to the next step
-			if (!isAttacking) {
-				return spyStealEquipmentInnerInner(connection, attackerId, defenderId, results, pastSpyingId);
+			if (!attacking) {
+				return spyStealEquipmentInnerInner(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
 			}
 
 			//count the number of weapons/consumable items to be skipped, from strongest to weakest
@@ -272,7 +273,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, pastSpyingId
 									//splice the two arrays back together
 									let results = weaponResults.concat(consumableResults, armourResults);
 
-									spyStealEquipmentInnerInner(connection, attackerId, defenderId, results, pastSpyingId);
+									spyStealEquipmentInnerInner(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
 								});
 							});
 						});
@@ -307,22 +308,37 @@ const removeForEachSoldier = (results, soldiers, cb) => {
 	});
 }
 
-const spyStealEquipmentInnerInner = (connection, attackerId, defenderId, results, pastSpyingId) => {
+const spyStealEquipmentInnerInner = (connection, attackerId, defenderId, attackingUnits, results, pastSpyingId) => {
 	//count the total items
 	let totalItems = 0;
 	results.forEach((item) => totalItems += item.quantity);
 
-	//select the specific item to steal
-	let selection = Math.floor(Math.random() * totalItems);
+	let items = [];
 
-	//find the exact item that will be stolen
-	let item = results.filter((item) => {
-		selection -= item.quantity;
-		if (selection < 0) {
-			return item;
+	for (let i = 0; i < attackingUnits; i++) {
+		//select the specific item to steal
+		let selection = Math.floor(Math.random() * totalItems);
+
+		//find the exact item that will be stolen
+		items.push(results.filter((item) => {
+			selection -= item.quantity;
+			if (selection < 0) {
+				return item;
+			}
+		})[0]);
+log(results.indexOf(items[items.length-1]));
+		results[results.indexOf(items[items.length-1])].quantity -= 1;
+
+		if (results[results.indexOf(items[items.length-1])].quantity === 0) {
+//			log(items[items.length-1].name);
+//			log(items[items.length-1].quantity);
+			log(results[results.indexOf(items[items.length-1])].name);
+			log(results[results.indexOf(items[items.length-1])].quantity);
+//			results[results.indexOf(items[items.length-1])].splice(1);
 		}
-	})[0];
+	}
 
+return;
 	//NOTE: this is glacially slow
 
 	//insert a new record - will clean up duplicates later
@@ -367,7 +383,7 @@ const spyStealEquipmentInnerInnerInnerInner = (connection, attackerId, defenderI
 		log('equipment stolen', attackerId, defenderId, item.id, item.name, item.type, pastSpyingId);
 	});
 };
-
+*/
 module.exports = {
 	spyRequest: spyRequest,
 	spyStatusRequest: spyStatusRequest,
