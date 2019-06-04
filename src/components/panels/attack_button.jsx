@@ -28,7 +28,7 @@ class AttackButton extends React.Component {
 			};
 
 			return (
-				<button className={this.props.className} style={this.props.style} onClick={onClick} disabled={!this.state.units}>{this.props.children}</button>
+				<button className={this.props.className} style={this.props.style} onClick={onClick} disabled={this.props.disabled || !this.state.units}>{this.props.children}</button>
 			);
 		}
 	}
@@ -86,7 +86,8 @@ AttackButton.propTypes = {
 	className: PropTypes.string,
 	style: PropTypes.object,
 	onClick: PropTypes.func,
-	setWarning: PropTypes.func
+	setWarning: PropTypes.func,
+	disabled: PropTypes.bool
 };
 
 const mapStoreToProps = (store) => {
