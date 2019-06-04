@@ -30,7 +30,7 @@ class CommonLinks extends React.Component {
 				<div className='panel'>
 					<p className='mobile centered'><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
 					<p className='mobile centered'><Link to='/equipment' onClick={this.props.onClickCombatLog}>Your Equipment</Link></p>
-					<p className='mobile centered'><Link to='/ladder' onClick={this.props.onClickLadder}>Game Ladder</Link></p>
+					<p className='mobile centered'><Link to='/ladder' onClick={this.props.onClickLadder}>Attack (Game Ladder)</Link></p>
 					<p className='mobile centered'><Link to='/combatlog' onClick={this.props.onClickCombatLog}>Combat Log</Link></p>
 					<p className='mobile centered'><Link to='/passwordchange' onClick={this.props.onClickPasswordChange}>Change Password</Link></p>
 					<p className='mobile centered'><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from 'react-markdown/with-html';
 
 class Markdown extends React.Component {
 	constructor(props) {
@@ -20,7 +20,7 @@ class Markdown extends React.Component {
 
 	render() {
 		if (this.state) {
-			return (<ReactMarkdown source={this.state.data} escapeHtml={false} />);
+			return (<ReactMarkdown source={this.state.data} escapeHtml={false} {...this.props} />);
 		} else {
 			return (<p className='centered'>Loading markdown...</p>);
 		}

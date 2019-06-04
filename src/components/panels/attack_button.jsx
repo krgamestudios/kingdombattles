@@ -6,10 +6,12 @@ class AttackButton extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			soldiers: 0, //NOTE: not stored in profile afterall
 			message: ''
 		};
 
-		this.sendRequest('/attackstatusrequest', {attacker: this.props.attacker});
+		this.sendRequest('/attackstatusrequest', {attacker: this.props.attacker}, this.attackStatus.bind(this));
+		this.sendRequest('/profilerequest', {username: this.props.attacker}, this.profileData.bind(this));
 	}
 
 	render() {
@@ -20,20 +22,20 @@ class AttackButton extends React.Component {
 		} else {
 			//inject something extra
 			let onClick = (e) => {
-				this.sendRequest('/attackrequest', {attacker: this.props.attacker, defender: this.props.defender});
+				this.sendRequest('/attackrequest', {attacker: this.props.attacker, defender: this.props.defender}, this.attackStatus.bind(this));
 				if (this.props.onClick) {
 					this.props.onClick(e);
 				}
 			};
 
 			return (
-				<button className={this.props.className} style={this.props.style} onClick={onClick}>Attack</button>
+				<button className={this.props.className} style={this.props.style} onClick={onClick} disabled={!this.state.soldiers}>Attack</button>
 			);
 		}
 	}
 
 	//gameplay functions
-	sendRequest(url, args = {}) { //send a unified request, using my credentials
+	sendRequest(url, args = {}, onSuccess) { //send a unified request, using my credentials
 		//build the XHR
 		let xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
@@ -43,10 +45,7 @@ class AttackButton extends React.Component {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
 
-					//on success
-					if (json.status === 'attacking') {
-						this.setState({ message: `Your soldiers are attacking ${json.defender}` });
-					}
+					onSuccess(json);
 				}
 				else if (xhr.status === 400 && this.props.setWarning) {
 					this.props.setWarning(xhr.responseText);
@@ -60,6 +59,16 @@ class AttackButton extends React.Component {
 			token: this.props.token,
 			...args
 		}));
+	}
+
+	attackStatus(json) {
+		if (json.status === 'attacking') {
+			this.setState({ message: `Your soldiers are attacking ${json.defender}` });
+		}
+	}
+
+	profileData(json) {
+		this.setState({ soldiers: json.soldiers });
 	}
 };
 

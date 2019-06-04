@@ -11,7 +11,6 @@ Major
 Minor
 ---
 
-* Disable attack button with no soldiers.
 * Implement game ladder sorting.
 * Write unit tests (ensure that the game doesn't break from an update).
 
@@ -32,6 +31,7 @@ Wishlist
 * In-game events.
 * Hire a graphic designer.
 * Implement nations (player alliances).
+* In-game chat.
 
 Event Ideas
 ---

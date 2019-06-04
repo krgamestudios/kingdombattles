@@ -19,6 +19,18 @@ The goal of the game is to be at the top of the game ladder for as long as possi
 
 <div class="break" />
 
+### Attacking
+
+<div class="break" />
+
+The best way to gain gold in this game is to attack other players. You can do this via the [game ladder](/ladder). Click on someone's profile, and click the "attack" button as soon as you have a soldier. You'll earn gold from attacking, even if you lose the battle, so <span style="color:red">attacking high-ranked players is encouraged!</span>
+
+<div class="break" />
+
+---
+
+<div class="break" />
+
 ### Recruits
 
 <div class="break" />
