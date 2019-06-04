@@ -77,18 +77,29 @@ const attackRequest = (connection) => (req, res) => {
 	});
 };
 
-const attackStatusRequest = (connection) => (req, res) => { //TODO: proper credentials
-	isAttacking(connection, req.body.attacker, (err, attacking, defender) => {
+const attackStatusRequest = (connection) => (req, res) => {
+	//verify the credentials
+	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND token = ?;';
+	connection.query(query, [req.body.id, req.body.token], (err, results) => {
 		if (err) throw err;
 
-		res.status(200).json({
-			status: attacking ? 'attacking' : 'idle',
-			attacker: req.body.attacker,
-			defender: defender,
-			msg: null
-		});
+		if (results[0].total !== 1) {
+			res.status(400).write(log('Invalid attack status request credentials', req.body.id, req.body.token));
+			res.end();
+			return;
+		}
 
-		res.end();
+		isAttacking(connection, req.body.id, (err, attacking, defender) => {
+			if (err) throw err;
+
+			res.status(200).json({
+				status: attacking ? 'attacking' : 'idle',
+				defender: defender,
+				msg: null
+			});
+
+			res.end();
+		});
 	});
 };
 

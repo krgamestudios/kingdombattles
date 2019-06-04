@@ -27,7 +27,7 @@ class PasswordRecover extends React.Component {
 
 				<form action='/passwordrecoverrequest' method='post' onSubmit={this.submit.bind(this)}>
 					<div>
-						<label for='email'>Email:</label>
+						<label htmlFor='email'>Email:</label>
 						<input id='email' type='text' name='email' value={this.state.email} onChange={this.updateEmail.bind(this)} />
 					</div>
 

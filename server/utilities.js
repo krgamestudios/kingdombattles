@@ -40,7 +40,7 @@ const isAttacking = (connection, user, cb) => {
 	} else if (typeof(user) === 'string') {
 		query = 'SELECT * FROM pendingCombat WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
 	} else {
-		return cb(`Unknown argument type for user: ${typeof(user)}`);
+		return cb(`isAttacking: Unknown argument type for user: ${typeof(user)}`);
 	}
 
 	connection.query(query, [user], (err, results) => {
@@ -59,8 +59,36 @@ const isAttacking = (connection, user, cb) => {
 	});
 };
 
+const isSpying = (connection, user, cb) => {
+	let query;
+
+	if (isNormalInteger(user)) {
+		query = 'SELECT * FROM pendingSpying WHERE attackerId = ?;';
+	} else if (typeof(user) === 'string') {
+		query = 'SELECT * FROM pendingSpying WHERE attackerId IN (SELECT id FROM accounts WHERE username = ?);';
+	} else {
+		return cb(`isSpying: Unknown argument type for user: ${typeof(user)}`);
+	}
+
+	connection.query(query, [user], (err, results) => {
+		if (err) throw err;
+
+		if (results.length === 0) {
+			return cb(undefined, false);
+		} else {
+			//get the username of the person being spied on
+			let query = 'SELECT username FROM accounts WHERE id = ?;';
+			connection.query(query, [results[0].defenderId], (err, results) => {
+				if (err) throw err;
+				return cb(undefined, true, results[0].username);
+			});
+		}
+	});
+};
+
 module.exports = {
 	getStatistics: getStatistics,
 	getOwned: getOwned,
-	isAttacking: isAttacking
+	isAttacking: isAttacking,
+	isSpying: isSpying
 };

@@ -51,6 +51,12 @@ app.post('/attackstatusrequest', combat.attackStatusRequest(connection));
 app.post('/combatlogrequest', combat.combatLogRequest(connection));
 combat.runCombatTick(connection);
 
+let spying = require('./spying.js');
+app.post('/spyrequest', spying.spyRequest(connection));
+app.post('/spystatusrequest', spying.spyStatusRequest(connection));
+app.post('/spylogrequest', spying.spyLogRequest(connection));
+spying.runSpyTick(connection);
+
 let equipment = require('./equipment.js');
 app.post('/equipmentrequest', equipment.equipmentRequest(connection));
 app.post('/equipmentpurchaserequest', equipment.purchaseRequest(connection));

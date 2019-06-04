@@ -233,16 +233,30 @@ class Profile extends React.Component {
 							setWarning={this.setWarning.bind(this)}
 							attacker={this.props.account.username}
 							defender={this.props.profile.username}
-							token={this.props.account.token}
-						/>
+							statusRequest={'/attackstatusrequest'}
+							attackRequest={'/attackrequest'}
+							pendingStatus={'attacking'}
+							pendingMsg={'Your soldiers are attacking'}
+							parseUnits={(json) => json.soldiers}
+						>Attack</AttackButton>
 					</div>
 
 					<div className='row'>
 						<p className='col'>Soldiers:</p>
 						<p className='col'>{this.props.profile.soldiers}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<AttackButton
+							className='col'
+							style={{flex: '2 1 2%'}}
+							setWarning={this.setWarning.bind(this)}
+							attacker={this.props.account.username}
+							defender={this.props.profile.username}
+							statusRequest={'/spystatusrequest'}
+							attackRequest={'/spyrequest'}
+							pendingStatus={'spying'}
+							pendingMsg={'Your spies are spying on'}
+							parseUnits={(json) => json.spies}
+						>Send Spies</AttackButton>
 					</div>
 
 					<div className='row'>

@@ -6,11 +6,11 @@ class AttackButton extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			soldiers: 0, //NOTE: not stored in profile afterall
+			units: 0,
 			message: ''
 		};
 
-		this.sendRequest('/attackstatusrequest', {attacker: this.props.attacker}, this.attackStatus.bind(this));
+		this.sendRequest(this.props.statusRequest, {/* SO MUCH FOR DEFAULT ARGUMENTS IN NODE */}, this.attackStatus.bind(this));
 		this.sendRequest('/profilerequest', {username: this.props.attacker}, this.profileData.bind(this));
 	}
 
@@ -20,22 +20,21 @@ class AttackButton extends React.Component {
 				<p className={this.props.className} style={this.props.style}>{this.state.message}</p>
 			);
 		} else {
-			//inject something extra
 			let onClick = (e) => {
-				this.sendRequest('/attackrequest', {attacker: this.props.attacker, defender: this.props.defender}, this.attackStatus.bind(this));
+				this.sendRequest(this.props.attackRequest, {attacker: this.props.attacker, defender: this.props.defender}, this.attackStatus.bind(this));
 				if (this.props.onClick) {
-					this.props.onClick(e);
+					this.props.onClick(e); //inject something extra
 				}
 			};
 
 			return (
-				<button className={this.props.className} style={this.props.style} onClick={onClick} disabled={!this.state.soldiers}>Attack</button>
+				<button className={this.props.className} style={this.props.style} onClick={onClick} disabled={!this.state.units}>{this.props.children}</button>
 			);
 		}
 	}
 
 	//gameplay functions
-	sendRequest(url, args = {}, onSuccess) { //send a unified request, using my credentials
+	sendRequest(url, args, onSuccess) { //send a unified request, using my credentials
 		//build the XHR
 		let xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
@@ -62,13 +61,13 @@ class AttackButton extends React.Component {
 	}
 
 	attackStatus(json) {
-		if (json.status === 'attacking') {
-			this.setState({ message: `Your soldiers are attacking ${json.defender}` });
+		if (json.status === this.props.pendingStatus) {
+			this.setState({ message: `${this.props.pendingMsg} ${json.defender}` });
 		}
 	}
 
 	profileData(json) {
-		this.setState({ soldiers: json.soldiers });
+		this.setState({units: this.props.parseUnits(json)});
 	}
 };
 
@@ -78,6 +77,11 @@ AttackButton.propTypes = {
 
 	attacker: PropTypes.string.isRequired,
 	defender: PropTypes.string.isRequired,
+	statusRequest: PropTypes.string.isRequired,
+	attackRequest: PropTypes.string.isRequired,
+	pendingStatus: PropTypes.string.isRequired,
+	pendingMsg: PropTypes.string.isRequired,
+	parseUnits: PropTypes.func.isRequired,
 
 	className: PropTypes.string,
 	style: PropTypes.object,
