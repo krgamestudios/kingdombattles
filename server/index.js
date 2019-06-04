@@ -69,12 +69,12 @@ app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles'))
 
 //the app file(s)
 app.get('/*app.bundle.js', (req, res) => {
-  res.sendFile(path.resolve(`${__dirname}/../public/${req.originalUrl}`));
+	res.sendFile(path.resolve(`${__dirname}/../public/${req.originalUrl.split('/').pop()}`));
 });
 
 //fallback
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname + '/../public/index.html'));
+	res.sendFile(path.resolve(__dirname + '/../public/index.html'));
 });
 
 //startup

@@ -11,7 +11,7 @@ class News extends React.Component {
 		};
 
 		if (props.getFetch) {
-			props.getFetch( () => this.sendRequest('/newsrequest', {length: this.props.length || 10}) );
+			props.getFetch( () => this.sendRequest('/newsrequest', {length: this.props.length || 10, postId: this.props.postId}) );
 		}
 	}
 

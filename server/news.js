@@ -11,6 +11,23 @@ const newsRequest = () => (req, res) => {
 	let fpath = path.join(__dirname, '..', 'public', 'news');
 	let fileNames = fs.readdirSync(fpath);
 
+	//if it's one specific post
+	if (req.body.postId) {
+		if (!fileNames.includes(req.body.postId)) {
+			res.status(404).write('File Not Found');
+			res.end();
+			return;
+		}
+
+		let json = {};
+		json[req.body.postId] = fs.readFileSync(path.join(fpath, req.body.postId), 'utf8');
+		res.status(200).json(json);
+		res.end();
+
+		log('News sent (singular)', req.body.postId, JSON.stringify(json));
+		return;
+	}
+
 	//set the maximum
 	let max = parseInt(req.body.length) || 99;
 	if (isNaN(max) || max > fileNames.length) {
@@ -26,7 +43,7 @@ const newsRequest = () => (req, res) => {
 	}
 
 	//actually send the data
-	res.json(json);
+	res.status(200).json(json);
 	res.end();
 
 	log('News sent', max, fileNames, JSON.stringify(json));

@@ -13,6 +13,8 @@ Minor
 
 * Implement game ladder sorting.
 * Write unit tests (ensure that the game doesn't break from an update).
+* Implement banning mechanism.
+* Implement post scrolling for news page.
 
 Patch
 ---
