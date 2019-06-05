@@ -124,7 +124,7 @@ const combatLogRequest = (connection) => (req, res) => {
 				if (err) throw err;
 
 				res.status(200).json(results);
-				log('Combat log sent', results[0].username, req.body.id, req.body.token, req.body.start, req.body.length);
+				log('Combat log sent', results.length > 0 ? results[0].username : 'WARNING: NO NAME', req.body.id, req.body.token, req.body.start, req.body.length);
 			});
 		});
 	});
