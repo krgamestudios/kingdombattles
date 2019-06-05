@@ -33,6 +33,7 @@ Wishlist
 * Hire a graphic designer.
 * Implement nations (player alliances).
 * In-game chat.
+* Structures / shields.
 
 Event Ideas
 ---
