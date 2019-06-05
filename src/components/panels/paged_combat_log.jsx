@@ -37,6 +37,8 @@ class PagedCombatLog extends React.Component {
 				if (xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
 
+					json.sort((a, b) => new Date(b.eventTime) - new Date(a.eventTime));
+
 					//on success
 					this.setState(json);
 

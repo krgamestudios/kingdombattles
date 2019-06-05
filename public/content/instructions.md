@@ -71,7 +71,9 @@ Scientists don't fight. Instead, they offer other means of gaining advantage ove
 
 <div class="break" />
 
---Coming Soon--
+Spies are another way to gain an advantage over your enemies. They're more expensive than soldiers, and they might not always produce results. However, they can be used at the same time as soldiers, and they can also steal your target's equipment. Spies have a 50% chance of stealing gold, and each spy has a 50% chance of stealing an item. Since their job is harder, they take 10 minutes for each spy used.
+
+Be careful though - if the spies are found, they will <span>all be killed</span>.
 
 <div class="break" />
 

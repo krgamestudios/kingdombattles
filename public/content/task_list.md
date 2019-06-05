@@ -1,8 +1,6 @@
 Major
 ---
 
-* Implement spies.
-* Write the instructions for spies.
 * Implement badges.
 * Write the instructions for badges.
 * Implement countdown timers for combat and training.

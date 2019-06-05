@@ -234,7 +234,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 					});
 				} else {
 					//steal this much gold on success
-					let spoilsGold = Math.random() >= 0.5 ? Math.floor(results[0].gold * 0.1) : 0; //50% chance of stealing gold
+					let spoilsGold = Math.random() >= 0.5 ? Math.floor(results[0].gold * 0.2) : 0; //50% chance of stealing gold
 					let query = 'INSERT INTO pastSpying (eventTime, attackerId, defenderId, attackingUnits, success, spoilsGold) VALUES (?, ?, ?, ?, "success", ?);';
 					connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits, spoilsGold], (err) => {
 						if (err) throw err;
@@ -290,45 +290,52 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 		connection.query(query, [defenderId], (err, results) => {
 			if (err) throw err;
 
-			//if he's not attacking, skip to the next step
-			if (!attacking) {
-				return spyStealEquipmentSelectItemsToSteal(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
-			}
-
-			//count the number of weapons/consumable items to be skipped, from strongest to weakest
-			let query = 'SELECT soldiers FROM profiles WHERE accountId = ?;';
-			connection.query(query, [defenderId], (err, results) => {
+			getStatistics((err, { statistics }) => {
 				if (err) throw err;
 
-				let soldierCount = results[0].soldiers;
+				//don't steal certain items
+				results = results.filter(item => statistics[item.type][item.name].stealable);
 
-				//armour
-				let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Armour";';
-				connection.query(query, [defenderId], (err, armourResults) => {
+				//if he's not attacking, skip to the next step
+				if (!attacking) {
+					return spyStealEquipmentSelectItemsToSteal(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
+				}
+
+				//count the number of weapons/consumable items to be skipped, from strongest to weakest
+				let query = 'SELECT soldiers FROM profiles WHERE accountId = ?;';
+				connection.query(query, [defenderId], (err, results) => {
 					if (err) throw err;
 
-					//NOTE: Armour stays at home - it's never carried by soldiers (don't call removeForEachSoldier)
+					let soldierCount = results[0].soldiers;
 
-					//weapons
-					let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Weapon";';
-					connection.query(query, [defenderId], (err, results) => {
+					//armour
+					let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Armour";';
+					connection.query(query, [defenderId], (err, armourResults) => {
 						if (err) throw err;
 
-						removeForEachSoldier(results, soldierCount, (err, weaponResults) => {
+						//NOTE: Armour stays at home - it's never carried by soldiers (don't call removeForEachSoldier)
+
+						//weapons
+						let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Weapon";';
+						connection.query(query, [defenderId], (err, results) => {
 							if (err) throw err;
 
-							//consumables
-							let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Consumable";';
-							connection.query(query, [defenderId], (err, results) => {
+							removeForEachSoldier(results, soldierCount, (err, weaponResults) => {
 								if (err) throw err;
 
-								removeForEachSoldier(results, soldierCount, (err, consumableResults) => {
+								//consumables
+								let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Consumable";';
+								connection.query(query, [defenderId], (err, results) => {
 									if (err) throw err;
 
-									//splice the two arrays back together
-									let results = weaponResults.concat(consumableResults, armourResults);
+									removeForEachSoldier(results, soldierCount, (err, consumableResults) => {
+										if (err) throw err;
 
-									spyStealEquipmentSelectItemsToSteal(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
+										//splice the two arrays back together
+										let results = weaponResults.concat(consumableResults, armourResults);
+
+										spyStealEquipmentSelectItemsToSteal(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
+									});
 								});
 							});
 						});
@@ -342,6 +349,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 const removeForEachSoldier = (results, soldiers, cb) => {
 	getStatistics((err, { statistics }) => {
 		if (err) throw err;
+
 		results.sort((a, b) => statistics[a.type][a.name].combatBoost < statistics[b.type][b.name].combatBoost);
 
 		results = results.map((item) => {
@@ -357,7 +365,7 @@ const removeForEachSoldier = (results, soldiers, cb) => {
 			return item;
 		});
 
-		results = results.filter(item => item.quantity > 0 && statistics[item.type][item.name].stealable);
+		results = results.filter(item => item.quantity > 0);
 
 		cb(undefined, results);
 	});

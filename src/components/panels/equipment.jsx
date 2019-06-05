@@ -112,7 +112,7 @@ class Equipment extends React.Component {
 				}
 
 				//if you can't see it and you don't own it, don't render it (for legendary items)
-				if (!structure.statistics[type][name].visible && !structure.owned[name]) {
+				if (!structure.statistics[type][name].visible && !structure.owned[name]) { //TODO: sort out the visible mixup
 					return;
 				}
 
