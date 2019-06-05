@@ -24,8 +24,12 @@ let excluded = [ //messages that should not be logged
 
 	'Can\'t train while attacking',
 	'Can\'t untrain while attacking',
+	'Can\'t train while spying',
+	'Can\'t untrain while spying',
 	'Can\'t purchase while attacking',
 	'Can\'t sell while attacking',
+	'Can\'t purchase while spying',
+	'Can\'t sell while spying',
 
 	'Purchase made',
 	'Sale made',
