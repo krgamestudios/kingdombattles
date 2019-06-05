@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import PropTypes from 'prop-types';
 
+//actions
+import { storeSpies, clearProfile } from '../../actions/profile.js';
+
 //panels
 import CommonLinks from '../panels/common_links.jsx';
 import PagedSpyingLog from '../panels/paged_spying_log.jsx';
@@ -19,15 +22,22 @@ class SpyingLog extends React.Component {
 			length: parseInt(params.length) || 20,
 
 			fetch: null,
+			buttonsVisible: false,
 
 			warning: ''
 		};
+
+		this.sendRequest('/profilerequest', {username: this.props.username});
 	}
 
 	componentDidMount() {
 		if (!this.props.loggedIn) {
 			this.props.history.replace('/login');
 		}
+	}
+
+	componentWillUnmount() {
+		this.props.clearProfile();
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -62,6 +72,7 @@ class SpyingLog extends React.Component {
 						username={this.props.username}
 						start={this.state.start}
 						length={this.state.length}
+						spies={this.props.spies}
 						getFetch={this.getFetch.bind(this)}
 						onReceived={this.onReceived.bind(this)}
 					/>
@@ -73,6 +84,10 @@ class SpyingLog extends React.Component {
 	}
 
 	buttonHeader() {
+		if (!this.buttonsVisible) {
+			return null;
+		}
+
 		return (
 			<div className='table noCollapse'>
 				<div className='row'>
@@ -102,12 +117,42 @@ class SpyingLog extends React.Component {
 		this.props.history.push(`${this.props.location.pathname}?log=${start}`);
 	}
 
+	//gameplay functions
+	sendRequest(url, args = {}) { //send a unified request, using my credentials
+		//build the XHR
+		let xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
+
+		xhr.onreadystatechange = () => {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					let json = JSON.parse(xhr.responseText);
+
+					//on success
+					this.props.storeSpies(json.spies);
+				}
+				else if (xhr.status === 400) {
+					this.setWarning(xhr.responseText);
+				}
+			}
+		};
+
+		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		xhr.send(JSON.stringify({
+			id: this.props.id,
+			token: this.props.token,
+			...args
+		}));
+	}
+
 	//bound callbacks
 	getFetch(fn) {
 		this.setState({ fetch: fn });
 	}
 
 	onReceived(data) {
+		this.setState({ buttonsVisible: data.length > 0 });
+
 		if (data.length === 0) {
 			let start = Math.max(0, this.state.start - this.state.length);
 
@@ -133,13 +178,16 @@ SpyingLog.propTypes = {
 const mapStoreToProps = (store) => {
 	return {
 		username: store.account.username,
-		loggedIn: store.account.id !== 0
+		loggedIn: store.account.id !== 0,
+		username: store.account.username,
+		spies: store.profile.spies
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		//
+		storeSpies: (x) => dispatch(storeSpies(x)),
+		clearProfile: () => dispatch(clearProfile())
 	};
 };
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -10,7 +9,7 @@ class PagedCombatLog extends React.Component {
 		super(props);
 
 		this.state = {
-			//
+			data: []
 		};
 
 		if (props.getFetch) {
@@ -21,7 +20,7 @@ class PagedCombatLog extends React.Component {
 	render() {
 		return (
 			<div>
-				{Object.keys(this.state).map((key) => <CombatLogRecord key={key} username={this.props.username} {...this.state[key]} />)}
+				{Object.keys(this.state.data).map((key) => <CombatLogRecord key={key} username={this.props.username} {...this.state.data[key]} />)}
 			</div>
 		);
 	}
@@ -40,7 +39,7 @@ class PagedCombatLog extends React.Component {
 					json.sort((a, b) => new Date(b.eventTime) - new Date(a.eventTime));
 
 					//on success
-					this.setState(json);
+					this.setState({ data: json });
 
 					if (this.props.onReceived) {
 						this.props.onReceived(json);
@@ -89,4 +88,4 @@ const mapDispatchToProps = (dispatch) => {
 
 PagedCombatLog = connect(mapStoreToProps, mapDispatchToProps)(PagedCombatLog);
 
-export default withRouter(PagedCombatLog);
+export default PagedCombatLog;

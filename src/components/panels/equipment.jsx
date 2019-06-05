@@ -8,7 +8,7 @@ class Equipment extends React.Component {
 		super(props);
 
 		this.state = {
-			//
+			data: []
 		};
 
 		if (this.props.getFetch) {
@@ -17,7 +17,7 @@ class Equipment extends React.Component {
 	}
 
 	render() {
-		let display = this.flattenStructure(this.state, this.props.scientists);
+		let display = this.flattenStructure(this.state.data, this.props.scientists);
 
 		//if there are no scientists
 		if (this.props.scientists <= 0 && display.length === 0) {
@@ -77,7 +77,7 @@ class Equipment extends React.Component {
 					let json = JSON.parse(xhr.responseText);
 
 					//on success
-					this.setState(json);
+					this.setState({ data: json });
 
 					if (this.props.onSuccess) {
 						this.props.onSuccess(json);

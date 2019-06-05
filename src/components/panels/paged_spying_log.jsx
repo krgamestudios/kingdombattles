@@ -10,7 +10,7 @@ class PagedSpyingLog extends React.Component {
 		super(props);
 
 		this.state = {
-			//
+			data: []
 		};
 
 		if (props.getFetch) {
@@ -19,9 +19,19 @@ class PagedSpyingLog extends React.Component {
 	}
 
 	render() {
+		//if there are no spies
+		if (this.props.spies <= 0 && this.state.data.length <= 0) {
+			return (
+				<div className='panel'>
+					<p className='centered'>You have no spies!</p>
+					<p className='centered'>Go and <Link to='/profile'>train some!</Link></p>
+				</div>
+			);
+		}
+
 		return (
 			<div>
-				{Object.keys(this.state).map((key) => <SpyingLogRecord key={key} username={this.props.username} {...this.state[key]} />)}
+				{Object.keys(this.state.data).map((key) => <SpyingLogRecord key={key} username={this.props.username} {...this.state.data[key]} />)}
 			</div>
 		);
 	}
@@ -40,7 +50,7 @@ class PagedSpyingLog extends React.Component {
 					json.sort((a, b) => new Date(b.eventTime) - new Date(a.eventTime));
 
 					//on success
-					this.setState(json);
+					this.setState({ data: json });
 
 					if (this.props.onReceived) {
 						this.props.onReceived(json);
