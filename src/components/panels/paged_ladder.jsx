@@ -17,7 +17,7 @@ class PagedLadder extends React.Component {
 	render() {
 		return (
 			<div className='table'>
-				<div className='row'>
+				<div className='row mobile hide'>
 					<p className='col centered'>Username</p>
 					<p className='col centered'>Soldiers</p>
 					<p className='col centered'>Recruits</p>
@@ -28,9 +28,9 @@ class PagedLadder extends React.Component {
 					<div className='break' />
 					<div className={'row'}>
 						<p className={'col centered truncate'}><Link to={`/profile?username=${this.state[key].username}`}>{this.state[key].username}</Link></p>
-						<p className={'col centered truncate'}>{this.state[key].soldiers}</p>
-						<p className={'col centered truncate'}>{this.state[key].recruits}</p>
-						<p className={'col centered truncate'}>{this.state[key].gold}</p>
+						<p className={'col centered truncate'}><span className='mobile show' style={{whiteSpace: 'pre'}}>Soldiers: </span>{this.state[key].soldiers}</p>
+						<p className={'col centered truncate'}><span className='mobile show' style={{whiteSpace: 'pre'}}>Recruits: </span>{this.state[key].recruits}</p>
+						<p className={'col centered truncate'}><span className='mobile show' style={{whiteSpace: 'pre'}}>Gold: </span>{this.state[key].gold}</p>
 					</div>
 				</div>)}
 			</div>

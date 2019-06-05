@@ -313,7 +313,7 @@ pre {
 
 @media screen and (max-width: 480px) {
 	.show.mobile {
-		display: block;
+		display: inline-block;
 	}
 
 	.hide.mobile {

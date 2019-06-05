@@ -370,7 +370,7 @@ const ladderRequest = (connection) => (req, res) => {
 };
 
 const runGoldTick = (connection) => {
-	let goldTickJob = new CronJob('0 */5 * * * *', () => {
+	let goldTickJob = new CronJob('0 */10 * * * *', () => {
 		let query = 'UPDATE profiles SET gold = gold + recruits;';
 		connection.query(query, (err) => {
 			if (err) throw err;

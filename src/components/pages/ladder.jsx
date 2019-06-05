@@ -37,7 +37,9 @@ class Ladder extends React.Component {
 					<div className='mainPanel'>
 						<h1 className='centered'>Game Ladder</h1>
 						<ButtonHeader />
-						<br />
+
+						<div className='half break mobile hide' />
+
 						<PagedLadder
 							start={this.state.start}
 							length={this.state.length}
