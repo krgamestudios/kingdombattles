@@ -103,9 +103,64 @@ const spyStatusRequest = (connection) => (req, res) => {
 };
 
 const spyLogRequest = (connection) => (req, res) => {
-	//TODO
-	res.status(400).write(log('Not yet implemented', 'spyLogRequest'));
-	res.end();
+	//verify the user's credentials
+	let query = 'SELECT COUNT(*) AS total FROM sessions WHERE accountId = ? AND token = ?;';
+	connection.query(query, [req.body.id, req.body.token], (err, results) => {
+		if (err) throw err;
+
+		if (results[0].total !== 1) {
+			res.status(400).write(log('Invalid spy log credentials', req.body.id, req.body.token));
+			res.end();
+			return;
+		}
+
+		//grab the spying log and equipment stolen based on the id
+		let query = 'SELECT pastSpying.id AS id, pastSpying.eventTime AS eventTime, pastSpying.attackerId AS attackerId, pastSpying.defenderId AS defenderId, atk.username AS attackerUsername, def.username AS defenderUsername, pastSpying.attackingUnits AS attackingUnits, pastSpying.success AS success, pastSpying.spoilsGold AS spoilsGold, equipmentStolen.name AS equipmentStolenName, equipmentStolen.type AS equipmentStolenType, equipmentStolen.quantity AS equipmentStolenQuantity FROM pastSpying LEFT JOIN equipmentStolen ON pastSpying.id = equipmentStolen.pastSpyingId LEFT JOIN accounts AS atk ON pastSpying.attackerId = atk.id LEFT JOIN accounts AS def ON pastSpying.defenderId = def.id WHERE pastSpying.attackerId = ? OR pastSpying.defenderId = ? ORDER BY eventTime DESC LIMIT ?, ?;';
+		connection.query(query, [req.body.id, req.body.id, req.body.start, req.body.length], (err, results) => {
+			if (err) throw err;
+
+			//build the sendable data structure (delete names from successful events when you're the losing defender, etc.)
+			let ret = [];
+
+			results.forEach((result) => {
+				//appending equipment stolen
+				if (ret[result.id]) {
+					ret[result.id].equipmentStolen.push({
+						name: result.equipmentStolenName,
+						type: result.equipmentStolenType,
+						quantity: result.equipmentStolenQuantity
+					});
+					return;
+				}
+
+				let hideData = req.body.id === result.defenderId && result.success === 'success';
+
+				//creating a new entry
+				ret[result.id] = {
+					eventTime: result.eventTime,
+					attacker: hideData ? null : result.attackerUsername,
+					defender: result.defenderUsername,
+					attackingUnits: hideData ? null : result.attackingUnits,
+					success: result.success,
+					spoilsGold: result.spoilsGold,
+					equipmentStolen: result.equipmentStolenName ? [{
+						name: result.equipmentStolenName,
+						type: result.equipmentStolenType,
+						quantity: result.equipmentStolenQuantity
+					}] : []
+				};
+			});
+
+			//remove null fields
+			ret = ret.filter(x => x);
+
+			//send the build structure
+			res.status(200).json(ret);
+			res.end();
+
+			log('Spy log sent', JSON.stringify(ret));
+		});
+	});
 };
 
 const runSpyTick = (connection) => {
@@ -157,7 +212,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 				//more spies reduces the chances of being seen? Counter intuitive
 				let chanceSeen = totalEyes / (pendingSpying.attackingUnits  * 10); //it takes 10 eyes to guarantee the capture of 1 spy, 50% chance to capture 2 spies, etc.
 
-				//if seen
+				//if seen (failure)
 				if (Math.random() <= chanceSeen) {
 					let query = 'INSERT INTO pastSpying (eventTime, attackerId, defenderId, attackingUnits, success, spoilsGold) VALUES (?, ?, ?, ?, "failure", 0);';
 					connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits], (err) => {
@@ -458,3 +513,4 @@ module.exports = {
 	runSpyTick: runSpyTick
 };
 
+//TODO: move balance variables to an external file (.env?)
