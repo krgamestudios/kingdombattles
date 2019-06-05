@@ -197,7 +197,7 @@ const trainRequest = (connection) => (req, res) => {
 					break;
 
 				case 'spy':
-					cost = 200;
+					cost = 300;
 					break;
 
 				case 'scientist':

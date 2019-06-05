@@ -155,10 +155,10 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 				let totalEyes = results[0].recruits + results[0].soldiers * !defenderIsAttacking + results[0].spies * !defenderIsSpying + results[0].scientists;
 
 				//more spies reduces the chances of being seen? Counter intuitive
-				let chanceSeen = totalEyes / pendingSpying.attackingUnits;
+				let chanceSeen = totalEyes / (pendingSpying.attackingUnits  * 10); //it takes 10 eyes to guarantee the capture of 1 spy, 50% chance to capture 2 spies, etc.
 
 				//if seen
-				if (Math.random() * 100 <= chanceSeen) { //TODO: balance this
+				if (Math.random() <= chanceSeen) {
 					let query = 'INSERT INTO pastSpying (eventTime, attackerId, defenderId, attackingUnits, success, spoilsGold) VALUES (?, ?, ?, ?, "failure", 0);';
 					connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits], (err) => {
 						if (err) throw err;
@@ -199,7 +199,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 
 									log('Spy succeeded', pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits, totalEyes, spoilsGold);
 
-//									spyStealEquipment(connection, pendingSpying, spoilsGold);
+									spyStealEquipment(connection, pendingSpying, spoilsGold);
 								});
 							});
 						});
@@ -209,7 +209,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 		});;
 	});
 };
-/*
+
 const spyStealEquipment = (connection, pendingSpying, spoilsGold) => {
 	let query = 'SELECT id FROM pastSpying WHERE eventTime = ? AND attackerId = ? AND defenderId = ? AND spoilsGold = ?;'; //make it VERY hard to grab the wrong one
 	connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, spoilsGold], (err, results) => {
@@ -219,7 +219,7 @@ const spyStealEquipment = (connection, pendingSpying, spoilsGold) => {
 
 		for (let i = 0; i < pendingSpying.attackingUnits; i++) {
 			//50% chance of stealing equipment
-			if (Math.random() >= 0.5 || true) { //DEBUG
+			if (Math.random() >= 0.5) {
 				successfulSpies += 1;
 			}
 		}
@@ -237,7 +237,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 
 			//if he's not attacking, skip to the next step
 			if (!attacking) {
-				return spyStealEquipmentInnerInner(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
+				return spyStealEquipmentSelectItemsToSteal(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
 			}
 
 			//count the number of weapons/consumable items to be skipped, from strongest to weakest
@@ -252,7 +252,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 				connection.query(query, [defenderId], (err, armourResults) => {
 					if (err) throw err;
 
-					//NOTE: Armour stays at home - it's never carried by soldiers
+					//NOTE: Armour stays at home - it's never carried by soldiers (don't call removeForEachSoldier)
 
 					//weapons
 					let query = 'SELECT * FROM equipment WHERE accountId = ? AND type = "Weapon";';
@@ -273,7 +273,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 									//splice the two arrays back together
 									let results = weaponResults.concat(consumableResults, armourResults);
 
-									spyStealEquipmentInnerInner(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
+									spyStealEquipmentSelectItemsToSteal(connection, attackerId, defenderId, attackingUnits, results, pastSpyingId);
 								});
 							});
 						});
@@ -308,7 +308,7 @@ const removeForEachSoldier = (results, soldiers, cb) => {
 	});
 }
 
-const spyStealEquipmentInnerInner = (connection, attackerId, defenderId, attackingUnits, results, pastSpyingId) => {
+const spyStealEquipmentSelectItemsToSteal = (connection, attackerId, defenderId, attackingUnits, results, pastSpyingId) => {
 	//count the total items
 	let totalItems = 0;
 	results.forEach((item) => totalItems += item.quantity);
@@ -318,72 +318,139 @@ const spyStealEquipmentInnerInner = (connection, attackerId, defenderId, attacki
 	for (let i = 0; i < attackingUnits; i++) {
 		//select the specific item to steal
 		let selection = Math.floor(Math.random() * totalItems);
+		totalItems -= 1;
 
-		//find the exact item that will be stolen
-		items.push(results.filter((item) => {
+		//find the exact item that will be stolen (records[0])
+		let records = results.filter((item) => {
 			selection -= item.quantity;
-			if (selection < 0) {
-				return item;
-			}
-		})[0]);
-log(results.indexOf(items[items.length-1]));
-		results[results.indexOf(items[items.length-1])].quantity -= 1;
+			return selection < 0;
+		});
 
-		if (results[results.indexOf(items[items.length-1])].quantity === 0) {
-//			log(items[items.length-1].name);
-//			log(items[items.length-1].quantity);
-			log(results[results.indexOf(items[items.length-1])].name);
-			log(results[results.indexOf(items[items.length-1])].quantity);
-//			results[results.indexOf(items[items.length-1])].splice(1);
+		//move to items (quantity = 1)
+		if (records.length > 0) {
+			items.unshift({
+				id: records[0].id,
+				name: records[0].name,
+				type: records[0].type,
+				quantity: 1
+			});
+		}
+
+		//remove it from results (decrement and/or delete)
+		for (let i = 0; i < results.length; i++) {
+			if (results[i].id === items[0].id) {
+				results[i].quantity -= 1;
+				if (results[i].quantity <= 0) {
+					results.splice(i, 1);
+				}
+				break;
+			}
+		}
+
+		//skip the rest
+		if (results.length <= 0) {
+			break;
 		}
 	}
 
-return;
-	//NOTE: this is glacially slow
+	//collapse the {quantity:1} into {quantity:n}
+	let collapsedItems = [];
 
-	//insert a new record - will clean up duplicates later
-	let query = 'INSERT INTO equipment (accountId, name, type, quantity) VALUES (?, ?, ?, 1);';
-	connection.query(query, [attackerId, item.name, item.type], (err) => {
-		if (err) throw err;
-
-		spyStealEquipmentInnerInnerInner(connection, attackerId, defenderId, item, pastSpyingId);
+	items.forEach((item) => {
+		if (!collapsedItems[item.id]) {
+			collapsedItems[item.id] = { ...item };
+		} else {
+			collapsedItems[item.id].quantity += item.quantity;
+		}
 	});
+
+	items = []; //clear
+
+	collapsedItems.forEach((record) => {
+		items.push(record);
+	});
+
+	//next steps
+	spyStealEquipmentIncrementItemsToInventory(connection, attackerId, items);
+	spyStealEquipmentDecrementItemsFromInventory(connection, defenderId, items);
+	recordEquipmentStolen(connection, items, pastSpyingId);
 };
 
-const spyStealEquipmentInnerInnerInner = (connection, attackerId, defenderId, item, pastSpyingId) => {
-	//decrement or remove the item
-	if (item.quantity > 1) {
-		let query = 'UPDATE equipment SET quantity = quantity - 1 WHERE id = ? AND quantity > 0;';
-		connection.query(query, [item.id], (err) => {
+const spyStealEquipmentIncrementItemsToInventory = (connection, accountId, items) => {
+	//add the items to the players's inventory
+	items.forEach((item) => {
+		let query = 'SELECT * FROM equipment WHERE accountId = ? AND name = ? AND type = ?;';
+		connection.query(query, [accountId, item.name, item.type], (err, results) => {
 			if (err) throw err;
 
-			//move on to the next step
-	//		spyStealEquipmentInnerInnerInnerInner(connection, attackerId, defenderId, item, pastSpyingId);
-log('MARK 1');
+			let query;
+
+			//if the player has this item, or not
+			if (results.length > 0) {
+				query = 'UPDATE equipment SET quantity = quantity + ? WHERE accountId = ? AND name = ? AND type = ?;';
+			} else {
+				query = 'INSERT INTO equipment (quantity, accountId, name, type) VALUES (?, ?, ?, ?);';
+			}
+
+			connection.query(query, [item.quantity, accountId, item.name, item.type], (err) => {
+				if (err) throw err;
+			});
 		});
-	} else {
-		let query = 'DELETE FROM equipment WHERE id = ?;';
-		connection.query(query, [item.id], (err) => {
+	});
+
+	//error checking
+	items.forEach((item) => {
+		let query = 'SELECT * FROM equipment WHERE accountId = ? AND name = ? AND type = ?;';
+		connection.query(query, [accountId, item.name, item.type], (err, results) => {
 			if (err) throw err;
 
-			//
-	//		spyStealEquipmentInnerInnerInnerInner(connection, attackerId, defenderId, item, pastSpyingId);
-log('MARK 2');
+			if (results.length > 1) {
+				log('WARNING: Duplicate items detected', JSON.stringify(results));
+			}
 		})
-	}
-};
-
-const spyStealEquipmentInnerInnerInnerInner = (connection, attackerId, defenderId, item, pastSpyingId) => {
-	//insert into items stolen
-	let query = 'INSERT INTO equipmentStolen (pastSpyingId, name, type, quantity) VALUES (?, ?, ?, 1);';
-	connection.query(query, [pastSpyingId, item.name, item.type], (err) => {
-		if (err) throw err;
-
-		//Holy nesting, batman!
-		log('equipment stolen', attackerId, defenderId, item.id, item.name, item.type, pastSpyingId);
 	});
 };
-*/
+
+const spyStealEquipmentDecrementItemsFromInventory = (connection, accountId, items) => {
+	//remove these items from the player's inventory
+	items.forEach((item) => {
+		let query = 'UPDATE equipment SET quantity = quantity - ? WHERE accountId = ? AND id = ?;';
+		connection.query(query, [item.quantity, accountId, item.id], (err) => {
+			if (err) throw err;
+		});
+	});
+
+	//check to see if any quantities are negative
+	let query = 'SELECT * FROM equipment WHERE quantity < 0;';
+	connection.query(query, (err, results) => {
+		if (err) throw err;
+
+		if (results.length !== 0) {
+			log('WARNING: equipment quantity below zero', JSON.stringify(results));
+		}
+	});
+
+	//clean the database from quantities of 0
+	query = 'DELETE FROM equipment WHERE accountId = ? AND quantity = 0;';
+	connection.query(query, [accountId], (err) => {
+		if (err) throw err;
+
+		log('Cleaned database', 'equipment decrement');
+	});
+};
+
+const recordEquipmentStolen = (connection, items, pastSpyingId) => {
+	//record in the database
+	let query = 'INSERT INTO equipmentStolen (pastSpyingId, name, type, quantity) VALUES (?, ?, ?, ?);';
+	items.forEach((item) => {
+		connection.query(query, [pastSpyingId, item.name, item.type, item.quantity], (err) => {
+			if (err) throw err;
+
+			log('Items stolen', pastSpyingId, JSON.stringify(item));
+		});
+	});
+};
+
 module.exports = {
 	spyRequest: spyRequest,
 	spyStatusRequest: spyStatusRequest,

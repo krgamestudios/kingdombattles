@@ -176,7 +176,7 @@ class Profile extends React.Component {
 						<p className='col'>Spies:</p>
 						<p className='col'>{this.props.profile.spies}</p>
 
-						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (200 gold)</button>
+						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (300 gold)</button>
 						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
 					</div>
 				</div>
@@ -256,7 +256,6 @@ class Profile extends React.Component {
 							pendingStatus={'spying'}
 							pendingMsg={'Your spies are spying on'}
 							parseUnits={(json) => json.spies}
-							disabled={true}
 						>Send Spies</AttackButton>
 					</div>
 
