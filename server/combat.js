@@ -119,12 +119,14 @@ const combatLogRequest = (connection) => (req, res) => {
 		connection.query(query, [req.body.id], (err, results) => {
 			if (err) throw err;
 
+			let cachedName = results[0].username; //HOTFIX
+
 			let query = 'SELECT pastCombat.*, atk.username AS attacker, def.username AS defender FROM pastCombat JOIN accounts AS atk ON pastCombat.attackerId = atk.id JOIN accounts AS def ON pastCombat.defenderId = def.id WHERE atk.username = ? OR def.username = ? ORDER BY eventTime DESC LIMIT ?, ?;';
 			connection.query(query, [results[0].username, results[0].username, req.body.start, req.body.length], (err, results) => {
 				if (err) throw err;
 
 				res.status(200).json(results);
-				log('Combat log sent', results.length > 0 ? results[0].username : 'WARNING: NO NAME', req.body.id, req.body.token, req.body.start, req.body.length);
+				log('Combat log sent', cachedName, req.body.id, req.body.token, req.body.start, req.body.length);
 			});
 		});
 	});
