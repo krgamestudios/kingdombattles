@@ -390,16 +390,46 @@ const ladderRequest = (connection) => (req, res) => {
 };
 
 const runGoldTick = (connection) => {
-	let goldTickJob = new CronJob('0 */30 * * * *', () => {
-		let query = 'UPDATE profiles SET gold = gold + recruits;';
-		connection.query(query, (err) => {
+	//gotta love closures
+	let goldTickJob;
+	let oldTickRate;
+
+	//run outer tick once a minute, 30 seconds after goldTickJob to prevent clashes
+	let outerTick = new CronJob('30 * * * * *', () => {
+		log('outerTick');
+
+		let query = 'SELECT SUM(gold) / COUNT(*) AS goldAverage FROM profiles;';
+		connection.query(query, (err, results) => {
 			if (err) throw err;
 
-			log('Gold tick');
+			//determine the correct tick rate based on the current gold average
+			let tickRate = (() => {
+				if (results[0].goldAverage < 120) return 5;
+				if (results[0].goldAverage < 130) return 20;
+				if (results[0].goldAverage < 140) return 30;
+				return 60; //slow it way down
+			})();
+
+			//if the tick rate changed (or is undefined), reset (or start) the inner tick job
+			if (oldTickRate !== tickRate) {
+				if (goldTickJob) goldTickJob.stop();
+
+				goldTickJob = new CronJob(`0 */${tickRate} * * * *`, () => {
+					let query = 'UPDATE profiles SET gold = gold + recruits;';
+					connection.query(query, (err) => {
+						if (err) throw err;
+						log('goldTickJob', tickRate);
+					})
+				});
+
+				goldTickJob.start();
+
+				oldTickRate = tickRate;
+			}
 		});
 	});
 
-	goldTickJob.start();
+	outerTick.start();
 };
 
 module.exports = {
