@@ -34,7 +34,8 @@ let excluded = [ //messages that should not be logged
 	'Purchase made',
 	'Sale made',
 
-	'Cleaned database'
+	'Cleaned database',
+	'outerTick'
 ];
 
 const log = (msg, ...args) => {
