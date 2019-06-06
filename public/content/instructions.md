@@ -35,7 +35,7 @@ The best way to gain gold in this game is to attack other players. You can do th
 
 <div class="break" />
 
-Untrained recruits gain you 1 gold piece evey 15 minutes - the only unit type that grants a passive income. They also act as a defense force when your soldiers are away, but they have lower combat skills. When recriuts are attacked, it is marked as "undefended" in the combat log. Recruits can still use equipment.
+Untrained recruits gain you 1 gold piece evey 20 minutes - the only unit type that grants a passive income. They also act as a defense force when your soldiers are away, but they have lower combat skills. When recriuts are attacked, it is marked as "undefended" in the combat log. Recruits can still use equipment.
 
 <div class="break" />
 

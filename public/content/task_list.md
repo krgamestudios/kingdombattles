@@ -16,6 +16,7 @@ Minor
 * Implement banning mechanism.
 * Implement post scrolling for news page.
 * Everyone who signed up within the first month will get an exclusive badge (based on diagnostics data).
+* Do something about whitespace in usernames.
 
 Patch
 ---
