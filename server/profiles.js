@@ -422,8 +422,14 @@ const runGoldTick = (connection) => {
 					let query = 'UPDATE profiles SET gold = gold + recruits;';
 					connection.query(query, (err) => {
 						if (err) throw err;
-						log('goldTickJob', tickRate, results[0].goldAverage);
-					})
+
+						//re-fetch the new gold average for logging
+						let query = 'SELECT SUM(gold) / COUNT(*) AS goldAverage FROM profiles;';
+						connection.query(query, (err, results) => {
+							if (err) throw err;
+							log('goldTickJob', tickRate, results[0].goldAverage);
+						});
+					});
 				});
 
 				goldTickJob.start();
