@@ -336,7 +336,7 @@ const passwordRecoverRequest = (connection) => (req, res) => {
 				//build the recovery email
 				let addr = `http://${process.env.WEB_ADDRESS}/passwordreset?email=${fields.email}&token=${rand}`;
 				let msg = 'Hello! Please visit the following address to set a new password (if you didn\'t request a password recovery, ignore this email): ';
-				let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+//				let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
 
 				//BUGFIX: is gmail being cruel?
 				let sentinel = false;
@@ -347,7 +347,7 @@ const passwordRecoverRequest = (connection) => (req, res) => {
 					to: fields.email,
 					subject: 'Password Recovery',
 					text: msg + addr,
-					html: msgHtml
+//					html: msgHtml
 				}, (err, reply) => {
 					//final check
 					if (err) {
