@@ -24,6 +24,7 @@ Patch
 * Game Balance.
 * Images to social media instead of links.
 * Occasional flickering when rendering Profile page.
+* Pull the balance numbers out into a config file.
 
 Potential And Confirmed Bugs
 ---
@@ -35,7 +36,7 @@ Wishlist
 
 * In-game events.
 * Hire a graphic designer.
-* Implement nations (player alliances).
+* Implement nations (player alliances) (sending items/gold).
 * In-game chat.
 * Structures / shields.
 
