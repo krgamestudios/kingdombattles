@@ -418,7 +418,7 @@ const runGoldTick = (connection) => {
 					let query = 'UPDATE profiles SET gold = gold + recruits;';
 					connection.query(query, (err) => {
 						if (err) throw err;
-						log('goldTickJob', tickRate);
+						log('goldTickJob', tickRate, results[0].goldAverage);
 					})
 				});
 
