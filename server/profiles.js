@@ -409,7 +409,7 @@ const runGoldTick = (connection) => {
 			//determine the correct tick rate based on the current gold average
 			let tickRate = (() => {
 				if (results[0].goldAverage < 120) return 5;
-				if (results[0].goldAverage < 130) return 20;
+				if (results[0].goldAverage < 130) return 15;
 				if (results[0].goldAverage < 140) return 30;
 				return 60; //slow it way down
 			})();
