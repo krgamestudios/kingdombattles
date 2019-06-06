@@ -41,7 +41,7 @@ const handleDisconnect = () => {
 	});
 
 	//finally
-	return connection;
+	return connection; //TODO: test that this actually bloody works
 };
 
 module.exports = {
