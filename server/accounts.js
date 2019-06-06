@@ -9,6 +9,7 @@ let sendmail = require('sendmail')({silent: true});
 //utilities
 let { log, validateEmail } = require('../common/utilities.js');
 let { throttle, isThrottled } = require('../common/throttle.js');
+let { logActivity } = require('./utilities.js');
 
 const signupRequest = (connection) => (req, res) => {
 	//formidable handles forms
@@ -205,6 +206,8 @@ const loginRequest = (connection) => (req, res) => {
 						msg: log('Logged in', fields.email, rand)
 					});
 					res.end();
+
+					logActivity(connection, results[0].id);
 				});
 			});
 		});
@@ -216,6 +219,7 @@ const logoutRequest = (connection) => (req, res) => {
 	connection.query(query, [req.body.id, req.body.token], (err) => {
 		if (err) throw err;
 		log('Logged out', req.body.id, req.body.token);
+		logActivity(connection, req.body.id);
 	});
 
 	res.end(); //NOTE: don't send a response
@@ -275,6 +279,8 @@ const passwordChangeRequest = (connection) => (req, res) => {
 									msg: log('Password changed!', fields.id)
 								});
 								res.end();
+
+								logActivity(connection, fields.id);
 							});
 						});
 					});
@@ -410,7 +416,8 @@ const passwordResetRequest = (connection) => (req, res) => {
 
 							res.status(200).json({ msg: log('Password updated!', fields.email) });
 							res.end();
-							return;
+
+							logActivity(connection, results[0].id);
 						});
 					});
 				});

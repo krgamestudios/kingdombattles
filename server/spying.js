@@ -8,7 +8,7 @@ let CronJob = require('cron').CronJob;
 let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
-let { getStatistics, isSpying, isAttacking } = require('./utilities.js'); //TODO: rename getStatistics to getEquipmentStatistics
+let { getStatistics, isSpying, isAttacking, logActivity } = require('./utilities.js'); //TODO: rename getStatistics to getEquipmentStatistics
 
 const spyRequest = (connection) => (req, res) => {
 	//verify the attacker's credentials (only the attacker can launch an attack)
@@ -70,6 +70,8 @@ const spyRequest = (connection) => (req, res) => {
 							msg: log('Spying', req.body.attacker, req.body.defender) //TODO: am I using this msg parameter anywhere?
 						});
 						res.end();
+
+						logActivity(connection, req.body.id);
 					});
 				});
 			});

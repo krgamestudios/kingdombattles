@@ -4,7 +4,7 @@ require('dotenv').config();
 //libraries
 let CronJob = require('cron').CronJob;
 
-let { isAttacking, isSpying } = require('./utilities.js');
+let { isAttacking, isSpying, logActivity } = require('./utilities.js');
 
 //utilities
 let { logDiagnostics } = require('./diagnostics.js');
@@ -44,6 +44,7 @@ function profileCreateRequestInner(connection, req, res, body) {
 				if (err) throw err;
 
 				log('Profile created', body.username, body.id, body.token);
+				logActivity(connection, body.id);
 
 				return profileRequestInner(connection, req, res, body);
 			});
@@ -154,6 +155,7 @@ const recruitRequest = (connection) => (req, res) => {
 
 					log('Recruit successful', results[0].username, req.body.id, req.body.token);
 					logDiagnostics(connection, 'recruit', 1);
+					logActivity(connection, req.body.id);
 				});
 			});
 		});
@@ -259,6 +261,7 @@ const trainRequest = (connection) => (req, res) => {
 							});
 							res.end();
 							log('Train executed', results[0].username, req.body.role, req.body.id, req.body.token);
+							logActivity(connection, req.body.id);
 						});
 					});
 				});
@@ -371,6 +374,7 @@ const untrainRequest = (connection) => (req, res) => {
 							});
 							res.end();
 							log('Untrain executed', results[0].username, roleName, req.body.id, req.body.token);
+							logActivity(connection, req.body.id);
 						});
 					});
 				});

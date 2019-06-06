@@ -86,9 +86,17 @@ const isSpying = (connection, user, cb) => {
 	});
 };
 
+const logActivity = (connection, id) => {
+	let query = 'UPDATE accounts SET lastActivityTime = CURRENT_TIMESTAMP() WHERE id = ?;';
+	connection.query(query, [id], (err) => {
+		if (err) throw err;
+	});
+};
+
 module.exports = {
 	getStatistics: getStatistics,
 	getOwned: getOwned,
 	isAttacking: isAttacking,
-	isSpying: isSpying
+	isSpying: isSpying,
+	logActivity: logActivity
 };

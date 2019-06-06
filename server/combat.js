@@ -8,7 +8,7 @@ let CronJob = require('cron').CronJob;
 let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
-let { getStatistics, isAttacking } = require('./utilities.js');
+let { getStatistics, isAttacking, logActivity } = require('./utilities.js');
 
 const attackRequest = (connection) => (req, res) => {
 	//verify the attacker's credentials (only the attacker can launch an attack)
@@ -70,6 +70,8 @@ const attackRequest = (connection) => (req, res) => {
 							msg: log('Attacking', req.body.attacker, req.body.defender)
 						});
 						res.end();
+
+						logActivity(connection, req.body.id);
 					});
 				});
 			});
