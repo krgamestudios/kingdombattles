@@ -7,7 +7,7 @@ class News extends React.Component {
 		super(props);
 
 		this.state = {
-			//
+			//TODO: data?
 		};
 
 		if (props.getFetch) {

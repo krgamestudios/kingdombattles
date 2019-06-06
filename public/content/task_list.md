@@ -5,6 +5,8 @@ Major
 * Write the instructions for badges.
 * Implement countdown timers for combat and training.
 * Implement referral links.
+* Implement admin panel / stats page.
+* Implement bug tracker.
 
 Minor
 ---
@@ -20,6 +22,7 @@ Patch
 
 * Game Balance.
 * Images to social media instead of links.
+* Occasional flickering when rendering Profile page.
 
 Potential And Confirmed Bugs
 ---

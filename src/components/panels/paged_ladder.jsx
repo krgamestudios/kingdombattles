@@ -6,7 +6,7 @@ class PagedLadder extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//
+			//TODO: data?
 		}
 
 		if (props.getFetch) {
@@ -16,7 +16,7 @@ class PagedLadder extends React.Component {
 
 	render() {
 		return (
-			<div className='table'>
+			<div className='panel table'>
 				<div className='row mobile hide'>
 					<p className='col centered'>Username</p>
 					<p className='col centered'>Soldiers</p>

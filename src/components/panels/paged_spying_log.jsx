@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -20,17 +19,16 @@ class PagedSpyingLog extends React.Component {
 
 	render() {
 		//if there are no spies
-		if (this.props.spies <= 0 && this.state.data.length <= 0) {
+		if (this.state.data.length === 0) {
 			return (
 				<div className='panel'>
-					<p className='centered'>You have no spies!</p>
-					<p className='centered'>Go and <Link to='/profile'>train some!</Link></p>
+					<p className='centered'>It's empty in here, isn't it?</p>
 				</div>
 			);
 		}
 
 		return (
-			<div>
+			<div className='panel'>
 				{Object.keys(this.state.data).map((key) => <SpyingLogRecord key={key} username={this.props.username} {...this.state.data[key]} />)}
 			</div>
 		);
@@ -50,7 +48,7 @@ class PagedSpyingLog extends React.Component {
 					json.sort((a, b) => new Date(b.eventTime) - new Date(a.eventTime));
 
 					//on success
-					this.setState({ data: json });
+					this.setState({ data: json }); //OVERRIDE existing data
 
 					if (this.props.onReceived) {
 						this.props.onReceived(json);
@@ -99,4 +97,4 @@ const mapDispatchToProps = (dispatch) => {
 
 PagedSpyingLog = connect(mapStoreToProps, mapDispatchToProps)(PagedSpyingLog);
 
-export default withRouter(PagedSpyingLog);
+export default PagedSpyingLog;

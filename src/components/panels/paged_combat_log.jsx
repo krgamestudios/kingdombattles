@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -18,8 +19,17 @@ class PagedCombatLog extends React.Component {
 	}
 
 	render() {
+		//nothing to report
+		if (this.state.data.length === 0) {
+			return (
+				<div className='panel'>
+					<p className='centered'>Go and <Link to='/ladder'>attack someone!</Link></p>
+				</div>
+			);
+		}
+
 		return (
-			<div>
+			<div className='panel'>
 				{Object.keys(this.state.data).map((key) => <CombatLogRecord key={key} username={this.props.username} {...this.state.data[key]} />)}
 			</div>
 		);
@@ -39,7 +49,7 @@ class PagedCombatLog extends React.Component {
 					json.sort((a, b) => new Date(b.eventTime) - new Date(a.eventTime));
 
 					//on success
-					this.setState({ data: json });
+					this.setState({ data: json }); //OVERRIDE existing data
 
 					if (this.props.onReceived) {
 						this.props.onReceived(json);
@@ -88,4 +98,4 @@ const mapDispatchToProps = (dispatch) => {
 
 PagedCombatLog = connect(mapStoreToProps, mapDispatchToProps)(PagedCombatLog);
 
-export default PagedCombatLog;
+export default withRouter(PagedCombatLog);

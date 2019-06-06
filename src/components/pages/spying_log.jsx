@@ -22,7 +22,6 @@ class SpyingLog extends React.Component {
 			length: parseInt(params.length) || 20,
 
 			fetch: null,
-			buttonsVisible: false,
 
 			warning: ''
 		};
@@ -84,10 +83,6 @@ class SpyingLog extends React.Component {
 	}
 
 	buttonHeader() {
-		if (!this.buttonsVisible && this.props.spies <= 0) {
-			return null;
-		}
-//TODO: prettier messages
 		return (
 			<div className='table noCollapse'>
 				<div className='row'>
@@ -151,8 +146,6 @@ class SpyingLog extends React.Component {
 	}
 
 	onReceived(data) {
-		this.setState({ buttonsVisible: data.length > 0 });
-
 		if (data.length === 0) {
 			let start = Math.max(0, this.state.start - this.state.length);
 
