@@ -29,6 +29,7 @@ Patch
 * Pull the balance numbers out into a config file.
 * Ezekiel-powered discord role for kingdom battles players.
 * Refactor callback-hell (yes, it is that bad).
+* Treasure?
 
 Potential And Confirmed Bugs
 ---
