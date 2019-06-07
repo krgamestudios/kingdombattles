@@ -61,4 +61,5 @@ Badge Ideas
 * Referral Linker
 * Bug Hunter (Reward List: Hegemon)
 * Alliance exclusive badges
+* Donater / Supporter
 
