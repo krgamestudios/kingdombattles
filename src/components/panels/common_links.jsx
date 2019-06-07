@@ -37,6 +37,7 @@ class CommonLinks extends React.Component {
 					<p className='mobile centered'><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
 					<p className='mobile centered'><Link to='/patronlist' onClick={this.props.onClickPatronList}>Patron List</Link></p>
 					<p className='mobile centered'><Link to='/rules' onClick={this.props.onClickRules}>Rules</Link></p>
+					<p className='mobile centered'><Link to='/statistics' onClick={this.props.onClickStatistics}>Game Stats</Link></p>
 
 					<Extra />
 
@@ -53,6 +54,7 @@ class CommonLinks extends React.Component {
 					<p className='mobile centered'><Link to='/tasklist' onClick={this.props.onClickTaskList}>Task List</Link></p>
 					<p className='mobile centered'><Link to='/patronlist' onClick={this.props.onClickPatronList}>Patron List</Link></p>
 					<p className='mobile centered'><Link to='/rules' onClick={this.props.onClickRules}>Rules</Link></p>
+					<p className='mobile centered'><Link to='/statistics' onClick={this.props.onClickStatistics}>Game Stats</Link></p>
 
 					<Extra />
 				</div>
@@ -75,7 +77,8 @@ CommonLinks.propTypes = {
 	onClickSpyingLog: PropTypes.func,
 	onClickTaskList: PropTypes.func,
 	onClickPatronList: PropTypes.func,
-	onClickRules: PropTypes.func
+	onClickRules: PropTypes.func,
+	onClickStatistics: PropTypes.func
 };
 
 function mapStoreToProps(store) {

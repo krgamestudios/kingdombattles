@@ -26,6 +26,10 @@ let connection = connectToDatabase(); //uses .env
 let diagnostics = require('./diagnostics.js');
 diagnostics.runDailyDiagnostics(connection);
 
+//game statistics
+let statistics = require('./statistics.js');
+app.post('/statisticsrequest', statistics.statisticsRequest(connection));
+
 //handle accounts
 let accounts = require('./accounts.js');
 app.post('/signuprequest', accounts.signupRequest(connection));

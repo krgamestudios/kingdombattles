@@ -8,7 +8,7 @@ let CronJob = require('cron').CronJob;
 let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
-let { getStatistics, isAttacking, logActivity } = require('./utilities.js');
+let { getEquipmentStatistics, isAttacking, logActivity } = require('./utilities.js');
 
 const attackRequest = (connection) => (req, res) => {
 	//verify the attacker's credentials (only the attacker can launch an attack)
@@ -197,7 +197,7 @@ const runCombatTick = (connection) => {
 											if (err) throw err;
 
 											//get the global equipment stats
-											getStatistics((err, { statistics }) => {
+											getEquipmentStatistics((err, { statistics }) => {
 												if (err) throw err;
 
 												//get the combat boosts from equipment, from highest to lowest

@@ -5,7 +5,7 @@ Major
 * Write the instructions for badges.
 * Implement countdown timers for combat and training.
 * Implement referral links.
-* Implement admin panel / stats page.
+* Implement admin panel.
 * Implement bug tracker.
 
 Minor

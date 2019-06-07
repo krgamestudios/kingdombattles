@@ -4,7 +4,7 @@ require('dotenv').config();
 //utilities
 let { log } = require('../common/utilities.js');
 
-const getStatistics = (cb) => {
+const getEquipmentStatistics = (cb) => {
 	//TODO: apiVisible field
 	return cb(undefined, { 'statistics': require('./equipment_statistics.json') });
 };
@@ -94,7 +94,7 @@ const logActivity = (connection, id) => {
 };
 
 module.exports = {
-	getStatistics: getStatistics,
+	getEquipmentStatistics: getEquipmentStatistics,
 	getOwned: getOwned,
 	isAttacking: isAttacking,
 	isSpying: isSpying,

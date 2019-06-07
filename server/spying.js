@@ -8,7 +8,7 @@ let CronJob = require('cron').CronJob;
 let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
-let { getStatistics, isSpying, isAttacking, logActivity } = require('./utilities.js'); //TODO: rename getStatistics to getEquipmentStatistics
+let { getEquipmentStatistics, isSpying, isAttacking, logActivity } = require('./utilities.js');
 
 const spyRequest = (connection) => (req, res) => {
 	//verify the attacker's credentials (only the attacker can launch an attack)
@@ -292,7 +292,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 		connection.query(query, [defenderId], (err, results) => {
 			if (err) throw err;
 
-			getStatistics((err, { statistics }) => {
+			getEquipmentStatistics((err, { statistics }) => {
 				if (err) throw err;
 
 				//don't steal certain items
@@ -349,7 +349,7 @@ const spyStealEquipmentInner = (connection, attackerId, defenderId, attackingUni
 };
 
 const removeForEachSoldier = (results, soldiers, cb) => {
-	getStatistics((err, { statistics }) => {
+	getEquipmentStatistics((err, { statistics }) => {
 		if (err) throw err;
 
 		results.sort((a, b) => statistics[a.type][a.name].combatBoost < statistics[b.type][b.name].combatBoost);

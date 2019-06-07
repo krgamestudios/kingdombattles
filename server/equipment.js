@@ -4,7 +4,7 @@ require('dotenv').config();
 //utilities
 let { log } = require('../common/utilities.js');
 
-let { getStatistics, getOwned, isAttacking, isSpying, logActivity } = require('./utilities.js');
+let { getEquipmentStatistics, getOwned, isAttacking, isSpying, logActivity } = require('./utilities.js');
 
 const equipmentRequest = (connection) => (req, res) => {
 	//validate the credentials
@@ -21,7 +21,7 @@ const equipmentRequest = (connection) => (req, res) => {
 		//if no field received, send everything
 		if (!req.body.field) {
 			//compose the returned objects
-			return getStatistics((err, statisticsObj) => {
+			return getEquipmentStatistics((err, statisticsObj) => {
 				if (err) {
 					res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
 					res.end();
@@ -45,7 +45,7 @@ const equipmentRequest = (connection) => (req, res) => {
 		//send specific fields
 		switch(req.body.field) {
 			case 'statistics':
-				return getStatistics((err, obj) => {
+				return getEquipmentStatistics((err, obj) => {
 					if (err) {
 						res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
 					} else {
@@ -117,7 +117,7 @@ const purchaseRequest = (connection) => (req, res) => {
 					}
 
 					//get the stats for all objects
-					getStatistics((err, { statistics }) => {
+					getEquipmentStatistics((err, { statistics }) => {
 						if (err) throw err;
 
 						//valid parameters
@@ -235,7 +235,7 @@ const sellRequest = (connection) => (req, res) => {
 					}
 
 					//get the stats for all objects
-					getStatistics((err, { statistics }) => {
+					getEquipmentStatistics((err, { statistics }) => {
 						if (err) throw err;
 
 						//valid parameters
