@@ -57,4 +57,5 @@ Badge Ideas
 * Spy Master
 * Referral Linker
 * Bug Hunter (Reward List: Hegemon)
+* Alliance exclusive badges
 
