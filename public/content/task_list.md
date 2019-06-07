@@ -5,8 +5,9 @@ Major
 * Write the instructions for badges.
 * Implement countdown timers for combat and training.
 * Implement referral links.
-* Implement admin panel.
+* Implement admin panel (write posts without having to commit).
 * Implement bug tracker.
+* Ads / monetisation research.
 
 Minor
 ---
@@ -25,6 +26,8 @@ Patch
 * Images to social media instead of links.
 * Occasional flickering when rendering Profile page.
 * Pull the balance numbers out into a config file.
+* Ezekiel-powered discord role for kingdom battles players.
+* Refactor callback-hell (yes, it is that bad).
 
 Potential And Confirmed Bugs
 ---
