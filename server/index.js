@@ -76,6 +76,11 @@ app.get('/*app.bundle.js', (req, res) => {
 	res.sendFile(path.resolve(`${__dirname}/../public/${req.originalUrl.split('/').pop()}`));
 });
 
+//source map (for development)
+app.get('/app.bundle.js.map', (req, res) => {
+	res.sendFile(path.resolve(__dirname + `/../public/${req.originalUrl}`));
+});
+
 //fallback
 app.get('*', (req, res) => {
 	res.sendFile(path.resolve(__dirname + '/../public/index.html'));

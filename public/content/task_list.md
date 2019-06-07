@@ -45,3 +45,16 @@ Event Ideas
 
 * Capture the flag.
 
+Badge Ideas
+---
+
+* alpha tester
+* capture the flag
+* king of the hill
+* gold horde
+* combat master
+* Beta tester
+* Spy Master
+* Referral Linker
+* Bug Hunter (Reward List: Hegemon)
+

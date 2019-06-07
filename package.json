@@ -8,8 +8,8 @@
     "restart": "forever -a -o forever.log -e error.log restart server/index.js",
     "stop": "forever stop server/index.js",
     "node": "node server/index.js",
-    "webpack": "webpack --mode=development",
-    "webpack-production": "webpack --mode=production",
+    "webpack": "webpack --mode=development --env=development",
+    "webpack-production": "webpack --mode=production --env=production",
     "pull": "git pull && npm run webpack-production && npm restart"
   },
   "author": "Kayne Ruse",
