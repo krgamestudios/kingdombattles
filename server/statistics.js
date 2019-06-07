@@ -33,19 +33,27 @@ const statisticsRequest = (connection) => (req, res) => {
 			let activity = results[0].activity;
 			let activePercentage = round(activity / playerCount * 100);
 
-			res.status(200).json({
-				'Player Count': playerCount,
-				'Active Players': activity,
-				'Active Percentage': { string: `${activePercentage}%`, color: activePercentage >= 10 ? 'lightgreen' : activePercentage >= 5 ? 'yellow' : 'red'},
-				'Recruits Total':  recruitTotal,
-				'Soldier Total': soldierTotal,
-				'Scientist Total': scientistTotal,
-				'Spy Total': { string: '[Classified]', color: 'red' },
-				'Gold Average': `${round(goldAverage)}`,
-				'Tick Rate': `${tickRate} minutes`,
-				'Next Tick': `${nextTick} minute${nextTick === 1 ? '' : 's'} from now`
+			let query = 'SELECT COUNT(*) AS newPlayers FROM profiles WHERE td >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)';
+			connection.query(query, (err, results) => {
+				if (err) throw err;
+
+				let newPlayers = results[0].newPlayers;
+
+				res.status(200).json({
+					'Player Count': playerCount,
+					'Active Players': activity,
+					'Active Percentage': { string: `${activePercentage}%`, color: activePercentage >= 10 ? 'lightgreen' : activePercentage >= 5 ? 'yellow' : 'red'},
+					'New Players': newPlayers > 0 ? { string: `${newPlayers} (Welcome aboard!)`, color: 'lightgreen' } : { string: '0', color: 'yellow' },
+					'Recruits Total':  recruitTotal,
+					'Soldier Total': soldierTotal,
+					'Scientist Total': scientistTotal,
+					'Spy Total': { string: '[Classified]', color: 'red' },
+					'Gold Average': `${round(goldAverage)}`,
+					'Tick Rate': `${tickRate} minutes`,
+					'Next Tick': `${nextTick} minute${nextTick === 1 ? '' : 's'} from now`
+				});
+				res.end();
 			});
-			res.end();
 		});
 	});
 };
