@@ -9,7 +9,7 @@ const getEquipmentStatistics = (cb) => {
 	return cb(undefined, { 'statistics': require('./equipment_statistics.json') });
 };
 
-const getOwned = (connection, id, cb) => {
+const getEquipmentOwned = (connection, id, cb) => {
 	let query = 'SELECT name, quantity FROM equipment WHERE accountId = ?;';
 	connection.query(query, [id], (err, results) => {
 		if (err) throw err;
@@ -95,7 +95,7 @@ const logActivity = (connection, id) => {
 
 module.exports = {
 	getEquipmentStatistics: getEquipmentStatistics,
-	getOwned: getOwned,
+	getEquipmentOwned: getEquipmentOwned,
 	isAttacking: isAttacking,
 	isSpying: isSpying,
 	logActivity: logActivity

@@ -4,7 +4,7 @@ require('dotenv').config();
 //utilities
 let { log } = require('../common/utilities.js');
 
-let { getEquipmentStatistics, getOwned, isAttacking, isSpying, logActivity } = require('./utilities.js');
+let { getEquipmentStatistics, getEquipmentOwned, isAttacking, isSpying, logActivity } = require('./utilities.js');
 
 const equipmentRequest = (connection) => (req, res) => {
 	//validate the credentials
@@ -28,7 +28,7 @@ const equipmentRequest = (connection) => (req, res) => {
 					return;
 				}
 
-				return getOwned(connection, req.body.id, (err, ownedObj) => {
+				return getEquipmentOwned(connection, req.body.id, (err, ownedObj) => {
 					if (err) {
 						res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
 						res.end();
@@ -56,7 +56,7 @@ const equipmentRequest = (connection) => (req, res) => {
 				});
 
 			case 'owned':
-				return getOwned(connection, req.body.id, (err, obj) => {
+				return getEquipmentOwned(connection, req.body.id, (err, obj) => {
 					if (err) {
 						res.status(400).write(log(err, req.body.id, req.body.token, req.body.field));
 					} else {
@@ -172,10 +172,10 @@ const purchaseRequest = (connection) => (req, res) => {
 									if (err) throw err;
 
 									//return the new owned data
-									getOwned(connection, req.body.id, (err, results) => {
+									getEquipmentOwned(connection, req.body.id, (err, results) => {
 										if (err) throw err;
 
-										res.status(200).json(Object.assign(results));
+										res.status(200).json(Object.assign(results)); //TODO: Why is assign here?
 										res.end();
 
 										log('Purchase made', req.body.id, req.body.token, req.body.type, req.body.name);
@@ -265,7 +265,7 @@ const sellRequest = (connection) => (req, res) => {
 								if (err) throw err;
 
 								//return the new owned data
-								getOwned(connection, req.body.id, (err, results) => {
+								getEquipmentOwned(connection, req.body.id, (err, results) => {
 									if (err) throw err;
 
 									res.status(200).json(Object.assign(results));

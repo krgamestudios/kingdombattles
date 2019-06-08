@@ -39,6 +39,7 @@ Potential And Confirmed Bugs
 Wishlist
 ---
 
+* Mercenaries.
 * In-game events.
 * Hire a graphic designer.
 * Implement nations (player alliances) (sending items/gold).
@@ -64,4 +65,4 @@ Badge Ideas
 * Bug Hunter (Reward List: Hegemon)
 * Alliance exclusive badges
 * Donater / Supporter
-
+* Unknown / error badge

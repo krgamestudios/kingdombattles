@@ -16,6 +16,9 @@ let excluded = [ //messages that should not be logged
 	'Ladder sent',
 	'attacking',
 	'idle',
+	'Badge list sent',
+	'Badges owned sent',
+	'Updated badge selection',
 
 	'Combat log sent',
 	'Spy log sent',

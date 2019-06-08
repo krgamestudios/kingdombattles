@@ -71,6 +71,7 @@ export default class App extends React.Component {
 						<LazyRoute path='/ladder' component={() => import('./pages/ladder.jsx')} />
 						<LazyRoute path='/combatlog' component={() => import('./pages/combat_log.jsx')} />
 						<LazyRoute path='/spyinglog' component={() => import('./pages/spying_log.jsx')} />
+						<LazyRoute path='/badges' component={() => import('./pages/badge_select.jsx')} />
 
 						<LazyRoute path='/tasklist' component={() => import('./pages/task_list.jsx')} />
 						<LazyRoute path='/patronlist' component={() => import('./pages/patron_list.jsx')} />

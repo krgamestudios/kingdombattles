@@ -66,6 +66,11 @@ app.post('/equipmentrequest', equipment.equipmentRequest(connection));
 app.post('/equipmentpurchaserequest', equipment.purchaseRequest(connection));
 app.post('/equipmentsellrequest', equipment.sellRequest(connection));
 
+let badges = require('./badges.js');
+app.post('/badgeslistrequest', badges.listRequest(connection));
+app.post('/badgesownedrequest', badges.ownedRequest(connection));
+app.post('/badgeselectactiverequest', badges.selectActiveBadge(connection));
+
 //static directories
 app.use('/content', express.static(path.resolve(__dirname + '/../public/content')) );
 app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );

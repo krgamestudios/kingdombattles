@@ -30,6 +30,7 @@ class CommonLinks extends React.Component {
 				<div className='panel'>
 					<p className='mobile centered'><Link to='/profile' onClick={this.props.onClickProfile}>Your Kingdom</Link></p>
 					<p className='mobile centered'><Link to='/equipment' onClick={this.props.onClickEquipment}>Your Equipment</Link></p>
+					<p className='mobile centered'><Link to='/badges' onClick={this.props.onClickBadges}>Your Badges</Link></p>
 					<p className='mobile centered'><Link to='/ladder' onClick={this.props.onClickLadder}>Attack (Game Ladder)</Link></p>
 					<p className='mobile centered'><Link to='/combatlog' onClick={this.props.onClickCombatLog}>Combat Log</Link></p>
 					<p className='mobile centered'><Link to='/spyinglog' onClick={this.props.onClickSpyingLog}>Espionage Log</Link></p>
@@ -72,6 +73,7 @@ CommonLinks.propTypes = {
 	onClickPasswordRecover: PropTypes.func,
 	onClickProfile: PropTypes.func,
 	onClickEquipment: PropTypes.func,
+	onClickBadges: PropTypes.func,
 	onClickLadder: PropTypes.func,
 	onClickCombatLog: PropTypes.func,
 	onClickSpyingLog: PropTypes.func,

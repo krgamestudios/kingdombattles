@@ -1,0 +1,32 @@
+{
+	"Alpha Tester": {
+		"filename": "alpha_tester.png",
+		"description": "Awarded to everyone who joined before or on the 7th of June, 2019 (AEST).",
+		"visible": true,
+		"earnable": false
+	},
+	"Capture The Flag": {
+		"filename": "capture_the_flag.png",
+		"description": "This badge is stolen by successful attacks.",
+		"visible": true,
+		"earnable": true
+	},
+	"Combat Master": {
+		"filename": "combat_master.png",
+		"description": "You have successfully attacked 100 times.",
+		"visible": true,
+		"earnable": true
+	},
+	"Gold Horde": {
+		"filename": "gold_horde.png",
+		"description": "You purchased this badge for 500 gold.",
+		"visible": true,
+		"earnable": true
+	},
+	"King Of The Hill": {
+		"filename": "king_of_the_hill.png",
+		"description": "You held your position at the top of the game ladder for a whole day.",
+		"visible": true,
+		"earnable": true
+	}
+}

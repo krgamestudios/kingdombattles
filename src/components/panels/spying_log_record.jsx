@@ -13,7 +13,7 @@ class SpyingLogRecord extends React.Component {
 
 	render() {
 		return (
-			<div className='table noCollapse'>
+			<div className='panel table noCollapse'>
 				<hr />
 				<div className='break' />
 				<div className='row'>
