@@ -46,6 +46,7 @@ Wishlist
 * In-game chat.
 * Structures / shields.
 * Sharding.
+* Action queue?
 
 Event Ideas
 ---
