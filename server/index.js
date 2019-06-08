@@ -17,6 +17,8 @@ app.use(bodyParser.json());
 let news = require('./news.js');
 app.get('/newsrequest', news.newsRequest());
 app.post('/newsrequest', news.newsRequest());
+app.get('/newsheadersrequest', news.newsHeadersRequest());
+app.post('/newsheadersrequest', news.newsHeadersRequest());
 
 //database
 let { connectToDatabase } = require('./database.js');

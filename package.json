@@ -25,6 +25,7 @@
     "cron": "^1.7.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "firstline": "^2.0.2",
     "forever": "^1.0.0",
     "formidable": "^1.2.1",
     "mysql": "^2.17.1",

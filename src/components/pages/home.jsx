@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter, Link } from 'react-router-dom';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
@@ -39,6 +40,7 @@ class Home extends React.Component {
 						<Blurb />
 						<h1 className='centered'>News</h1>
 						<News setWarning={this.setWarning.bind(this)} getFetch={ (fn) => this.setState({ fetch: fn }) } />
+						<p className='centered'><Link to='/news'>See all news...</Link></p>
 					</div>
 				</div>
 			</div>
@@ -50,4 +52,4 @@ class Home extends React.Component {
 	}
 };
 
-export default Home;
+export default withRouter(Home);

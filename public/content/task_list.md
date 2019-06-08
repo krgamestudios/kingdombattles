@@ -6,6 +6,7 @@ Major
 * Implement admin panel (write posts without having to commit).
 * Implement bug tracker.
 * Ads / monetisation research.
+* github pages hosting?
 
 Minor
 ---

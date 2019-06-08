@@ -4,6 +4,7 @@ require('dotenv').config();
 //libraries
 let fs = require('fs');
 let path = require('path');
+let firstline = require('firstline');
 
 let { log } = require('../common/utilities.js');
 
@@ -49,6 +50,28 @@ const newsRequest = () => (req, res) => {
 	log('News sent', max, fileNames, JSON.stringify(json));
 };
 
+const newsHeadersRequest = () => (req, res) => {
+	let fpath = path.join(__dirname, '..', 'public', 'news');
+	let fileNames = fs.readdirSync(fpath);
+
+	let json = {};
+
+	let promises = [];
+
+	for(let i = 0; i < fileNames.length; i++) {
+		promises.push(firstline(path.join(fpath, fileNames[i])).then(fl => json[fileNames[i]] = { firstline: fl }));
+	}
+
+	Promise.all(promises)
+		.then(() => {
+			res.status(200).json(json);
+			res.end();
+
+			log('News headers sent', fileNames.length);
+		});
+}
+
 module.exports = {
-	newsRequest: newsRequest
+	newsRequest: newsRequest,
+	newsHeadersRequest: newsHeadersRequest
 };
