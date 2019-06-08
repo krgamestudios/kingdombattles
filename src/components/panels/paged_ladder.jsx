@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+import BadgeText from './badge_text.jsx';
 import ProgressiveRainbowText from './progressive_rainbow_text.jsx';
 
 class PagedLadder extends React.Component {
@@ -28,12 +29,12 @@ class PagedLadder extends React.Component {
 				{Object.keys(this.state).map((key) =><div key={key}>
 					<hr />
 					<div className='break' />
-					<div className={'row'}>
-						{
-							this.state[key].username === 'Ratstail91' ?
-							<Link to={`/profile?username=${this.state[key].username}`} className={'col centered truncate'}><ProgressiveRainbowText>{this.state[key].username}</ProgressiveRainbowText></Link> :
-							<Link to={`/profile?username=${this.state[key].username}`} className={'col centered truncate'}><p>{this.state[key].username}</p></Link>
-						}
+
+					<div className={'row'} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+						<Link className='col centered truncate' to={`/profile?username=${this.state[key].username}`}>
+							<BadgeText name={this.state[key].activeBadge} filename={this.state[key].activeBadgeUrl} size={'small'} centered={true}>{this.state[key].username}</BadgeText>
+						</Link>
+
 						<p className={'col centered truncate'}><span className='mobile show' style={{whiteSpace: 'pre'}}>Soldiers: </span>{this.state[key].soldiers}</p>
 						<p className={'col centered truncate'}><span className='mobile show' style={{whiteSpace: 'pre'}}>Recruits: </span>{this.state[key].recruits}</p>
 						<p className={'col centered truncate'}><span className='mobile show' style={{whiteSpace: 'pre'}}>Gold: </span>{this.state[key].gold}</p>

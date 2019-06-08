@@ -6,6 +6,8 @@ import {
 	STORE_SOLDIERS,
 	STORE_SPIES,
 	STORE_SCIENTISTS,
+	STORE_ACTIVE_BADGE,
+	STORE_ACTIVE_BADGE_FILENAME,
 	CLEAR_PROFILE
 } from '../actions/profile.js';
 
@@ -15,7 +17,9 @@ const initialStore = {
 	recruits: 0,
 	soldiers: 0,
 	spies: 0,
-	scientists: 0
+	scientists: 0,
+	activeBadge: '',
+	activeBadgeFilename: ''
 };
 
 export const profileReducer = (store = initialStore, action) => {
@@ -29,6 +33,8 @@ export const profileReducer = (store = initialStore, action) => {
 			newStore.soldiers = action.soldiers;
 			newStore.spies = action.spies;
 			newStore.scientists = action.scientists;
+			newStore.activeBadge = action.activeBadge;
+			newStore.activeBadgeFilename = action.activeBadgeFilename;
 		break;
 
 		case STORE_USERNAME:
@@ -53,6 +59,14 @@ export const profileReducer = (store = initialStore, action) => {
 
 		case STORE_SCIENTISTS:
 			newStore.scientists = action.scientists;
+		break;
+
+		case STORE_ACTIVE_BADGE:
+			newStore.activeBadge = action.activeBadge;
+		break;
+
+		case STORE_ACTIVE_BADGE_FILENAME:
+			newStore.activeBadgeFilename = action.activeBadgeFilename;
 		break;
 
 		case CLEAR_PROFILE:

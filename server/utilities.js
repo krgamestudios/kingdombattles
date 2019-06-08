@@ -27,6 +27,29 @@ const getEquipmentOwned = (connection, id, cb) => {
 	});
 };
 
+const getBadgesStatistics = (cb) => {
+	//TODO: apiVisible field
+	return cb(undefined, { 'statistics': require('./badge_statistics.json') });
+};
+
+const getBadgesOwned = (connection, id, cb) => {
+	let query = 'SELECT name, active FROM badges WHERE accountId = ?;';
+	connection.query(query, [id], (err, results) => {
+		if (err) throw err;
+
+		let ret = {}; //names, active
+
+		Object.keys(results).map((key) => {
+			if (ret[results[key].name] !== undefined) {
+				log('WARNING: Invalid database state, badges owned', id, JSON.stringify(results));
+			}
+			ret[results[key].name] = { active: results[key].active };
+		});
+
+		return cb(undefined, { 'owned': ret });
+	});
+}
+
 const isNormalInteger = (str) => {
     let n = Math.floor(Number(str));
     return n !== Infinity && String(n) == str && n >= 0;
@@ -96,6 +119,8 @@ const logActivity = (connection, id) => {
 module.exports = {
 	getEquipmentStatistics: getEquipmentStatistics,
 	getEquipmentOwned: getEquipmentOwned,
+	getBadgesStatistics: getBadgesStatistics,
+	getBadgesOwned: getBadgesOwned,
 	isAttacking: isAttacking,
 	isSpying: isSpying,
 	logActivity: logActivity

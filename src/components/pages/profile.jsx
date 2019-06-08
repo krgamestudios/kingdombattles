@@ -10,6 +10,7 @@ import { storeProfile, clearProfile } from '../../actions/profile.js';
 import CommonLinks from '../panels/common_links.jsx';
 import AttackButton from '../panels/attack_button.jsx';
 import Markdown from '../panels/markdown.jsx';
+import BadgeText from '../panels/badge_text.jsx';
 
 class Profile extends React.Component {
 	constructor(props) {
@@ -103,7 +104,9 @@ class Profile extends React.Component {
 						json.recruits,
 						json.soldiers,
 						json.spies,
-						json.scientists
+						json.scientists,
+						json.activeBadge,
+						json.activeBadgeFilename
 					);
 				}
 				else if (xhr.status === 400) {
@@ -136,7 +139,7 @@ class Profile extends React.Component {
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
-						<p className='col'>{this.props.profile.username}</p>
+						<BadgeText name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'} className='col'>{this.props.profile.username}</BadgeText>
 
 						<div className='col'></div>
 						<div className='col'></div>
@@ -209,7 +212,7 @@ class Profile extends React.Component {
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
-						<p className='col'>{this.props.profile.username}</p>
+						<BadgeText name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'} className='col'>{this.props.profile.username}</BadgeText>
 
 						<div className='col' />
 						<div className='col' />
@@ -294,7 +297,7 @@ class Profile extends React.Component {
 				<div className='table noCollapse'>
 					<div className='row'>
 						<p className='col'>Username:</p>
-						<p className='col'>{this.props.profile.username}</p>
+						<BadgeText name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'} className='col'>{this.props.profile.username}</BadgeText>
 
 						<div className='col' />
 						<div className='col' />
@@ -366,7 +369,7 @@ const mapStoreToProps = (store) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		storeProfile: (username, gold, recruits, soldiers, spies, scientists) => dispatch(storeProfile(username, gold, recruits, soldiers, spies, scientists)),
+		storeProfile: (username, gold, recruits, soldiers, spies, scientists, activeBadge, activeBadgeFilename) => dispatch(storeProfile(username, gold, recruits, soldiers, spies, scientists, activeBadge, activeBadgeFilename)),
 		clearProfile: () => dispatch(clearProfile())
 	};
 };

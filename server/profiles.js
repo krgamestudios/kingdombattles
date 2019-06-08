@@ -4,7 +4,7 @@ require('dotenv').config();
 //libraries
 let CronJob = require('cron').CronJob;
 
-let { isAttacking, isSpying, logActivity } = require('./utilities.js');
+let { getBadgesStatistics, getBadgesOwned, isAttacking, isSpying, logActivity } = require('./utilities.js');
 
 //utilities
 let { logDiagnostics } = require('./diagnostics.js');
@@ -77,17 +77,28 @@ function profileRequestInner(connection, req, res, body) {
 				}
 			});
 		} else {
-			//results.length === 1
-			res.status(200).json({
-				username: body.username,
-				gold: results[0].gold,
-				recruits: results[0].recruits,
-				soldiers: results[0].soldiers,
-				spies: results[0].spies,
-				scientists: results[0].scientists
+			getBadgesOwned(connection, results[0].accountId, (err, { owned }) => {
+				if (err) throw err;
+
+				getBadgesStatistics((err, { statistics }) => {
+					if (err) throw err;
+
+					let activeBadge = Object.keys(owned).find(name => owned[name].active) || null;
+
+					res.status(200).json({
+						username: body.username,
+						gold: results[0].gold,
+						recruits: results[0].recruits,
+						soldiers: results[0].soldiers,
+						spies: results[0].spies,
+						scientists: results[0].scientists,
+						activeBadge: activeBadge,
+						activeBadgeFilename: activeBadge ? statistics[activeBadge].filename : null
+					});
+					res.end();
+					log('Profile sent', body.username, body.id, body.token);
+				});
 			});
-			res.end();
-			log('Profile sent', body.username, body.id, body.token);
 		}
 	});
 };
@@ -142,20 +153,31 @@ const recruitRequest = (connection) => (req, res) => {
 						return;
 					}
 
-					//results.length === 1
-					res.status(200).json({
-						username: results[0].username,
-						gold: results[0].gold,
-						recruits: results[0].recruits,
-						soldiers: results[0].soldiers,
-						spies: results[0].spies,
-						scientists: results[0].scientists
-					});
-					res.end();
+					getBadgesOwned(connection, results[0].accountId, (err, { owned }) => {
+						if (err) throw err;
 
-					log('Recruit successful', results[0].username, req.body.id, req.body.token);
-					logDiagnostics(connection, 'recruit', 1);
-					logActivity(connection, req.body.id);
+						getBadgesStatistics((err, { statistics }) => {
+							if (err) throw err;
+
+							let activeBadge = Object.keys(owned).find(name => owned[name].active) || null;
+
+							res.status(200).json({
+								username: results[0].username,
+								gold: results[0].gold,
+								recruits: results[0].recruits,
+								soldiers: results[0].soldiers,
+								spies: results[0].spies,
+								scientists: results[0].scientists,
+								activeBadge: activeBadge,
+								activeBadgeFilename: activeBadge ? statistics[activeBadge].filename : null
+							});
+							res.end();
+
+							log('Recruit successful', results[0].username, req.body.id, req.body.token);
+							logDiagnostics(connection, 'recruit', 1);
+							logActivity(connection, req.body.id);
+						});
+					});
 				});
 			});
 		});
@@ -250,18 +272,30 @@ const trainRequest = (connection) => (req, res) => {
 								return;
 							}
 
-							//results.length === 1
-							res.status(200).json({
-								username: results[0].username,
-								gold: results[0].gold,
-								recruits: results[0].recruits,
-								soldiers: results[0].soldiers,
-								spies: results[0].spies,
-								scientists: results[0].scientists
+							getBadgesOwned(connection, results[0].accountId, (err, { owned }) => {
+								if (err) throw err;
+
+								getBadgesStatistics((err, { statistics }) => {
+									if (err) throw err;
+
+									let activeBadge = Object.keys(owned).find(name => owned[name].active) || null;
+
+									res.status(200).json({
+										username: results[0].username,
+										gold: results[0].gold,
+										recruits: results[0].recruits,
+										soldiers: results[0].soldiers,
+										spies: results[0].spies,
+										scientists: results[0].scientists,
+										activeBadge: activeBadge,
+										activeBadgeFilename: activeBadge ? statistics[activeBadge].filename : null
+									});
+									res.end();
+
+									log('Train executed', results[0].username, req.body.role, req.body.id, req.body.token);
+									logActivity(connection, req.body.id);
+								});
 							});
-							res.end();
-							log('Train executed', results[0].username, req.body.role, req.body.id, req.body.token);
-							logActivity(connection, req.body.id);
 						});
 					});
 				});
@@ -363,18 +397,30 @@ const untrainRequest = (connection) => (req, res) => {
 								return;
 							}
 
-							//results.length === 1
-							res.status(200).json({
-								username: results[0].username,
-								gold: results[0].gold,
-								recruits: results[0].recruits,
-								soldiers: results[0].soldiers,
-								spies: results[0].spies,
-								scientists: results[0].scientists
+							getBadgesOwned(connection, results[0].accountId, (err, { owned }) => {
+								if (err) throw err;
+
+								getBadgesStatistics((err, { statistics }) => {
+									if (err) throw err;
+
+									let activeBadge = Object.keys(owned).find(name => owned[name].active) || null;
+
+									res.status(200).json({
+										username: results[0].username,
+										gold: results[0].gold,
+										recruits: results[0].recruits,
+										soldiers: results[0].soldiers,
+										spies: results[0].spies,
+										scientists: results[0].scientists,
+										activeBadge: activeBadge,
+										activeBadgeFilename: activeBadge ? statistics[activeBadge].filename : null
+									});
+									res.end();
+
+									log('Untrain executed', results[0].username, roleName, req.body.id, req.body.token);
+									logActivity(connection, req.body.id);
+								});
 							});
-							res.end();
-							log('Untrain executed', results[0].username, roleName, req.body.id, req.body.token);
-							logActivity(connection, req.body.id);
 						});
 					});
 				});
@@ -384,12 +430,31 @@ const untrainRequest = (connection) => (req, res) => {
 };
 
 const ladderRequest = (connection) => (req, res) => {
-	let query = 'SELECT username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY soldiers DESC, recruits DESC, gold DESC LIMIT ?, ?;';
+	let query = 'SELECT accounts.id AS id, username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY soldiers DESC, recruits DESC, gold DESC LIMIT ?, ?;';
 	connection.query(query, [req.body.start, req.body.length], (err, results) => {
 		if (err) throw err;
 
-		res.status(200).json(results);
-		log('Ladder sent', req.body.start, req.body.length, results);
+		getBadgesStatistics((err, { statistics }) => {
+			if (err) throw err;
+
+			for(let i = 0; i < results.length; i++) {
+				getBadgesOwned(connection, results[i].id, (err, { owned }) => {
+					if (err) throw err;
+
+					results[i].activeBadge = Object.keys(owned).find(name => owned[name].active) || null;
+					results[i].activeBadgeUrl = results[i].activeBadge ? statistics[results[i].activeBadge].filename : null;
+
+					//don't share IDs
+					delete results[i].id;
+
+					//weird, because of async
+					if (i + 1 === results.length) {
+						res.status(200).json(results);
+						log('Ladder sent', req.body.start, req.body.length, results);
+					}
+				});
+			}
+		});
 	});
 };
 

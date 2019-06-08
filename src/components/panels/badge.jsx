@@ -10,6 +10,10 @@ class Badge extends React.Component {
 	}
 
 	render() {
+		if (!this.props.filename) {
+			return null;
+		}
+
 		let realSize = typeof(this.props.size) === 'number' ? this.props.number : this.parseSize(this.props.size);
 
 		return (
@@ -18,8 +22,8 @@ class Badge extends React.Component {
 	}
 
 	parseSize(sizeString) {
-		if (sizeString === 'small') return 12;
-		if (sizeString === 'medium') return 20;
+		if (sizeString === 'small') return 20;
+		if (sizeString === 'medium') return 50;
 		return 100;
 	}
 };

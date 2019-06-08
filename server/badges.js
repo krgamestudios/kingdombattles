@@ -4,30 +4,7 @@ require('dotenv').config();
 //utilities
 let { log } = require('../common/utilities.js');
 
-let { logActivity } = require('./utilities.js');
-
-const getBadgesStatistics = (cb) => {
-	//TODO: apiVisible field
-	return cb(undefined, { 'statistics': require('./badge_statistics.json') });
-};
-
-const getBadgesOwned = (connection, id, cb) => {
-	let query = 'SELECT name, active FROM badges WHERE accountId = ?;';
-	connection.query(query, [id], (err, results) => {
-		if (err) throw err;
-
-		let ret = {}; //names, active
-
-		Object.keys(results).map((key) => {
-			if (ret[results[key].name] !== undefined) {
-				log('WARNING: Invalid database state, badges owned', id, JSON.stringify(results));
-			}
-			ret[results[key].name] = { active: results[key].active };
-		});
-
-		return cb(undefined, { 'owned': ret });
-	});
-}
+let { logActivity, getBadgesStatistics, getBadgesOwned } = require('./utilities.js');
 
 const listRequest = (connection) => (req, res) => {
 	getBadgesStatistics((err, results) => {
