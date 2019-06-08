@@ -24,7 +24,7 @@ const ownedRequest = (connection) => (req, res) => {
 		if (err) throw err;
 
 		if (credentials[0].total !== 1) {
-			res.status(400).write(log('Invalid badges owned credentials', JSON.stringify(body), body.id, body.token));
+			res.status(400).write(log('Invalid badges owned credentials', JSON.stringify(req.body), req.body.id, req.body.token));
 			res.end();
 			return;
 		}
