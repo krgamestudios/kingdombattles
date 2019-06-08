@@ -24,6 +24,7 @@ let excluded = [ //messages that should not be logged
 	'Spy log sent',
 	'News sent',
 	'News sent (singular)',
+	'News headers sent',
 
 	'Can\'t train while attacking',
 	'Can\'t untrain while attacking',
