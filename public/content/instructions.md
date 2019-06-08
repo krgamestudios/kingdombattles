@@ -97,7 +97,7 @@ New equipment becomes accessible as soon as you train a new scientist, and purch
 
 <div class="break" />
 
---Coming Soon--
+Badges are bling - vanity items that appear next to your name on the game ladder and profile. Some are easy to unlock, others require specific situations. Others still are exclusives, and no longer available. You can see a full list of badges on the [badges list page](/badges/list).
 
 <div class="break" />
 

@@ -17,7 +17,7 @@ class Badge extends React.Component {
 		let realSize = typeof(this.props.size) === 'number' ? this.props.number : this.parseSize(this.props.size);
 
 		return (
-			<img {...this.props} src={`/img/badges/${this.props.filename}`} alt={this.props.name} width={realSize} height={realSize} />
+			<img {...this.props} src={`/img/badges/${this.props.filename}`} alt={this.props.name} width={realSize} height={realSize} style={{ minWidth: realSize, minHeight: realSize }} />
 		);
 	}
 

@@ -1,8 +1,6 @@
 Major
 ---
 
-* Implement badges.
-* Write the instructions for badges.
 * Implement countdown timers for combat and training.
 * Implement referral links.
 * Implement admin panel (write posts without having to commit).
@@ -30,6 +28,7 @@ Patch
 * Ezekiel-powered discord role for kingdom battles players.
 * Refactor callback-hell (yes, it is that bad).
 * Treasure?
+* Add a link home to the verification message.
 
 Potential And Confirmed Bugs
 ---
@@ -45,6 +44,7 @@ Wishlist
 * Implement nations (player alliances) (sending items/gold).
 * In-game chat.
 * Structures / shields.
+* Sharding.
 
 Event Ideas
 ---
@@ -54,7 +54,7 @@ Event Ideas
 Badge Ideas
 ---
 
-* alpha tester
+* ~~alpha tester~~
 * capture the flag
 * king of the hill
 * gold horde

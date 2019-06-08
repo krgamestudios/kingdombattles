@@ -22,9 +22,9 @@ class BadgeText extends React.Component {
 		let style = this.props.centered ? centerStyle : leftStyle;
 
 		return (
-			<div {...this.props} style={{...style, paddingBottom: '0.5em'}}>
+			<div className={this.props.className} style={{...style, paddingBottom: '0.5em'}}>
 				<Badge name={this.props.name} filename={this.props.filename} size={this.props.size} />
-				<p style={{paddingBottom: 0}}>{this.props.children}</p>
+				<p style={{paddingBottom: 0, ...this.props.style}}>{this.props.children}</p>
 			</div>
 		);
 	}

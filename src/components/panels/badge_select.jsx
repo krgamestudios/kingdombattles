@@ -50,7 +50,7 @@ class BadgeSelect extends React.Component {
 							<hr className='col mobile show' />
 						</div>
 					</div>
-				)}
+				).reverse()}
 			</div>
 		);
 	}

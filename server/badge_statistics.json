@@ -3,30 +3,30 @@
 		"filename": "alpha_tester.png",
 		"description": "Awarded to everyone who joined before or on the 7th of June, 2019 (AEST).",
 		"visible": true,
-		"earnable": false
+		"unlockable": false
 	},
 	"Capture The Flag": {
 		"filename": "capture_the_flag.png",
-		"description": "This badge is stolen by successful attacks.",
+		"description": "This badge is stolen by successful attacks. It is automatically set as your active badge, and you can't change it until it is lost; it also sets your name to yellow, so everyone knows you have it. Only one exists.",
 		"visible": true,
-		"earnable": true
+		"unlockable": null
 	},
 	"Combat Master": {
 		"filename": "combat_master.png",
 		"description": "You have successfully attacked 100 times.",
 		"visible": true,
-		"earnable": true
+		"unlockable": null
 	},
 	"Gold Horde": {
 		"filename": "gold_horde.png",
 		"description": "You purchased this badge for 500 gold.",
 		"visible": true,
-		"earnable": true
+		"unlockable": null
 	},
 	"King Of The Hill": {
 		"filename": "king_of_the_hill.png",
 		"description": "You held your position at the top of the game ladder for a whole day.",
 		"visible": true,
-		"earnable": true
+		"unlockable": null
 	}
 }
