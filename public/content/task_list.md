@@ -1,7 +1,8 @@
 Major
 ---
 
-* Implement countdown timers for combat and training.
+* Implement countdown timers for combat, spying and training.
+* Write unit tests (ensure that the game doesn't break from an update).
 * Implement referral links.
 * Implement admin panel (write posts without having to commit).
 * Implement bug tracker.
@@ -12,7 +13,6 @@ Minor
 ---
 
 * Implement new game ladder sorting.
-* Write unit tests (ensure that the game doesn't break from an update).
 * Implement banning mechanism.
 * Implement post scrolling for news page.
 * Everyone who signed up within the first month will get an exclusive badge (based on diagnostics data).
