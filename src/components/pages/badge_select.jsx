@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';
@@ -11,6 +12,12 @@ class BadgeSelect extends React.Component {
 			warning: '', //TODO: unified warning?
 			fetch: null
 		};
+	}
+
+	componentDidMount() {
+		if (!this.props.loggedIn) {
+			this.props.history.replace('/login');
+		}
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -47,5 +54,20 @@ class BadgeSelect extends React.Component {
 		this.setState({ warning: s });
 	}
 };
+
+const mapStoreToProps = (store) => {
+	return {
+		loggedIn: store.account.id !== 0
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		//
+	};
+};
+
+BadgeSelect = connect(mapStoreToProps, mapDispatchToProps)(BadgeSelect);
+
 
 export default BadgeSelect;
