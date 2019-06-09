@@ -40,7 +40,7 @@ class Home extends React.Component {
 						<Blurb />
 						<h1 className='centered'>News</h1>
 						<News setWarning={this.setWarning.bind(this)} getFetch={ (fn) => this.setState({ fetch: fn }) } />
-						<p className='centered'><Link to='/news'>See all news...</Link></p>
+						<p className='right'><Link to='/news'>See all news...</Link></p>
 					</div>
 				</div>
 			</div>
