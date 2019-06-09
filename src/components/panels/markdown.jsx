@@ -19,7 +19,7 @@ class Markdown extends React.Component {
 	}
 
 	render() {
-		if (this.state) {
+		if (this.state.data) {
 			return (<ReactMarkdown source={this.state.data} escapeHtml={false} {...this.props} />);
 		} else {
 			return (<p className='centered'>Loading markdown...</p>);

@@ -23,7 +23,7 @@ Minor
 Patch
 ---
 
-* Game Balance.
+* Game Balance - move balance variables to a config file.
 * Images to social media instead of links.
 * Occasional flickering when rendering Profile page.
 * Pull the balance numbers out into a config file.
