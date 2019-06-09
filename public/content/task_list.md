@@ -12,6 +12,7 @@ Major
 Minor
 ---
 
+* Add "Are you sure?" prompt to untrain.
 * Proper changelog feed.
 * Implement new game ladder sorting.
 * Implement banning mechanism.
