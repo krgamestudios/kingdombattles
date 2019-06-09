@@ -12,6 +12,7 @@ Major
 Minor
 ---
 
+* Proper changelog feed.
 * Implement new game ladder sorting.
 * Implement banning mechanism.
 * Implement post scrolling for news page.
