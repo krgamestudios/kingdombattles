@@ -436,6 +436,12 @@ const ladderRequest = (connection) => (req, res) => {
 		getBadgesStatistics((err, { statistics }) => {
 			if (err) throw err;
 
+			//BUGFIX
+			if (results.length === 0) {
+				res.status(200).json([]);
+				res.end();
+			}
+
 			for(let i = 0; i < results.length; i++) {
 				getBadgesOwned(connection, results[i].id, (err, { owned }) => {
 					if (err) throw err;
@@ -449,6 +455,7 @@ const ladderRequest = (connection) => (req, res) => {
 					//weird, because of async
 					if (i + 1 === results.length) {
 						res.status(200).json(results);
+						res.end();
 						log('Ladder sent', req.body.start, req.body.length, results);
 					}
 				});

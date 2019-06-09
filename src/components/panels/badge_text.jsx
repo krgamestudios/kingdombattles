@@ -5,7 +5,7 @@ class BadgeText extends React.Component {
 	render() {
 		if (!this.props.filename) {
 			return (
-				<p {...this.props}>{this.props.children}</p>
+				<p className={this.props.className} style={this.props.style}>{this.props.children}</p>
 			);
 		}
 
