@@ -7,7 +7,7 @@ let CronJob = require('cron').CronJob;
 //utilities
 let { log } = require('../common/utilities.js');
 
-let { logActivity, getBadgesStatistics, getBadgesOwned } = require('./utilities.js');
+let { logActivity, getBadgesStatistics, getBadgesOwned, getLadderData } = require('./utilities.js');
 
 const listRequest = (connection) => (req, res) => {
 	getBadgesStatistics((err, results) => {
@@ -123,6 +123,20 @@ const runBadgeTicks = (connection) => {
 	});
 
 	combatMasterBadgeTickJob.start();
+/*
+	//King Of The Hill
+	let kingOfTheHillBadgeTickJob = new CronJob('0 * * * * *', () => {
+		getLadderData(connection, 0, 1, (err, ladderResults) => {
+			if (err) throw err;
+
+			//TODO: pull badge names into variables. Not good.
+			let query = 'SELECT * FROM badgesTimespan WHERE qualifyTime >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND name = "King Of The Hill";';
+			connection.query(query, (err, results) => {
+				if (err) throw err;
+			});
+		});
+	});
+*/
 }
 
 module.exports = {

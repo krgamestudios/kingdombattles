@@ -109,6 +109,14 @@ const isSpying = (connection, user, cb) => {
 	});
 };
 
+const getLadderData = (connection, start, length, cb) => {
+	//moved here for reusability
+	let query = 'SELECT accounts.id AS id, username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY soldiers DESC, recruits DESC, gold DESC LIMIT ?, ?;';
+	connection.query(query, [start, length], (err, results) => {
+		cb(err, results);
+	});
+};
+
 const logActivity = (connection, id) => {
 	let query = 'UPDATE accounts SET lastActivityTime = CURRENT_TIMESTAMP() WHERE id = ?;';
 	connection.query(query, [id], (err) => {
@@ -123,5 +131,6 @@ module.exports = {
 	getBadgesOwned: getBadgesOwned,
 	isAttacking: isAttacking,
 	isSpying: isSpying,
+	getLadderData: getLadderData,
 	logActivity: logActivity
 };

@@ -4,7 +4,7 @@ require('dotenv').config();
 //libraries
 let CronJob = require('cron').CronJob;
 
-let { getBadgesStatistics, getBadgesOwned, isAttacking, isSpying, logActivity } = require('./utilities.js');
+let { getBadgesStatistics, getBadgesOwned, isAttacking, isSpying, getLadderData, logActivity } = require('./utilities.js');
 
 //utilities
 let { logDiagnostics } = require('./diagnostics.js');
@@ -430,8 +430,7 @@ const untrainRequest = (connection) => (req, res) => {
 };
 
 const ladderRequest = (connection) => (req, res) => {
-	let query = 'SELECT accounts.id AS id, username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY soldiers DESC, recruits DESC, gold DESC LIMIT ?, ?;';
-	connection.query(query, [req.body.start, req.body.length], (err, results) => {
+	getLadderData(connection, req.body.start, req.body.length, (err, results) => {
 		if (err) throw err;
 
 		getBadgesStatistics((err, { statistics }) => {
