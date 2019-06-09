@@ -43,7 +43,9 @@ Wishlist
 * Mercenaries.
 * In-game events.
 * Hire a graphic designer.
-* Implement nations (player alliances) (sending items/gold).
+* Implement nations (player alliances) (sending items/gold; guild bank? guild taxes? population caps?).
+* How to balance powerful and weak nations?
+* Nations are rife for abuse.
 * In-game chat.
 * Structures / shields.
 * Sharding.
