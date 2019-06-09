@@ -164,7 +164,7 @@ class Profile extends React.Component {
 						<p className='col'>{this.props.profile.soldiers}</p>
 
 						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>Train Soldier (100 gold)</button>
-						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain Soldier</button>
+						<button className='col' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain Soldier</button>
 					</div>
 
 					<div className='row'>
@@ -172,7 +172,7 @@ class Profile extends React.Component {
 						<p className='col'>{this.props.profile.scientists}</p>
 
 						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>Train Scientist (120 gold)</button>
-						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
+						<button className='col' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
 					</div>
 
 					<div className='row'>
@@ -180,7 +180,7 @@ class Profile extends React.Component {
 						<p className='col'>{this.props.profile.spies}</p>
 
 						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (300 gold)</button>
-						<button className='col' onClick={ () => this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
+						<button className='col' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
 					</div>
 				</div>
 
