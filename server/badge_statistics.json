@@ -19,7 +19,7 @@
 	},
 	"Gold Horde": {
 		"filename": "gold_horde.png",
-		"description": "You purchased this badge for 500 gold.",
+		"description": "You purchased this badge for 1000 gold.",
 		"visible": true,
 		"unlockable": null
 	},
