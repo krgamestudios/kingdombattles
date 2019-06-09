@@ -1,6 +1,9 @@
 //environment variables
 require('dotenv').config();
 
+//libraries
+let CronJob = require('cron').CronJob;
+
 //utilities
 let { log } = require('../common/utilities.js');
 
@@ -93,17 +96,39 @@ const selectActiveBadge = (connection) => (req, res) => {
 	});
 };
 
-const rewardBadge = (connection, id, badgeName) => {
+const rewardBadge = (connection, id, badgeName, cb) => {
 	//TODO: constants as badge/equipment names?
-	let query = 'INSERT IGNORE badges (accountId, name) VALUES (?, ?);';
-	connection.query(query, [id, badgeName], (err) => {
+	let query = 'INSERT INTO badges (accountId, name) SELECT ?, ? FROM DUAL WHERE NOT EXISTS(SELECT 1 FROM badges WHERE accountId = ? AND name = ?) LIMIT 1;';
+	connection.query(query, [id, badgeName, id, badgeName], (err, packet) => {
 		if (err) throw err;
+
+		if (packet.affectedRows) {
+			cb(id, badgeName);
+		}
 	});
 };
+
+const runBadgeTicks = (connection) => {
+	//Combat Master
+	let combatMasterBadgeTickJob = new CronJob('0 * * * * *', () => { //once a minute - combats aren't that fast
+		//gather the total combats
+		let query = 'SELECT * FROM (SELECT attackerId, COUNT(attackerId) AS successfulAttacks FROM pastCombat WHERE victor = "attacker" GROUP BY attackerId ORDER BY attackerId) AS t WHERE successfulAttacks >= 100;';
+		connection.query(query, (err, results) => {
+			if (err) throw err;
+
+			for (let i = 0; i < results.length; i++) {
+				rewardBadge(connection, results[i].attackerId, 'Combat Master', (id, badgeName) => log('Badge rewarded', id, badgeName));
+			}
+		});
+	});
+
+	combatMasterBadgeTickJob.start();
+}
 
 module.exports = {
 	listRequest: listRequest,
 	ownedRequest: ownedRequest,
 	selectActiveBadge: selectActiveBadge,
-	rewardBadge: rewardBadge
+	rewardBadge: rewardBadge,
+	runBadgeTicks: runBadgeTicks
 };

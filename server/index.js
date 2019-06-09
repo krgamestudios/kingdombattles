@@ -72,6 +72,7 @@ let badges = require('./badges.js');
 app.post('/badgeslistrequest', badges.listRequest(connection));
 app.post('/badgesownedrequest', badges.ownedRequest(connection));
 app.post('/badgeselectactiverequest', badges.selectActiveBadge(connection));
+badges.runBadgeTicks(connection);
 
 //static directories
 app.use('/content', express.static(path.resolve(__dirname + '/../public/content')) );

@@ -15,7 +15,7 @@
 		"filename": "combat_master.png",
 		"description": "You have successfully attacked 100 times.",
 		"visible": true,
-		"unlockable": null
+		"unlockable": true
 	},
 	"Gold Horde": {
 		"filename": "gold_horde.png",
