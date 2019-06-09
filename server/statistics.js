@@ -49,8 +49,8 @@ const statisticsRequest = (connection) => (req, res) => {
 					'Scientist Total': scientistTotal,
 					'Spy Total': { string: '[Classified]', color: 'red' },
 					'Gold Average': `${round(goldAverage)}`,
-					'Tick Rate': `${tickRate} minutes`,
-					'Next Tick': `${nextTick} minute${nextTick === 1 ? '' : 's'} from now`
+					'Gold Tick Rate': `${tickRate} minutes`,
+					'Gold Next Tick': `${nextTick} minute${nextTick === 1 ? '' : 's'} from now`
 				});
 				res.end();
 			});
