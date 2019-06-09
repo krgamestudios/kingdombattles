@@ -63,7 +63,7 @@ Badge Ideas
 * capture the flag
 * king of the hill
 * gold horde
-* combat master
+* ~~Combat Master~~
 * Beta tester
 * Spy Master
 * Referral Linker
