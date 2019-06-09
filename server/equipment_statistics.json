@@ -13,6 +13,6 @@
 		"Platemail": { "cost": 200, "purchasable": true, "saleable": true, "scientistsRequired": 5, "visible": true, "stealable": true, "combatBoost": 0.10 }
 	},
 	"Consumable": {
-		"Potion":  { "cost": 20, "purchasable": true, "saleable": true, "scientistsRequired": 1, "visible": true, "stealable": true, "combatBoost": 0.45 }
+		"Potion":  { "cost": 20, "purchasable": false, "saleable": true, "scientistsRequired": 1, "visible": false, "stealable": true, "combatBoost": 0.45 }
 	}
 }
