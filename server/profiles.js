@@ -526,28 +526,18 @@ const runLadderTick = (connection) => {
 			connection.query(query, (err, results) => {
 				if (err) throw err;
 
-				//collect the promises
-				let promises = [];
+				let query = `INSERT INTO profiles (id, ladderRank) VALUES ${ results.map((record, index) => `(${record.id}, ${index})` ) } ON DUPLICATE KEY UPDATE id = VALUES(id), ladderRank = VALUES(ladderRank);`;
 
-				//this is really inefficient
-				let query = 'UPDATE profiles SET ladderRank = ? WHERE id = ?;';
-				for (let i = 0; i < results.length; i++) {
-					promises.push(
-						connection.query(query, [i, results[i].id], (err) => {
-							if (err) throw err;
-						})
-					);
-				}
+				connection.query(query, (err) => {
+					if (err) throw err;
 
-				Promise.all(promises)
-					.then((e) => log('runLadderTick completed'))
-					.catch((e) => log('runLadderTick failed', e ))
-				;
+					log('runLadderTick completed');
+				});
 			});
 		});
 	});
 
-//	ladderTickJob.start();
+	ladderTickJob.start();
 };
 
 module.exports = {
