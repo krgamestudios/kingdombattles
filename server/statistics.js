@@ -42,7 +42,7 @@ const statisticsRequest = (connection) => (req, res) => {
 				res.status(200).json({
 					'Player Count': playerCount,
 					'Active Players': activity,
-					'Active Percentage': { string: `${activePercentage}%`, color: activePercentage >= 10 ? 'lightgreen' : activePercentage >= 5 ? 'yellow' : 'red'},
+					'Active Percentage': { string: `${activePercentage}%`, color: activePercentage >= 5 ? 'lightgreen' : activePercentage >= 3 ? 'yellow' : 'red'},
 					'New Players': newPlayers > 0 ? { string: `${newPlayers} (Welcome aboard!)`, color: 'lightgreen' } : { string: '0', color: 'yellow' },
 					'Recruits Total':  recruitTotal,
 					'Soldier Total': soldierTotal,
