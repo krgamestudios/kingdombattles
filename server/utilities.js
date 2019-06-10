@@ -112,7 +112,7 @@ const isSpying = (connection, user, cb) => {
 const getLadderData = (connection, field, start, length, cb) => {
 	//moved here for reusability
 	let query = 'SELECT accounts.id AS id, username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY ladderRank DESC LIMIT ?, ?;';
-	connection.query(query, [field, start, length], (err, results) => {
+	connection.query(query, [start, length], (err, results) => {
 		cb(err, results);
 	});
 };
