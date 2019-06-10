@@ -547,7 +547,7 @@ const runLadderTick = (connection) => {
 		});
 	});
 
-	ladderTickJob.start();
+//	ladderTickJob.start();
 };
 
 module.exports = {
