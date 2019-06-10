@@ -109,10 +109,10 @@ const isSpying = (connection, user, cb) => {
 	});
 };
 
-const getLadderData = (connection, start, length, cb) => {
+const getLadderData = (connection, field, start, length, cb) => {
 	//moved here for reusability
-	let query = 'SELECT accounts.id AS id, username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY soldiers DESC, recruits DESC, gold DESC LIMIT ?, ?;';
-	connection.query(query, [start, length], (err, results) => {
+	let query = 'SELECT accounts.id AS id, username, soldiers, recruits, gold FROM accounts JOIN profiles ON accounts.id = profiles.accountId ORDER BY ? DESC LIMIT ?, ?;';
+	connection.query(query, [field, start, length], (err, results) => {
 		cb(err, results);
 	});
 };

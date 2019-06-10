@@ -50,6 +50,7 @@ app.post('/trainrequest', profiles.trainRequest(connection));
 app.post('/untrainrequest', profiles.untrainRequest(connection));
 app.post('/ladderrequest', profiles.ladderRequest(connection));
 profiles.runGoldTick(connection);
+profiles.runLadderTick(connection);
 
 let combat = require('./combat.js');
 app.post('/attackrequest', combat.attackRequest(connection));

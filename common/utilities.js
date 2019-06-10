@@ -38,6 +38,8 @@ let excluded = [ //messages that should not be logged
 	'Purchase made',
 	'Sale made',
 
+	'runLadderTick completed',
+
 	'Cleaned database',
 	'outerTick'
 ];

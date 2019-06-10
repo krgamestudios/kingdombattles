@@ -430,7 +430,7 @@ const untrainRequest = (connection) => (req, res) => {
 };
 
 const ladderRequest = (connection) => (req, res) => {
-	getLadderData(connection, req.body.start, req.body.length, (err, results) => {
+	getLadderData(connection, 'ladderRank', req.body.start, req.body.length, (err, results) => {
 		if (err) throw err;
 
 		getBadgesStatistics((err, { statistics }) => {
@@ -513,6 +513,42 @@ const runGoldTick = (connection) => {
 	outerTick.start();
 };
 
+const runLadderTick = (connection) => {
+	let ladderTickJob = new CronJob('0 * * * * *', () => {
+		//set the ladder rank weight
+		let query = 'UPDATE profiles SET ladderRankWeight = ((recruits + soldiers + scientists + spies) + (SELECT COUNT(*) FROM pastCombat WHERE (attackerId = accountId AND victor = "attacker") OR (defenderId = accountId AND victor = "defender")) / 30 + gold / 10);';
+		connection.query(query, (err) => {
+			if (err) throw err;
+
+			//get the profiles ordered by weight descending
+			let query = 'SELECT id FROM profiles ORDER BY ladderRankWeight DESC;';
+			connection.query(query, (err, results) => {
+				if (err) throw err;
+
+				//collect the promises
+				let promises = [];
+
+				//this is really inefficient
+				let query = 'UPDATE profiles SET ladderRank = ? WHERE id = ?;';
+				for (let i = 0; i < results.length; i++) {
+					promises.push(
+						connection.query(query, [i, results[i].id], (err) => {
+							if (err) throw err;
+						})
+					);
+				}
+
+				Promise.all(promises)
+					.then((e) => log('runLadderTick completed'))
+					.catch((e) => log('runLadderTick failed', e ))
+				;
+			});
+		});
+	});
+
+	ladderTickJob.start();
+};
+
 module.exports = {
 //	profileCreate: profileCreate, //NOTE: Not actually used
 	profileRequest: profileRequest,
@@ -520,5 +556,6 @@ module.exports = {
 	trainRequest: trainRequest,
 	untrainRequest: untrainRequest,
 	ladderRequest: ladderRequest,
-	runGoldTick: runGoldTick
+	runGoldTick: runGoldTick,
+	runLadderTick: runLadderTick
 };

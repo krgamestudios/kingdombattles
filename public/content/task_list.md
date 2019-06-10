@@ -12,8 +12,8 @@ Major
 Minor
 ---
 
+* Show the total equipment strength to the player on their own profile.
 * Proper changelog feed.
-* Implement new game ladder sorting.
 * Implement banning mechanism.
 * Implement post scrolling for news page.
 * Everyone who signed up within the first month will get an exclusive badge (based on diagnostics data).
@@ -55,6 +55,7 @@ Event Ideas
 ---
 
 * Capture the flag.
+* Bosses / raids (drop exclusive badges / items).
 
 Badge Ideas
 ---
