@@ -515,6 +515,7 @@ const runGoldTick = (connection) => {
 
 const runLadderTick = (connection) => {
 	let ladderTickJob = new CronJob('0 * * * * *', () => {
+		log('runLadderTick begin');
 		//set the ladder rank weight
 		let query = 'UPDATE profiles SET ladderRankWeight = ((recruits + soldiers + scientists + spies) + (SELECT COUNT(*) FROM pastCombat WHERE (attackerId = accountId AND victor = "attacker") OR (defenderId = accountId AND victor = "defender")) / 30 + gold / 10);';
 		connection.query(query, (err) => {
