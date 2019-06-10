@@ -515,9 +515,8 @@ const runGoldTick = (connection) => {
 
 const runLadderTick = (connection) => {
 	let ladderTickJob = new CronJob('0 * * * * *', () => {
-		log('runLadderTick begin');
 		//set the ladder rank weight
-		let query = 'UPDATE profiles SET ladderRankWeight = ((recruits + soldiers + scientists + spies) + (SELECT COUNT(*) FROM pastCombat WHERE (attackerId = accountId AND victor = "attacker") OR (defenderId = accountId AND victor = "defender")) / 30 + gold / 10);';
+		let query = 'UPDATE profiles SET ladderRankWeight = ((recruits + soldiers + scientists + spies) + (SELECT COUNT(*) FROM pastCombat WHERE (attackerId = accountId AND victor = "attacker") OR (defenderId = accountId AND victor = "defender")) / 10 + gold / 100);';
 		connection.query(query, (err) => {
 			if (err) throw err;
 
@@ -527,7 +526,6 @@ const runLadderTick = (connection) => {
 				if (err) throw err;
 
 				let query = `INSERT INTO profiles (id, ladderRank) VALUES ${ results.map((record, index) => `(${record.id}, ${index})` ) } ON DUPLICATE KEY UPDATE id = VALUES(id), ladderRank = VALUES(ladderRank);`;
-
 				connection.query(query, (err) => {
 					if (err) throw err;
 
