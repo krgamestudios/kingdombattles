@@ -5,6 +5,12 @@
 		"visible": true,
 		"unlockable": false
 	},
+	"Bug Hunter": {
+		"filename": "bug_hunter.png",
+		"description": "Awarded to anyone who finds and reports a bug in the game, be it game logic, website stability, or other problems.",
+		"visible": true,
+		"unlockable": true
+	},
 	"Capture The Flag": {
 		"filename": "capture_the_flag.png",
 		"description": "This badge is stolen by successful attacks. It is automatically set as your active badge, and you can't change it until it is lost; it also sets your name to yellow, so everyone knows you have it. Only one exists.",
@@ -13,20 +19,44 @@
 	},
 	"Combat Master": {
 		"filename": "combat_master.png",
-		"description": "You have successfully attacked 100 times.",
+		"description": "Awared to anyone who successfully attacks 100 times.",
 		"visible": true,
 		"unlockable": true
 	},
+	"Developer": {
+		"filename": "developer.png",
+		"description": "This badge is granted to the developers of Kingdom Battles.",
+		"visible": true,
+		"unlockable": false
+	},
 	"Gold Horde": {
 		"filename": "gold_horde.png",
-		"description": "You purchased this badge for 1000 gold.",
+		"description": "This badge is purchased for 1000 gold.",
 		"visible": true,
 		"unlockable": null
 	},
 	"King Of The Hill": {
 		"filename": "king_of_the_hill.png",
-		"description": "You held your position at the top of the game ladder for a whole day.",
+		"description": "Awarded to anyone who keeps their position at the top of the game ladder for 24 hours.",
 		"visible": true,
 		"unlockable": null
+	},
+	"Referral Linker": {
+		"filename": "referral_linker.png",
+		"description": "Awarded to anyone who successfully referred another player to Kingdom Battles.",
+		"visible": true,
+		"unlockable": null
+	},
+	"Supporter": {
+		"filename": "supporter.png",
+		"description": "Awarded to anyone who contributes real world cash to the development and maintenance of Kingdom Battles.",
+		"visible": true,
+		"unlockable": null
+	},
+	"Error": {
+		"filename": "error.png",
+		"description": "This is not an official badge. This image is used as a placeholder, or when something internal has gone wrong. If you see this badge anywhere other than the badge list, please report it for a reward.",
+		"visible": true,
+		"unlockable": false
 	}
 }
