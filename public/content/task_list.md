@@ -47,7 +47,7 @@ Wishlist
 * How to balance powerful and weak nations?
 * Nations are rife for abuse.
 * In-game chat.
-* Structures / shields.
+* Structures / shields (upkeep costs).
 * Sharding.
 * Action queue?
 
