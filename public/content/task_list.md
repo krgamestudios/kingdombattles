@@ -43,6 +43,7 @@ Potential And Confirmed Bugs
 Wishlist
 ---
 
+* Strongest weapon / armour used shown as icon in combat log.
 * Mercenaries.
 * In-game events.
 * Hire a graphic designer.
