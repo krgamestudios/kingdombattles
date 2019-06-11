@@ -24,6 +24,7 @@ Minor
 Patch
 ---
 
+* The only way to know you're attacking is to go to someone else's profile page.
 * Open the game ladder to the page the player is on.
 * Game Balance - move balance variables to a config file.
 * Images to social media instead of links.
