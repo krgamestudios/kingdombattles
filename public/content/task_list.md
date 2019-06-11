@@ -72,7 +72,7 @@ Badge Ideas
 * Beta tester
 * Spy Master
 * Referral Linker
-* Bug Hunter (Reward List: Hegemon)
+* ~~Bug Hunter~~
 * Alliance exclusive badges
 * Donater / Supporter
-* Unknown / error badge
+* ~~Unknown / error badge~~
