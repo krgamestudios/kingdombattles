@@ -1,6 +1,7 @@
 Major
 ---
 
+* Hide other people's spies...
 * Implement countdown timers for combat, spying and training.
 * Write unit tests (ensure that the game doesn't break from an update).
 * Implement referral links.
