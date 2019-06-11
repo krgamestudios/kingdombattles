@@ -55,7 +55,7 @@ const selectActiveBadge = (connection) => (req, res) => {
 		if (err) throw err;
 
 		if (credentials[0].total !== 1) {
-			res.status(400).write(log('Invalid active badge select credentials', JSON.stringify(body), body.id, body.token));
+			res.status(400).write(log('Invalid active badge select credentials', req.body.id, req.body.token));
 			res.end();
 			return;
 		}
