@@ -88,11 +88,6 @@ a {
 	text-overflow: ellipsis;
 }
 
-.badwrap {
-	overflow: wrap;
-	overflow-wrap: break-word;
-}
-
 /* footer */
 footer {
 	flex: 0 1 auto;
@@ -193,8 +188,6 @@ footer {
 	align-self: stretch;
 }
 
-/* custom styling */
-
 /* SidePanelPage structure */
 .sidePanelPage {
 	flex: 1;
@@ -210,7 +203,7 @@ footer {
 	}
 }
 
-/* left panel */
+/* side panel */
 .sidePanel {
 	flex: 0 1 auto;
 	display: flex;
@@ -276,9 +269,60 @@ footer {
 	min-width: 0;
 }
 
+.table .row .col.double {
+	flex: 2 1 2%;
+}
+
+@media screen and (max-width: 480px) {
+	.table .row .col.double {
+		flex: 2 1 2.5%;
+	}
+}
+
 .table.noCollapse .row, .table .row.noCollapse {
 	flex-direction: row;
 	border-style: none;
+}
+
+/* mobile control */
+.mobile.show {
+	display: none;
+}
+
+.mobile.centered {
+	text-align: initial;
+}
+
+@media screen and (max-width: 480px) {
+	.mobile.show {
+		display: inline-block;
+	}
+
+	.mobile.hide {
+		display: none;
+	}
+
+	.mobile.centered {
+		text-align: center;
+	}
+
+	/* hybrid of table and mobile control */
+	.mobile.col.half {
+		flex: 0.5;
+	}
+}
+
+/* --- custom styling below this line --- */
+
+.highlight {
+	background-color: #1a253a;
+}
+
+pre {
+	color: pink;
+	background-color: #1a253a;
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 /* bits and pieces */
@@ -296,36 +340,7 @@ footer {
 	margin-bottom: 2em;
 }
 
-pre {
-	color: pink;
-	background-color: #1a253a;
-	margin-top: 1em;
-	margin-bottom: 1em;
-}
-
-.show.mobile {
-	display: none;
-}
-
-.centered.mobile {
-	text-align: initial;
-}
-
-@media screen and (max-width: 480px) {
-	.show.mobile {
-		display: inline-block;
-	}
-
-	.hide.mobile {
-		display: none;
-	}
-
-	.centered.mobile {
-		text-align: center;
-	}
-}
-
-.central p.equipmentTextPadding {
+.central p.equipmentTextPadding { /* for the row layout (makes the button bigger) */
 	padding-top: .25em;
 	padding-bottom: .25em;
 }
@@ -346,8 +361,4 @@ pre {
 		color-stop(76%, indigo),
 		color-stop(1.00, violet)
 	);
-}
-
-.highlight {
-	background-color: #1a253a;
 }

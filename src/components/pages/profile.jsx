@@ -138,49 +138,48 @@ class Profile extends React.Component {
 				<h1 className='centered'>Your Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
-						<p className='col'>Username:</p>
-						<BadgeText name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'} className='col'>{this.props.profile.username}</BadgeText>
+						<p className='col truncate'>Username:</p>
+						<BadgeText className={'col'} name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'}>{this.props.profile.username}</BadgeText>
 
-						<div className='col'></div>
-						<div className='col'></div>
+						<div className='col double'></div>
 					</div>
 
 					<div className='row'>
-						<p className='col'>Gold:</p>
-						<p className='col'>{this.props.profile.gold}</p>
+						<p className='col truncate'>Gold:</p>
+						<p className='col mobile half truncate'>{this.props.profile.gold}</p>
 
-						<p className='col truncate' style={{flex: '2 1 2%'}}>(+1 gold for each recruit every half hour)</p>
+						<p className='col double truncate'>(+1 gold for each recruit)</p>
 					</div>
 
 					<div className='row'>
-						<p className='col'>Recruits:</p>
-						<p className='col'>{this.props.profile.recruits}</p>
+						<p className='col truncate'>Recruits:</p>
+						<p className='col mobile half truncate'>{this.props.profile.recruits}</p>
 
-						<button className='col' style={{flex: '2 1 2%'}} onClick={ () => this.sendRequest('/recruitrequest') }>Recruit More Units</button>
+						<button className='col double truncate' onClick={ () => this.sendRequest('/recruitrequest') }>Recruit More Units</button>
 					</div>
 
 					<div className='row'>
-						<p className='col'>Soldiers:</p>
-						<p className='col'>{this.props.profile.soldiers}</p>
+						<p className='col truncate'>Soldiers:</p>
+						<p className='col mobile half truncate'>{this.props.profile.soldiers}</p>
 
-						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>Train Soldier (100 gold)</button>
-						<button className='col' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain Soldier</button>
+						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>Train Soldier (100 gold)</button>
+						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain Soldier</button>
 					</div>
 
 					<div className='row'>
-						<p className='col'>Scientists:</p>
-						<p className='col'>{this.props.profile.scientists}</p>
+						<p className='col truncate'>Scientists:</p>
+						<p className='col mobile half truncate'>{this.props.profile.scientists}</p>
 
-						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>Train Scientist (120 gold)</button>
-						<button className='col' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
+						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>Train Scientist (120 gold)</button>
+						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
 					</div>
 
 					<div className='row'>
-						<p className='col'>Spies:</p>
-						<p className='col'>{this.props.profile.spies}</p>
+						<p className='col truncate'>Spies:</p>
+						<p className='col mobile half truncate'>{this.props.profile.spies}</p>
 
-						<button className='col' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (300 gold)</button>
-						<button className='col' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
+						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (300 gold)</button>
+						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
 					</div>
 				</div>
 
@@ -211,28 +210,25 @@ class Profile extends React.Component {
 				<h1 className='centered'>{this.props.profile.username}'s Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
-						<p className='col'>Username:</p>
-						<BadgeText name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'} className='col'>{this.props.profile.username}</BadgeText>
+						<p className='col truncate'>Username:</p>
+						<BadgeText className={'col'} name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'}>{this.props.profile.username}</BadgeText>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double truncate' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Gold:</p>
-						<p className='col'>{this.props.profile.gold}</p>
+						<p className='col truncate'>Gold:</p>
+						<p className='col truncate'>{this.props.profile.gold}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Recruits:</p>
-						<p className='col'>{this.props.profile.recruits}</p>
+						<p className='col truncate'>Recruits:</p>
+						<p className='col truncate'>{this.props.profile.recruits}</p>
 
 						<AttackButton
-							className='col'
-							style={{flex: '2 1 2%'}}
+							className={'col double truncate'}
 							setWarning={this.setWarning.bind(this)}
 							attacker={this.props.account.username}
 							defender={this.props.profile.username}
@@ -245,12 +241,11 @@ class Profile extends React.Component {
 					</div>
 
 					<div className='row'>
-						<p className='col'>Soldiers:</p>
-						<p className='col'>{this.props.profile.soldiers}</p>
+						<p className='col truncate'>Soldiers:</p>
+						<p className='col truncate'>{this.props.profile.soldiers}</p>
 
 						<AttackButton
-							className='col'
-							style={{flex: '2 1 2%'}}
+							className={'col double truncate'}
 							setWarning={this.setWarning.bind(this)}
 							attacker={this.props.account.username}
 							defender={this.props.profile.username}
@@ -263,19 +258,17 @@ class Profile extends React.Component {
 					</div>
 
 					<div className='row'>
-						<p className='col'>Scientists:</p>
-						<p className='col'>{this.props.profile.scientists}</p>
+						<p className='col truncate'>Scientists:</p>
+						<p className='col truncate'>{this.props.profile.scientists}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Spies:</p>
-						<p className='col'>{this.props.profile.spies}</p>
+						<p className='col truncate'>Spies:</p>
+						<p className='col truncate'>{this.props.profile.spies}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 				</div>
 			</div>
@@ -296,51 +289,45 @@ class Profile extends React.Component {
 				<h1 className='centered'>{this.props.profile.username}'s Kingdom</h1>
 				<div className='table noCollapse'>
 					<div className='row'>
-						<p className='col'>Username:</p>
-						<BadgeText name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'} className='col'>{this.props.profile.username}</BadgeText>
+						<p className='col truncate'>Username:</p>
+						<BadgeText className={'col'} name={this.props.profile.activeBadge} filename={this.props.profile.activeBadgeFilename} size={'small'}>{this.props.profile.username}</BadgeText>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Gold:</p>
-						<p className='col'>{this.props.profile.gold}</p>
+						<p className='col truncate'>Gold:</p>
+						<p className='col truncate'>{this.props.profile.gold}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Recruits:</p>
-						<p className='col'>{this.props.profile.recruits}</p>
+						<p className='col truncate'>Recruits:</p>
+						<p className='col truncate'>{this.props.profile.recruits}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Soldiers:</p>
-						<p className='col'>{this.props.profile.soldiers}</p>
+						<p className='col truncate'>Soldiers:</p>
+						<p className='col truncate'>{this.props.profile.soldiers}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Scientists:</p>
-						<p className='col'>{this.props.profile.scientists}</p>
+						<p className='col truncate'>Scientists:</p>
+						<p className='col truncate'>{this.props.profile.scientists}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 
 					<div className='row'>
-						<p className='col'>Spies:</p>
-						<p className='col'>{this.props.profile.spies}</p>
+						<p className='col truncate'>Spies:</p>
+						<p className='col truncate'>{this.props.profile.spies}</p>
 
-						<div className='col' />
-						<div className='col' />
+						<div className='col double' />
 					</div>
 				</div>
 			</div>
