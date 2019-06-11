@@ -162,24 +162,24 @@ class Profile extends React.Component {
 						<p className='col truncate'>Soldiers:</p>
 						<p className='col mobile half truncate'>{this.props.profile.soldiers}</p>
 
-						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>Train Soldier (100 gold)</button>
-						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain Soldier</button>
+						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>+Soldier (100g)</button>
+						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain a soldier? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain</button>
 					</div>
 
 					<div className='row'>
 						<p className='col truncate'>Scientists:</p>
 						<p className='col mobile half truncate'>{this.props.profile.scientists}</p>
 
-						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>Train Scientist (120 gold)</button>
-						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain Scientist</button>
+						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>+Scientist (120g)</button>
+						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain a scientist? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain</button>
 					</div>
 
 					<div className='row'>
 						<p className='col truncate'>Spies:</p>
 						<p className='col mobile half truncate'>{this.props.profile.spies}</p>
 
-						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>Train Spy (300 gold)</button>
-						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain Spy</button>
+						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>+Spy (300g)</button>
+						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain a spy? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain</button>
 					</div>
 				</div>
 

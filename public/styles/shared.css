@@ -281,7 +281,6 @@ footer {
 
 .table.noCollapse .row, .table .row.noCollapse {
 	flex-direction: row;
-	border-style: none;
 }
 
 /* mobile control */
