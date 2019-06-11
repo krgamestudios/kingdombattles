@@ -160,7 +160,7 @@ const verifyRequest = (connection) => (req, res) => {
 		}, 3000); //3 second delay on account creation
 
 		//TODO: prettier verification page
-		res.status(200).write(log('Verification succeeded!', req.query.email));
+		res.status(200).write(log('<p>Verification succeeded!</p><p><a href="/">Return Home</a></p>', req.query.email));
 		res.end();
 	});
 };

@@ -26,7 +26,7 @@ class PagedLadder extends React.Component {
 					<p className='col centered'>Recruits</p>
 					<p className='col centered'>Gold</p>
 				</div>
-				{Object.keys(this.state).map((key) =><div key={key}>
+				{Object.keys(this.state).map((key) =><div key={key} className={`${this.props.highlightedName === this.state[key].username ? ' highlight' : ''}`}>
 					<hr />
 					<div className='break' />
 
@@ -78,6 +78,7 @@ class PagedLadder extends React.Component {
 PagedLadder.propTypes = {
 	start: PropTypes.number,
 	length: PropTypes.number,
+	highlightedName: PropTypes.string,
 	setWarning: PropTypes.func,
 	getFetch: PropTypes.func,
 	onReceived: PropTypes.func

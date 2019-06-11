@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import queryString from 'query-string';
 
 import CommonLinks from '../panels/common_links.jsx';
@@ -43,6 +44,7 @@ class Ladder extends React.Component {
 						<PagedLadder
 							start={this.state.start}
 							length={this.state.length}
+							highlightedName={this.props.username}
 							getFetch={this.getFetch.bind(this)}
 							onReceived={this.onReceived.bind(this)}
 						/>
@@ -101,5 +103,19 @@ class Ladder extends React.Component {
 		}
 	}
 };
+
+const mapStoreToProps = (store) => {
+	return {
+		username: store.account.username
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		//
+	};
+};
+
+Ladder = connect(mapStoreToProps, mapDispatchToProps)(Ladder);
 
 export default Ladder;
