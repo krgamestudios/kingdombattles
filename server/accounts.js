@@ -35,70 +35,83 @@ const signupRequest = (connection) => (req, res) => {
 			return;
 		}
 
-		//check if email, username already exists
-		let query = 'SELECT (SELECT COUNT(*) FROM accounts WHERE email = ?) AS email, (SELECT COUNT(*) FROM accounts WHERE username = ?) AS username;';
-		connection.query(query, [fields.email, fields.username], (err, results) => {
+		//check to see if the email has been banned
+		let query = 'SELECT COUNT(*) as total FROM bannedEmails WHERE email = ?;';
+		connection.query(query, [fields.email], (err, results) => {
 			if (err) throw err;
 
-			if (results[0].email !== 0) {
-				res.status(400).write(log('Email already registered!', fields.email));
+			//if the email has been banned
+			if (results[0].total > 0) {
+				res.status(400).write(log('This email account has been banned!', 'signup', fields.email, fields.username));
 				res.end();
 				return;
 			}
 
-			if (results[0].username !== 0) {
-				res.status(400).write(log('Username already registered!', fields.username));
-				res.end();
-				return;
-			}
-
-			//generate the salt, hash
-			bcrypt.genSalt(11, (err, salt) => {
+			//check if email, username already exists
+			let query = 'SELECT (SELECT COUNT(*) FROM accounts WHERE email = ?) AS email, (SELECT COUNT(*) FROM accounts WHERE username = ?) AS username;';
+			connection.query(query, [fields.email, fields.username], (err, results) => {
 				if (err) throw err;
-				bcrypt.hash(fields.password, salt, (err, hash) => {
+
+				if (results[0].email !== 0) {
+					res.status(400).write(log('Email already registered!', fields.email));
+					res.end();
+					return;
+				}
+
+				if (results[0].username !== 0) {
+					res.status(400).write(log('Username already registered!', fields.username));
+					res.end();
+					return;
+				}
+
+				//generate the salt, hash
+				bcrypt.genSalt(11, (err, salt) => {
 					if (err) throw err;
-
-					//generate a random number as a token
-					let rand = Math.floor(Math.random() * 100000);
-
-					//save the generated data to the signups table
-					let query = 'REPLACE INTO signups (email, username, salt, hash, verify) VALUES (?, ?, ?, ?, ?);';
-					connection.query(query, [fields.email, fields.username, salt, hash, rand], (err) => {
+					bcrypt.hash(fields.password, salt, (err, hash) => {
 						if (err) throw err;
 
-						//TODO: make the verification email prettier
-						//build the verification email
-						let addr = `http://${process.env.WEB_ADDRESS}/verifyrequest?email=${fields.email}&verify=${rand}`;
-						let msg = 'Hello! Please visit the following address to verify your account: ';
-//						let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
+						//generate a random number as a token
+						let rand = Math.floor(Math.random() * 100000);
 
-						//BUGFIX: is gmail being cruel?
-						let sentinel = false;
+						//save the generated data to the signups table
+						let query = 'REPLACE INTO signups (email, username, salt, hash, verify) VALUES (?, ?, ?, ?, ?);';
+						connection.query(query, [fields.email, fields.username, salt, hash, rand], (err) => {
+							if (err) throw err;
 
-						//send the verification email
-						sendmail({
-							from: `signup@${process.env.WEB_ADDRESS}`,
-							to: fields.email,
-							subject: 'Email Verification',
-							text: msg + addr,
-//							html: msgHtml
-						}, (err, reply) => {
-							if (err) { //final check
-								let msg = log('Something went wrong (did you use a valid email?)', err);
+							//TODO: make the verification email prettier
+							//build the verification email
+							let addr = `http://${process.env.WEB_ADDRESS}/verifyrequest?email=${fields.email}&verify=${rand}`;
+							let msg = 'Hello! Please visit the following address to verify your account: ';
+	//						let msgHtml = `<html><body><p>${msg}<a href='${addr}'>${addr}</a></p></body></html>`;
 
-								if (!sentinel) {
-									res.status(400).write(msg);
-									res.end();
+							//BUGFIX: is gmail being cruel?
+							let sentinel = false;
+
+							//send the verification email
+							sendmail({
+								from: `signup@${process.env.WEB_ADDRESS}`,
+								to: fields.email,
+								subject: 'Email Verification',
+								text: msg + addr,
+	//							html: msgHtml
+							}, (err, reply) => {
+								if (err) { //final check
+									let msg = log('Something went wrong (did you use a valid email?)', err);
+
+									if (!sentinel) {
+										res.status(400).write(msg);
+										res.end();
+									}
+								} else {
+									let msg = log('Verification email sent!', fields.email, fields.username, rand);
+
+									if (!sentinel) {
+										res.status(200).json({ msg: msg });
+										res.end();
+									}
 								}
-							} else {
-								let msg = log('Verification email sent!', fields.email, fields.username, rand);
-
-								if (!sentinel) {
-									res.status(200).json({ msg: msg });
-									res.end();
-								}
-							}
-							sentinel = true;
+								sentinel = true;
+							});
 						});
 					});
 				});
@@ -167,47 +180,60 @@ const loginRequest = (connection) => (req, res) => {
 			return;
 		}
 
-		//find this email's information
-		let query = 'SELECT id, username, salt, hash FROM accounts WHERE email = ?;';
+		//check to see if the email has been banned
+		let query = 'SELECT COUNT(*) as total FROM bannedEmails WHERE email = ?;';
 		connection.query(query, [fields.email], (err, results) => {
 			if (err) throw err;
 
-			//found this email?
-			if (results.length === 0) {
-				res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this email')); //NOTE: deliberately obscure incorrect email or password
+			//if the email has been banned
+			if (results[0].total > 0) {
+				res.status(400).write(log('This email account has been banned!', 'login', fields.email));
 				res.end();
 				return;
 			}
 
-			//gen a new hash from the salt and password
-			bcrypt.hash(fields.password, results[0].salt, (err, newHash) => {
+			//find this email's information
+			let query = 'SELECT id, username, salt, hash FROM accounts WHERE email = ?;';
+			connection.query(query, [fields.email], (err, results) => {
 				if (err) throw err;
 
-				//compare the passwords
-				if (results[0].hash !== newHash) {
-					res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this password'));
+				//found this email?
+				if (results.length === 0) {
+					res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this email')); //NOTE: deliberately obscure incorrect email or password
 					res.end();
 					return;
 				}
 
-				//create the new session
-				let rand = Math.floor(Math.random() * 100000);
-
-				let query = 'INSERT INTO sessions (accountId, token) VALUES (?, ?);';
-				connection.query(query, [results[0].id, rand], (err) => {
+				//gen a new hash from the salt and password
+				bcrypt.hash(fields.password, results[0].salt, (err, newHash) => {
 					if (err) throw err;
 
-					//send json containing the account info
-					res.status(200).json({
-						id: results[0].id,
-						email: fields.email,
-						username: results[0].username,
-						token: rand,
-						msg: log('Logged in', fields.email, rand)
-					});
-					res.end();
+					//compare the passwords
+					if (results[0].hash !== newHash) {
+						res.status(400).write(log('Incorrect email or password', fields.email, 'Did not find this password'));
+						res.end();
+						return;
+					}
 
-					logActivity(connection, results[0].id);
+					//create the new session
+					let rand = Math.floor(Math.random() * 100000);
+
+					let query = 'INSERT INTO sessions (accountId, token) VALUES (?, ?);';
+					connection.query(query, [results[0].id, rand], (err) => {
+						if (err) throw err;
+
+						//send json containing the account info
+						res.status(200).json({
+							id: results[0].id,
+							email: fields.email,
+							username: results[0].username,
+							token: rand,
+							msg: log('Logged in', fields.email, rand)
+						});
+						res.end();
+
+						logActivity(connection, results[0].id);
+					});
 				});
 			});
 		});

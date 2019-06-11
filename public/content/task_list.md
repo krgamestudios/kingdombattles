@@ -23,6 +23,7 @@ Minor
 Patch
 ---
 
+* Open the game ladder to the page the player is on.
 * Game Balance - move balance variables to a config file.
 * Images to social media instead of links.
 * Occasional flickering when rendering Profile page.
