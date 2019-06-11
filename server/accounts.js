@@ -216,7 +216,7 @@ const loginRequest = (connection) => (req, res) => {
 					}
 
 					//create the new session
-					let rand = Math.floor(Math.random() * 100000);
+					let rand = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
 					let query = 'INSERT INTO sessions (accountId, token) VALUES (?, ?);';
 					connection.query(query, [results[0].id, rand], (err) => {
