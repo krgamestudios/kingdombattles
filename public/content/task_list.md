@@ -1,8 +1,10 @@
 Major
 ---
 
+* uuid-as-token.
 * Hide other people's spies...
 * Implement countdown timers for combat, spying and training.
+* Rest bonus.
 * Write unit tests (ensure that the game doesn't break from an update).
 * Implement referral links.
 * Implement admin panel (write posts without having to commit).
@@ -32,6 +34,7 @@ Patch
 * Pull the balance numbers out into a config file.
 * Ezekiel-powered discord role for kingdom battles players.
 * Refactor callback-hell (yes, it is that bad).
+* Refactor - Data can be deleted.
 * Treasure?
 * Add a link home to the verification message.
 
