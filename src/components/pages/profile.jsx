@@ -163,23 +163,23 @@ class Profile extends React.Component {
 						<p className='col mobile half truncate'>{this.props.profile.soldiers}</p>
 
 						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'soldier'}) }>+Soldier (100g)</button>
-						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain a soldier? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain</button>
+						<button className='col truncate' onClick={ () => this.confirmUntrain('soldier') && this.sendRequest('/untrainrequest', {role: 'soldier'}) }>Untrain</button>
 					</div>
 
 					<div className='row'>
 						<p className='col truncate'>Scientists:</p>
 						<p className='col mobile half truncate'>{this.props.profile.scientists}</p>
 
-						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'scientist'}) }>+Scientist (120g)</button>
-						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain a scientist? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain</button>
+						<button className='col truncate' onClick={ () => this.confirmNoSoldiers('scientist') && this.sendRequest('/trainrequest', {role: 'scientist'}) }>+Scientist (120g)</button>
+						<button className='col truncate' onClick={ () => this.confirmUntrain('scientist') && this.sendRequest('/untrainrequest', {role: 'scientist'}) }>Untrain</button>
 					</div>
 
 					<div className='row'>
 						<p className='col truncate'>Spies:</p>
 						<p className='col mobile half truncate'>{this.props.profile.spies}</p>
 
-						<button className='col truncate' onClick={ () => this.sendRequest('/trainrequest', {role: 'spy'}) }>+Spy (300g)</button>
-						<button className='col truncate' onClick={ () => window.confirm('Are you sure you want to untrain a spy? (you won\'t get your gold back!)') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain</button>
+						<button className='col truncate' onClick={ () => this.confirmNoSoldiers('spy') && this.sendRequest('/trainrequest', {role: 'spy'}) }>+Spy (300g)</button>
+						<button className='col truncate' onClick={ () => this.confirmUntrain('spy') && this.sendRequest('/untrainrequest', {role: 'spy'}) }>Untrain</button>
 					</div>
 				</div>
 
@@ -340,6 +340,19 @@ class Profile extends React.Component {
 				<p className='centered'>Profile Not Found!</p>
 			</div>
 		);
+	}
+
+	//popup messages
+	confirmNoSoldiers(role) {
+		if (this.props.profile.soldiers > 0) {
+			return true;
+		}
+
+		return window.confirm(`Are you sure you want to train a ${role}? (without a soldier, it'll be very difficult to accrue gold!)`);
+	}
+
+	confirmUntrain(role) {
+		return window.confirm(`Are you sure you want to untrain a ${role}? (you won't get your gold back!)`);
 	}
 
 	setWarning(s) {
