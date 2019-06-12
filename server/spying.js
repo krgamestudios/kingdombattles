@@ -523,8 +523,6 @@ const updateSuccessStatus = (connection, status, pastSpyingId) => {
 	let query = 'UPDATE pastSpying SET success = ? WHERE id = ?;';
 	connection.query(query, [status, pastSpyingId], (err) => {
 		if (err) throw err;
-
-		log('Success status updated', pastSpyingId, status);
 	});
 }
 
