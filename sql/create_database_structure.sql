@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS pastSpying (
 	defenderId INTEGER UNSIGNED,
 	attackingUnits INTEGER UNSIGNED,
 
-	success ENUM ('success', 'failure'),
+	success ENUM ('success', 'failure', 'ineffective'),
 
 	spoilsGold INTEGER,
 

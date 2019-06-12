@@ -1,18 +1,20 @@
 #NOTE: ALWAYS, ALWAYS, ALWAYS write a script in revert.sql that undoes these changes
 
 ALTER TABLE
-	profiles
-ADD COLUMN
-	ladderRank INTEGER UNSIGNED
-AFTER
-	accountId
+	pastSpying
+MODIFY COLUMN
+	success ENUM ('success', 'failure', 'ineffective')
 ;
 
-ALTER TABLE
-	profiles
-ADD COLUMN
-	ladderRankWeight FLOAT UNSIGNED
-AFTER
-	ladderRank
+UPDATE
+	pastSpying
+SET
+	success = 'ineffective'
+WHERE
+	success = 'success'
+AND
+	spoilsGold = 0
+AND
+	(SELECT COUNT(*) FROM equipmentStolen WHERE pastSpyingId = pastSpying.id) = 0
 ;
 

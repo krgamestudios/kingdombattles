@@ -135,7 +135,7 @@ const spyLogRequest = (connection) => (req, res) => {
 					return;
 				}
 
-				let hideData = req.body.id === result.defenderId && result.success === 'success';
+				let hideData = req.body.id === result.defenderId && (result.success === 'success' || result.success === 'ineffective');
 
 				//creating a new entry
 				ret[result.id] = {
@@ -237,8 +237,8 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 				} else {
 					//steal this much gold on success
 					let spoilsGold = Math.random() >= 0.5 ? Math.floor(results[0].gold * 0.2) : 0; //50% chance of stealing gold
-					let query = 'INSERT INTO pastSpying (eventTime, attackerId, defenderId, attackingUnits, success, spoilsGold) VALUES (?, ?, ?, ?, "success", ?);';
-					connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits, spoilsGold], (err) => {
+					let query = 'INSERT INTO pastSpying (eventTime, attackerId, defenderId, attackingUnits, success, spoilsGold) VALUES (?, ?, ?, ?, ?, ?);';
+					connection.query(query, [pendingSpying.eventTime, pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits, spoilsGold ? 'success' : 'ineffective', spoilsGold], (err) => {
 						if (err) throw err;
 
 						let query = 'UPDATE profiles SET gold = gold + ? WHERE accountId = ?;';
@@ -439,6 +439,9 @@ const spyStealEquipmentSelectItemsToSteal = (connection, attackerId, defenderId,
 	spyStealEquipmentIncrementItemsToInventory(connection, attackerId, items);
 	spyStealEquipmentDecrementItemsFromInventory(connection, defenderId, items);
 	recordEquipmentStolen(connection, items, pastSpyingId);
+	if (items.length) {
+		updateSuccessStatus(connection, 'success', pastSpyingId); //QOL improvement
+	}
 };
 
 const spyStealEquipmentIncrementItemsToInventory = (connection, accountId, items) => {
@@ -515,6 +518,15 @@ const recordEquipmentStolen = (connection, items, pastSpyingId) => {
 		});
 	});
 };
+
+const updateSuccessStatus = (connection, status, pastSpyingId) => {
+	let query = 'UPDATE pastSpying SET success = ? WHERE id = ?;';
+	connection.query(query, [status, pastSpyingId], (err) => {
+		if (err) throw err;
+
+		log('Success status updated', pastSpyingId, status);
+	});
+}
 
 module.exports = {
 	spyRequest: spyRequest,
