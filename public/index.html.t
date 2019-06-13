@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="/styles/shared.css"/>
 
 		<title>Kingdom Battles!</title>
-		<meta name="description" content="Build Your Kingdom!" />
+		<meta name="description" content="{1}" />
 		<meta name="author" content="Kayne Ruse" />
 		<meta name="keywords" content="gaming, browser game, persistent browser based game, free game" />
 <!--
@@ -19,7 +19,7 @@
 		<meta property="og:image" content="https://kingdombattles.net/img/flag_scaled.png" />
 
 		<meta property="og:title" content="Kingdom Battles!" />
-		<meta property="og:description" content="Build Your Kingdom!" />
+		<meta property="og:description" content="{1}" />
 
 		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 		<script>

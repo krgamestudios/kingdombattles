@@ -6,10 +6,12 @@ let express = require('express');
 let app = express();
 let http = require('http').Server(app);
 let bodyParser = require('body-parser');
+let fs = require('fs');
 let path = require('path');
 
 //utilities
 let { log } = require('../common/utilities.js');
+let { replacement, stringReplacement } = require('../common/replacement.js');
 
 app.use(bodyParser.json());
 
@@ -90,9 +92,12 @@ app.get('/app.bundle.js.map', (req, res) => {
 	res.sendFile(path.resolve(__dirname + `/../public/${req.originalUrl}`));
 });
 
-//fallback
+//fallback to index.html template (with randomization)
+const indexTemplate = fs.readFileSync(path.resolve(__dirname + '/../public/index.html.t'), 'utf8');
+const replacementEngine = replacement(require('./website_descriptions.json'));
+
 app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname + '/../public/index.html'));
+	res.send(stringReplacement(indexTemplate, replacementEngine('description') ));
 });
 
 //startup
