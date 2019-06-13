@@ -94,7 +94,8 @@
 		"Kingdom Battles, where kingdoms battle in kingdom battles!",
 		"marquee",
 		"rainbow",
-		"curl https://kingdombattles.net/easteregg"
-	],
-	"easteregg": "You found it!"
+		"You're our one millionth customer!",
+		"We came, we saw, we kicked it's ass!",
+		"curl https://kingdombattles.net/easteregg -H \"Content-Type: application/json\" -d \"{\\\"query\\\":\\\"search\\\"}\""
+	]
 }

@@ -82,8 +82,12 @@ app.get('/taglinerequest', (req, res) => {
 	res.send(taglineEngine('tagline'));
 });
 
-app.get('/easteregg', (req, res) => {
-	res.send(taglineEngine('easteregg'));
+app.post('/easteregg', (req, res) => {
+	if (req.body.query === 'search') {
+		res.status(200).send('You found it!');
+	} else {
+		res.status(404).send('Keep searching!');
+	}
 });
 
 //static directories
