@@ -96,6 +96,10 @@
 		"rainbow",
 		"You're our one millionth customer!",
 		"We came, we saw, we kicked it's ass!",
-		"curl https://kingdombattles.net/easteregg -H \"Content-Type: application/json\" -d \"{\\\"query\\\":\\\"search\\\"}\""
+		"curl https://kingdombattles.net/easteregg -H \"Content-Type: application/json\" -d \"{\\\"query\\\":\\\"search\\\"}\"",
+		"1) Create a kingdom. 2) Attack others. 3) ??? 4) PROFIT!",
+		"Attack! Attack! Attack!",
+		"Unleash your inner leader!",
+		"Kingdoms and battles. Do you really need more?"
 	]
 }
