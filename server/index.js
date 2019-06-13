@@ -6,7 +6,6 @@ let express = require('express');
 let app = express();
 let http = require('http').Server(app);
 let bodyParser = require('body-parser');
-let fs = require('fs');
 let path = require('path');
 
 //utilities
@@ -77,6 +76,16 @@ app.post('/badgesownedrequest', badges.ownedRequest(connection));
 app.post('/badgeselectactiverequest', badges.selectActiveBadge(connection));
 badges.runBadgeTicks(connection);
 
+//a bit of fun
+const taglineEngine = replacement(require('./taglines.json'));
+app.get('/taglinerequest', (req, res) => {
+	res.send(taglineEngine('tagline'));
+});
+
+app.get('/easteregg', (req, res) => {
+	res.send(taglineEngine('easteregg'));
+});
+
 //static directories
 app.use('/content', express.static(path.resolve(__dirname + '/../public/content')) );
 app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );
@@ -92,12 +101,9 @@ app.get('/app.bundle.js.map', (req, res) => {
 	res.sendFile(path.resolve(__dirname + `/../public/${req.originalUrl}`));
 });
 
-//fallback to index.html template (with randomization)
-const indexTemplate = fs.readFileSync(path.resolve(__dirname + '/../public/index.html.t'), 'utf8');
-const replacementEngine = replacement(require('./website_descriptions.json'));
-
+//fallback to index.html
 app.get('*', (req, res) => {
-	res.send(stringReplacement(indexTemplate, replacementEngine('description') ));
+	res.sendFile(path.resolve(__dirname + '/../public/index.html'));
 });
 
 //startup

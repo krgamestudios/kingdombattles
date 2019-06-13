@@ -11,8 +11,15 @@ class Home extends React.Component {
 		super(props);
 		this.state = {
 			warning: '', //TODO: unified warning?
-			fetch: null
+			fetch: null,
+			tagline: ''
 		};
+
+		fetch('/taglinerequest')
+			.then(res => res.text())
+			.then(text => this.setState({ tagline: text }))
+			.catch(console.error)
+		;
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -23,6 +30,17 @@ class Home extends React.Component {
 		let warningStyle = {
 			display: this.state.warning.length > 0 ? 'flex' : 'none'
 		};
+
+		//A bit of fun
+		let Tagline = () => {
+			if (this.state.tagline === 'marquee') {
+				return (<p className='marquee'><em>I hope this CSS marquee effect works in all browsers!</em></p>);
+			}
+			if (this.state.tagline === 'rainbow') {
+				return (<p className='centered rainbowText'><em>I hope this CSS rainbow effect works in all browsers!</em></p>);
+			}
+			return (<p className='centered'><em><Markdown source={this.state.tagline} escapeHtml={true} /></em></p>);
+		}
 
 		return (
 			<div className='page'>
@@ -37,7 +55,7 @@ class Home extends React.Component {
 						</div>
 
 						<h1 className='centered'>About</h1>
-						<p className='centered'><em>A game in <strike>early</strike> development.</em></p>
+						<Tagline />
 						<br />
 						<Markdown url='/content/blurb.md' />
 						<h1 className='centered'>News</h1>
