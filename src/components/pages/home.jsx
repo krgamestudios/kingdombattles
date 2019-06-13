@@ -34,10 +34,10 @@ class Home extends React.Component {
 		//A bit of fun
 		let Tagline = () => {
 			if (this.state.tagline === 'marquee') {
-				return (<p className='marquee'><em>I hope this CSS marquee effect works in all browsers!</em></p>);
+				return (<div className='marqueeContainer'><em><p className='marquee'>I hope this CSS marquee effect works in all browsers!</p></em></div>);
 			}
 			if (this.state.tagline === 'rainbow') {
-				return (<p className='centered rainbowText'><em>I hope this CSS rainbow effect works in all browsers!</em></p>);
+				return (<em><p className='centered rainbowText'>I hope this CSS rainbow effect works in all browsers!</p></em>);
 			}
 			return (<p className='centered'><em><Markdown source={this.state.tagline} escapeHtml={true} /></em></p>);
 		}
