@@ -2,9 +2,9 @@ Priority List
 ---
 
 * ~~Privacy policy / no children under 13.~~
-* Unsubscribe from promotional emails.
+* ~~Unsubscribe from promotional emails.~~
 * Delete own account (right to be forgotten).
-* Write unit tests / refactor for unit tests (ensure that the game doesn't break from an update).
+* refactor for unit tests / Write unit tests (ensure that the game doesn't break from an update).
 * Implement admin panel (write posts without having to commit, interact with the database safely).
 
 Major Effort Changes

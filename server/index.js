@@ -42,6 +42,8 @@ app.post('/logoutrequest', accounts.logoutRequest(connection));
 app.post('/passwordchangerequest', accounts.passwordChangeRequest(connection));
 app.post('/passwordrecoverrequest', accounts.passwordRecoverRequest(connection));
 app.post('/passwordresetrequest', accounts.passwordResetRequest(connection));
+app.post('/privacysettingsrequest', accounts.privacySettingsRequest(connection));
+app.post('/privacysettingsupdaterequest', accounts.privacySettingsUpdateRequest(connection));
 
 //handle profiles
 let profiles = require('./profiles.js');
