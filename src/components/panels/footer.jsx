@@ -4,7 +4,7 @@ class Footer extends React.Component {
 	render() {
 		return (
 			<footer>
-				<p>Copyright <a href='https://krgamestudios.com'>KR Game Studios</a> 2019</p>
+				<p>Copyright <a href='https://krgamestudios.com'>KR Game Studios</a> 2019 - <a href='/privacypolicy'>Privacy Policy</a></p>
 			</footer>
 		);
 	}
