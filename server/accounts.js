@@ -18,7 +18,7 @@ const signupRequest = (connection) => (req, res) => {
 	//parse form
 	form.parse(req, (err, fields) => {
 		if (err) throw err;
-
+console.log(fields);
 		//prevent too many clicks
 		if (isThrottled(fields.email)) {
 			res.status(400).write(log('Signup throttled', fields.email));
@@ -74,8 +74,8 @@ const signupRequest = (connection) => (req, res) => {
 						let rand = Math.floor(Math.random() * 100000);
 
 						//save the generated data to the signups table
-						let query = 'REPLACE INTO signups (email, username, salt, hash, verify) VALUES (?, ?, ?, ?, ?);';
-						connection.query(query, [fields.email, fields.username, salt, hash, rand], (err) => {
+						let query = 'REPLACE INTO signups (email, username, salt, hash, promotions, verify) VALUES (?, ?, ?, ?, ?, ?);';
+						connection.query(query, [fields.email, fields.username, salt, hash, fields.promotions ? true : false, rand], (err) => {
 							if (err) throw err;
 
 							//TODO: make the verification email prettier
@@ -145,8 +145,8 @@ const verifyRequest = (connection) => (req, res) => {
 			log('Trying to create account', req.query.email);
 
 			//move the data from signups to accounts
-			let query = 'INSERT IGNORE INTO accounts (email, username, salt, hash) VALUES (?, ?, ?, ?);';
-			connection.query(query, [results[0].email, results[0].username, results[0].salt, results[0].hash], (err) => {
+			let query = 'INSERT IGNORE INTO accounts (email, username, salt, hash, promotions) VALUES (?, ?, ?, ?, ?);';
+			connection.query(query, [results[0].email, results[0].username, results[0].salt, results[0].hash, results[0].promotions], (err) => {
 				if (err) throw err;
 
 				//delete from signups

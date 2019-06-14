@@ -1,20 +1,16 @@
-#NOTE: ALWAYS, ALWAYS, ALWAYS write a script in revert.sql that undoes these changes
-
 ALTER TABLE
-	pastSpying
-MODIFY COLUMN
-	success ENUM ('success', 'failure', 'ineffective')
+	signups
+ADD COLUMN
+	promotions BOOLEAN DEFAULT FALSE
+AFTER
+	hash
 ;
 
-UPDATE
-	pastSpying
-SET
-	success = 'ineffective'
-WHERE
-	success = 'success'
-AND
-	spoilsGold = 0
-AND
-	(SELECT COUNT(*) FROM equipmentStolen WHERE pastSpyingId = pastSpying.id) = 0
+ALTER TABLE
+	accounts
+ADD COLUMN
+	promotions BOOLEAN DEFAULT FALSE
+AFTER
+	hash
 ;
 

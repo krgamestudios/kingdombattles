@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS signups (
 	username VARCHAR(100) UNIQUE,
 	salt VARCHAR(50),
 	hash VARCHAR(100),
+	promotions BOOLEAN DEFAULT FALSE,
 
 	verify INTEGER DEFAULT 0
 );
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 	username VARCHAR(100) UNIQUE,
 	salt VARCHAR(50),
 	hash VARCHAR(100),
+	promotions BOOLEAN DEFAULT FALSE,
 
 	lastActivityTime TIMESTAMP DEFAULT '2019-01-01 00:00:00'
 );

@@ -11,6 +11,7 @@ class Signup extends React.Component {
 			username: '',
 			password: '',
 			retype: '',
+			promotions: false,
 			warning: ''
 		};
 	}
@@ -47,6 +48,11 @@ class Signup extends React.Component {
 					<div>
 						<label htmlFor='retype'>Retype Password:</label>
 						<input id='retype' type='password' name='retype' value={this.state.retype} onChange={this.updateRetype.bind(this)} />
+					</div>
+
+					<div style={{paddingLeft: '34px', alignSelf: 'flex-start', flex: '1', display:'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
+						<label htmlFor='promotions'>Allow Emails:</label>
+						<input id='promotions' type='checkbox' name='promotions' value={this.state.promotions} onChange={this.updatePromotions.bind(this)} />
 					</div>
 
 					<button type='submit' disabled={!this.state.email}>Sign Up</button>
@@ -121,7 +127,7 @@ class Signup extends React.Component {
 	}
 
 	clearInput() {
-		this.setState({ email: '', username: '', password: '', retype: '', warning: '' });
+		this.setState({ email: '', username: '', password: '', retype: '', promotions: false, warning: '' });
 	}
 
 	updateEmail(evt) {
@@ -138,6 +144,10 @@ class Signup extends React.Component {
 
 	updateRetype(evt) {
 		this.setState({ retype: evt.target.value });
+	}
+
+	updatePromotions(evt) {
+		this.setState({ promotions: evt.target.value });
 	}
 };
 

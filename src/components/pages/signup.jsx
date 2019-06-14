@@ -32,9 +32,7 @@ class Signup extends React.Component {
 				<Panel />
 				<Link to='/' className='centered'>Return Home</Link>
 				<div className='break' />
-				<p className='centered'>Remember to verify your email!</p>
-				<div className='break' />
-				<p className='centered'>Check our rules concerning<br /><Link to='/rules'>conduct in this game</Link>.</p>
+				<p className='centered'><em>(Remember to verify your email!)</em></p>
 			</div>
 		);
 	}
