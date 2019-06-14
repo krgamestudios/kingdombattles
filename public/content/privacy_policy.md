@@ -2,6 +2,11 @@ Privacy Policy
 ===
 _Last Updated 14 June 2019_
 
+Governing Law
+---
+
+This privacy policy is governed by Australian privacy law. Any disputes will be determined by Australian law.
+
 Collection and Storage of Data
 ---
 
