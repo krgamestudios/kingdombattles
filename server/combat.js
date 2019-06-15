@@ -1,4 +1,4 @@
-https://10minutemail.net///environment variables
+//environment variables
 require('dotenv').config();
 
 //libraries
