@@ -1,7 +1,7 @@
 Priority List
 ---
 
-* Capture The Flag / King Of The Hill implemented.
+* ~~Capture The Flag / King Of The Hill implemented.~~
 * ~~Privacy policy / no children under 13.~~
 * ~~Unsubscribe from promotional emails.~~
 * Delete own account (right to be forgotten).
@@ -76,7 +76,7 @@ Badge Ideas
 ---
 
 * ~~alpha tester~~
-* capture the flag
+* ~~capture the flag~~
 * ~~king of the hill~~
 * gold horde
 * ~~Combat Master~~

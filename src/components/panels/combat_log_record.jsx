@@ -2,6 +2,8 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+import BadgeText from './badge_text.jsx';
+
 class CombatLogRecord extends React.Component {
 	constructor(props) {
 		super(props);
@@ -12,6 +14,10 @@ class CombatLogRecord extends React.Component {
 	}
 
 	render() {
+		//NOTE: the badgeText was never meant to be used this way
+		let badgeFilename = this.props.flagCaptured ? 'capture_the_flag.png' : undefined;
+		let badgeName = this.props.flagCaptured ? 'Capture The Flag' : undefined;
+
 		return (
 			<div className='panel table noCollapse'>
 				<hr />
@@ -23,7 +29,7 @@ class CombatLogRecord extends React.Component {
 				</div>
 
 				<div className='row'>
-					<p className='col truncate'><span className='mobile hide'>Victor: </span>{this.capitalizeFirstLetter(this.props.victor)} {this.props.undefended ? '(undefended)' : ''}</p>
+					<BadgeText name={badgeName} filename={badgeFilename} size='small' className='col truncate'><span className='mobile hide'>Victor: </span>{this.capitalizeFirstLetter(this.props.victor)} {this.props.undefended ? '(undefended)' : ''}</BadgeText>
 					<p className='col truncate'>Gold: {this.props.spoilsGold}</p>
 					<p className='col truncate'>Atk. Deaths: {this.props.attackerCasualties}</p>
 				</div>

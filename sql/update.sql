@@ -1,16 +1,19 @@
-ALTER TABLE
-	signups
-ADD COLUMN
-	promotions BOOLEAN DEFAULT FALSE
-AFTER
-	hash
-;
 
 ALTER TABLE
-	accounts
-ADD COLUMN
-	promotions BOOLEAN DEFAULT FALSE
-AFTER
-	hash
+	pastCombat
+ADD
+	flagCaptured BOOLEAN NOT NULL DEFAULT FALSE
 ;
+
+#initialize the server's flag
+INSERT INTO badges (accountId, name) VALUES (1, "Capture The Flag"); #my account ID
+
+#move the badge between accounts
+#INSERT INTO badges
+#	(id, accountId)
+#VALUES
+#	(?, ?)
+#ON DUPLICATE KEY UPDATE
+#	accountId = VALUES(accountId)
+#;
 

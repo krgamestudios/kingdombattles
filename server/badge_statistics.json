@@ -15,7 +15,7 @@
 		"filename": "capture_the_flag.png",
 		"description": "This badge is stolen by successful attacks. It is automatically set as your active badge, and you can't change it until it is lost; it also sets your name to yellow, so everyone knows you have it. Only one exists.",
 		"visible": true,
-		"unlockable": null
+		"unlockable": false
 	},
 	"Combat Master": {
 		"filename": "combat_master.png",

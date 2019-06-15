@@ -70,6 +70,16 @@ const selectActiveBadge = (connection) => (req, res) => {
 				return;
 			}
 
+			//if Capture The Flag is active, don't change the active badge; return badges owned
+			if (owned["Capture The Flag"]) {
+				getBadgesOwned(connection, req.body.id, (err, results) => {
+					if (err) throw err;
+					res.status(200).json(results);
+					res.end();
+				});
+				return;
+			}
+
 			//zero out the user's selection
 			let query = 'UPDATE badges SET active = FALSE WHERE accountId = ?;';
 			connection.query(query, [req.body.id], (err) => {
@@ -105,6 +115,33 @@ const rewardBadge = (connection, id, badgeName, cb) => {
 		if (packet.affectedRows) {
 			cb(id, badgeName);
 		}
+	});
+};
+
+const captureTheFlag = (connection, attackerId, defenderId, skip, cb) => {
+	//if this is a no-op
+	if (skip) {
+		return cb(false);
+	}
+
+	//check to see if the flag belongs to the defender
+	let query = 'SELECT * FROM badges WHERE accountId = ? AND name = "Capture The Flag" LIMIT 1;';
+	connection.query(query, [defenderId], (err, results) => {
+		if (err) throw err;
+
+		//does the defender have this badge? If not, return
+		if (results.length === 0) {
+			return cb(false);
+		}
+
+		//move the badge between accounts
+		let query = 'INSERT INTO badges (id, accountId, name, active) VALUES (?, ?, "Capture The Flag", FALSE) ON DUPLICATE KEY UPDATE accountId = VALUES(accountId), active = FALSE;';
+		connection.query(query, [results[0].id, attackerId], (err) => {
+			if (err) throw err;
+
+			log('Badge moved', attackerId, defenderId);
+			cb(true);
+		});
 	});
 };
 
@@ -187,5 +224,6 @@ module.exports = {
 	ownedRequest: ownedRequest,
 	selectActiveBadge: selectActiveBadge,
 	rewardBadge: rewardBadge,
+	captureTheFlag: captureTheFlag,
 	runBadgeTicks: runBadgeTicks
 };

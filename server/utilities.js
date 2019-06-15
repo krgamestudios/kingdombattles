@@ -46,6 +46,12 @@ const getBadgesOwned = (connection, id, cb) => {
 			ret[results[key].name] = { active: results[key].active };
 		});
 
+		//NOTE: check for "Capture The Flag" badge, force it to be the active badge
+		if ("Capture The Flag" in ret) {
+			Object.keys(ret).map((key) => ret[key].active = false);
+			ret["Capture The Flag"].active = true;
+		}
+
 		return cb(undefined, { 'owned': ret });
 	});
 }

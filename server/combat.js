@@ -9,6 +9,7 @@ let { logDiagnostics } = require('./diagnostics.js');
 let { log } = require('../common/utilities.js');
 
 let { getEquipmentStatistics, isAttacking, logActivity } = require('./utilities.js');
+let { captureTheFlag } = require('./badges.js');
 
 const attackRequest = (connection) => (req, res) => {
 	//verify the attacker's credentials (only the attacker can launch an attack)
@@ -234,39 +235,42 @@ const runCombatTick = (connection) => {
 												let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
 												let attackerCasualties = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits : 0) * (victor === 'attacker' ? Math.random() / 5 : Math.random() / 2));
 
-												//save the combat
-												let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
-												connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties], (err) => {
-													if (err) throw err;
-
-													//update the attacker profile
-													let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE accountId = ?;';
-													connection.query(query, [spoilsGold, attackerCasualties, pendingCombat.attackerId], (err) => {
+												//capture the flag logic
+												captureTheFlag(connection, pendingCombat.attackerId, pendingCombat.defenderId, victor !== 'attacker', (flagCaptured) => {
+													//save the combat
+													let query = 'INSERT INTO pastCombat (eventTime, attackerId, defenderId, attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties, flagCaptured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+													connection.query(query, [pendingCombat.eventTime, pendingCombat.attackerId, pendingCombat.defenderId, pendingCombat.attackingUnits, defendingUnits, undefended, victor, spoilsGold, attackerCasualties, flagCaptured], (err) => {
 														if (err) throw err;
 
-														//update the defender profile
-														let query = 'UPDATE profiles SET gold = gold - ? WHERE accountId = ?;';
-														connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
+														//update the attacker profile
+														let query = 'UPDATE profiles SET gold = gold + ?, soldiers = soldiers - ? WHERE accountId = ?;';
+														connection.query(query, [spoilsGold, attackerCasualties, pendingCombat.attackerId], (err) => {
 															if (err) throw err;
 
-															//remove used consumables (moved because callback hell is rediculous)
-															removeConsumables(connection, attackerConsumables, pendingCombat.attackingUnits);
-															removeConsumables(connection, defenderConsumables, defendingUnits);
-
-															//delete the pending combat
-															let query = 'DELETE FROM pendingCombat WHERE id = ?;';
-															connection.query(query, [pendingCombat.id], (err) => {
+															//update the defender profile
+															let query = 'UPDATE profiles SET gold = gold - ? WHERE accountId = ?;';
+															connection.query(query, [spoilsGold, pendingCombat.defenderId], (err) => {
 																if (err) throw err;
 
-																log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor, spoilsGold);
-																logDiagnostics(connection, 'death', attackerCasualties);
+																//remove used consumables (moved because callback hell is rediculous)
+																removeConsumables(connection, attackerConsumables, pendingCombat.attackingUnits);
+																removeConsumables(connection, defenderConsumables, defendingUnits);
 
-																//clean the database
-																let query = 'DELETE FROM equipment WHERE quantity <= 0;';
-																connection.query(query, (err) => {
+																//delete the pending combat
+																let query = 'DELETE FROM pendingCombat WHERE id = ?;';
+																connection.query(query, [pendingCombat.id], (err) => {
 																	if (err) throw err;
 
-																	log('Cleaned database', 'Combat consumables');
+																	log('Combat executed', pendingCombat.attackerId, pendingCombat.defenderId, victor, spoilsGold);
+																	logDiagnostics(connection, 'death', attackerCasualties);
+
+																	//clean the database
+																	let query = 'DELETE FROM equipment WHERE quantity <= 0;';
+																	connection.query(query, (err) => {
+																		if (err) throw err;
+
+																		log('Cleaned database', 'Combat consumables');
+																	});
 																});
 															});
 														});
