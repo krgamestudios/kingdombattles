@@ -1,4 +1,4 @@
-//environment variables
+https://10minutemail.net///environment variables
 require('dotenv').config();
 
 //libraries
@@ -233,7 +233,7 @@ const runCombatTick = (connection) => {
 
 												//determine the spoils and casualties
 												let spoilsGold = Math.floor(results[0].gold * (victor === 'attacker' ? 0.1 : 0.02));
-												let attackerCasualties = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits : 0) * (victor === 'attacker' ? Math.random() / 5 : Math.random() / 2));
+												let attackerCasualties = Math.floor((pendingCombat.attackingUnits >= 10 ? pendingCombat.attackingUnits : 0) * (victor === 'attacker' ? 0 : Math.random() / 5));
 
 												//capture the flag logic
 												captureTheFlag(connection, pendingCombat.attackerId, pendingCombat.defenderId, victor !== 'attacker', (flagCaptured) => {
