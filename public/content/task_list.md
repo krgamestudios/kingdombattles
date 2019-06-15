@@ -77,7 +77,7 @@ Badge Ideas
 
 * ~~alpha tester~~
 * capture the flag
-* king of the hill
+* ~~king of the hill~~
 * gold horde
 * ~~Combat Master~~
 * Beta tester

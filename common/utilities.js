@@ -39,6 +39,7 @@ let excluded = [ //messages that should not be logged
 	'Sale made',
 
 	'runLadderTick completed',
+	'King Of The Hill contender found',
 
 	'Cleaned database',
 	'outerTick'

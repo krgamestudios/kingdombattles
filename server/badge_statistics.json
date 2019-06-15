@@ -39,7 +39,7 @@
 		"filename": "king_of_the_hill.png",
 		"description": "Awarded to anyone who keeps their position at the top of the game ladder for 24 hours.",
 		"visible": true,
-		"unlockable": null
+		"unlockable": true
 	},
 	"Referral Linker": {
 		"filename": "referral_linker.png",
