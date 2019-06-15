@@ -1,21 +1,23 @@
 Priority List
 ---
 
+* Capture The Flag / King Of The Hill implemented.
 * ~~Privacy policy / no children under 13.~~
 * ~~Unsubscribe from promotional emails.~~
 * Delete own account (right to be forgotten).
 * refactor for unit tests / Write unit tests (ensure that the game doesn't break from an update).
-* Implement admin panel (write posts without having to commit, interact with the database safely).
 
 Major Effort Changes
 ---
 
+* Implement admin panel (write posts without having to commit, interact with the database safely).
 * Implement countdown timers for combat, spying and training.
 * Implement Rest bonus.
 * Implement referral links.
 * Implement bug tracker.
 * Ads / monetisation research.
 * Proper changelog feed.
+* Prepare for archiving during the reset.
 
 Minor Effort Changes
 ---
@@ -29,6 +31,7 @@ Minor Effort Changes
 * Implement banning mechanism.
 * Do something about whitespace in usernames.
 * Combat and spying notifications.
+* Mass Mailer Script.
 
 Patch Changes
 ---
