@@ -479,8 +479,7 @@ const runGoldTick = (connection) => {
 
 			//determine the correct tick rate based on the current gold average
 			let tickRate = (() => {
-				//TMP: freeze the tick rate
-				return null;
+				return -60; //TMP: semi-freeze the tick rate
 				if (results[0].goldAverage < 120) return 5;
 				if (results[0].goldAverage < 130) return 15;
 				if (results[0].goldAverage < 140) return 30;
@@ -491,15 +490,14 @@ const runGoldTick = (connection) => {
 			if (oldTickRate !== tickRate) {
 				if (goldTickJob) goldTickJob.stop();
 
-				//TMP: freeze the tickRate
-				if (tickRate === null) {
-					log('Tick rate frozen');
-					oldTickRate = tickRate;
-					return;
-				}
-
-				goldTickJob = new CronJob(`0 */${tickRate} * * * *`, () => {
-					let query = 'UPDATE profiles SET gold = gold + recruits;';
+				//NOTE: negative tickRate means restrict the tick to people with gold < 100
+				goldTickJob = new CronJob(`0 */${tickRate > 0 ? tickRate : -tickRate} * * * *`, () => {
+					let query;
+					if (tickRate > 0) {
+						query = 'UPDATE profiles SET gold = gold + recruits;';
+					} else {
+						query = 'UPDATE profiles SET gold = gold + recruits WHERE gold < 100;';
+					}
 					connection.query(query, (err) => {
 						if (err) throw err;
 

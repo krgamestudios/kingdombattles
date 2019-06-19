@@ -18,15 +18,14 @@ const statisticsRequest = (connection) => (req, res) => {
 		//determine the correct tick rate based on the current gold average
 		//NOTE: copy/pasted
 		let tickRate = (() => {
-			//TMP: freeze the tick rate
-			return null;
+			return -60; //TMP: semi-freeze the tick rate
 			if (results[0].goldAverage < 120) return 5;
 			if (results[0].goldAverage < 130) return 15;
 			if (results[0].goldAverage < 140) return 30;
 			return 60; //slow it way down
 		})();
 
-		let nextTick = tickRate ? tickRate - (new Date()).getMinutes() % tickRate : null;
+		let nextTick = Math.abs(tickRate) - (new Date()).getMinutes() % Math.abs(tickRate);
 
 		let query = 'SELECT COUNT(*) AS activity FROM accounts WHERE lastActivityTime >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY);';
 		connection.query(query, (err, results) => {
@@ -51,8 +50,8 @@ const statisticsRequest = (connection) => (req, res) => {
 					'Scientist Total': scientistTotal,
 					'Spy Total': { string: '[Classified]', color: 'red' },
 					'Gold Average': `${round(goldAverage)}`,
-					'Gold Tick Rate': tickRate ? `${tickRate} minutes` : { string: 'Frozen', color: 'red' },
-					'Gold Next Tick': nextTick ? `${nextTick} minute${nextTick === 1 ? '' : 's'} from now` : { string: 'Frozen', color: 'red' }
+					'Gold Tick Rate': tickRate > 0 ? `${tickRate} minutes` : { string: `${Math.abs(tickRate)} minutes (restricted to gold < 100)`, color: 'yellow' },
+					'Gold Next Tick': `${nextTick} minute${nextTick === 1 ? '' : 's'} from now`
 				});
 				res.end();
 			});
