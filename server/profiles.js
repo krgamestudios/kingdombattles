@@ -479,6 +479,8 @@ const runGoldTick = (connection) => {
 
 			//determine the correct tick rate based on the current gold average
 			let tickRate = (() => {
+				//TMP: freeze the tick rate
+				return null;
 				if (results[0].goldAverage < 120) return 5;
 				if (results[0].goldAverage < 130) return 15;
 				if (results[0].goldAverage < 140) return 30;
@@ -488,6 +490,13 @@ const runGoldTick = (connection) => {
 			//if the tick rate changed (or is undefined), reset (or start) the inner tick job
 			if (oldTickRate !== tickRate) {
 				if (goldTickJob) goldTickJob.stop();
+
+				//TMP: freeze the tickRate
+				if (tickRate === null) {
+					log('Tick rate frozen');
+					oldTickRate = tickRate;
+					return;
+				}
 
 				goldTickJob = new CronJob(`0 */${tickRate} * * * *`, () => {
 					let query = 'UPDATE profiles SET gold = gold + recruits;';
