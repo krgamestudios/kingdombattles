@@ -231,6 +231,7 @@ const spyGameplayLogic = (connection, pendingSpying) => {
 								if (err) throw err;
 
 								log('Spy failed', pendingSpying.attackerId, pendingSpying.defenderId, pendingSpying.attackingUnits, totalEyes);
+								logDiagnostics(connection, 'death', pendingSpying.attackingUnits);
 							});
 						});
 					});

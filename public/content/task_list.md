@@ -71,6 +71,7 @@ Event Ideas
 
 * Capture the flag.
 * Bosses / raids (drop exclusive badges / items).
+* Tug of War (endian wars).
 
 Badge Ideas
 ---
