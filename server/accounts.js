@@ -71,7 +71,7 @@ const signupRequest = (connection) => (req, res) => {
 						if (err) throw err;
 
 						//generate a random number as a token
-						let rand = Math.floor(Math.random() * 100000);
+						let rand = Math.floor(Math.random() * 2000000000);
 
 						//save the generated data to the signups table
 						let query = 'REPLACE INTO signups (email, username, salt, hash, promotions, verify) VALUES (?, ?, ?, ?, ?, ?);';
@@ -293,7 +293,7 @@ const passwordChangeRequest = (connection) => (req, res) => {
 							if (err) throw err;
 
 							//create the new session
-							let rand = Math.floor(Math.random() * 100000);
+							let rand = Math.floor(Math.random() * 2000000000);
 
 							let query = 'INSERT INTO sessions (accountId, token) VALUES (?, ?);';
 							connection.query(query, [fields.id, rand], (err) => {
@@ -352,7 +352,7 @@ const passwordRecoverRequest = (connection) => (req, res) => {
 			}
 
 			//create the new recover record
-			let rand = Math.floor(Math.random() * 100000);
+			let rand = Math.floor(Math.random() * 2000000000);
 
 			let query = 'REPLACE INTO passwordRecover (accountId, token) VALUES (?, ?)';
 			connection.query(query, [results[0].id, rand], (err) => {
