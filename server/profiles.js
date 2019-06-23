@@ -529,7 +529,7 @@ const runLadderTick = (connection) => {
 			if (err) throw err;
 
 			//get the profiles ordered by weight descending
-			let query = 'SELECT id FROM profiles ORDER BY ladderRankWeight DESC;';
+			let query = 'SELECT id FROM profiles ORDER BY ladderRankWeight DESC, soldiers DESC, recruits DESC, gold DESC;';
 			connection.query(query, (err, results) => {
 				if (err) throw err;
 
