@@ -477,11 +477,12 @@ const runGoldTick = (connection) => {
 		connection.query(query, (err, results) => {
 			if (err) throw err;
 
+			//TODO: automatic "drain mode"
+
 			//determine the correct tick rate based on the current gold average
 			let tickRate = (() => {
-				return -60; //TMP: semi-freeze the tick rate
-				if (results[0].goldAverage < 120) return 5;
-				if (results[0].goldAverage < 130) return 15;
+				if (results[0].goldAverage < 120) return 10;
+				if (results[0].goldAverage < 130) return 20;
 				if (results[0].goldAverage < 140) return 30;
 				return 60; //slow it way down
 			})();
