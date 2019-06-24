@@ -481,10 +481,10 @@ const runGoldTick = (connection) => {
 
 			//determine the correct tick rate based on the current gold average
 			let tickRate = (() => {
-				if (results[0].goldAverage < 120) return 10;
-				if (results[0].goldAverage < 130) return 20;
-				if (results[0].goldAverage < 140) return 30;
-				return 60; //slow it way down
+				if (results[0].goldAverage < 120) return 30;
+				if (results[0].goldAverage < 130) return 60;
+				if (results[0].goldAverage < 140) return 120;
+				return 180; //slow it way down
 			})();
 
 			//if the tick rate changed (or is undefined), reset (or start) the inner tick job
