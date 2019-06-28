@@ -21,7 +21,7 @@ const statisticsRequest = (connection) => (req, res) => {
 			if (results[0].goldAverage < 120) return 30;
 			if (results[0].goldAverage < 130) return 60;
 			if (results[0].goldAverage < 140) return 120;
-			return 180; //slow it way down
+			return -180; //slow it way down
 		})();
 
 		let nextTick = Math.abs(tickRate) - (new Date()).getMinutes() % Math.abs(tickRate);
