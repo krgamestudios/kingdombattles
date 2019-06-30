@@ -97,6 +97,11 @@ app.use('/content', express.static(path.resolve(__dirname + '/../public/content'
 app.use('/img', express.static(path.resolve(__dirname + '/../public/img')) );
 app.use('/styles', express.static(path.resolve(__dirname + '/../public/styles')) );
 
+//ads
+app.get('/ads.txt', (req, res) => {
+	res.sendFile(path.resolve(__dirname + `/../public/${req.originalUrl}`));
+});
+
 //the app file(s)
 app.get('/*app.bundle.js', (req, res) => {
 	res.sendFile(path.resolve(`${__dirname}/../public/${req.originalUrl.split('/').pop()}`));
