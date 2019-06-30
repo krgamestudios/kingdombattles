@@ -6,9 +6,9 @@ class Markdown extends React.Component {
 	constructor(props) {
 		super(props);
 
-		if (this.props.source) {
+		if (props.source !== undefined) {
 			this.state = {
-				data: this.props.source
+				data: props.source
 			};
 		} else {
 			this.state = {

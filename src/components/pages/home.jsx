@@ -39,7 +39,7 @@ class Home extends React.Component {
 			if (this.state.tagline === 'rainbow') {
 				return (<em><p className='centered rainbowText'>I hope this CSS rainbow effect works in all browsers!</p></em>);
 			}
-			return (<p className='centered'><em><Markdown source={this.state.tagline} escapeHtml={true} /></em></p>);
+			return (<div className='centered'><em><Markdown source={this.state.tagline} escapeHtml={true} /></em></div>);
 		}
 
 		return (

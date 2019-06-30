@@ -5,6 +5,7 @@ import Loadable from 'react-loadable';
 //other stuff
 import Footer from './panels/footer.jsx';
 import GA from './utilities/google_analytics.jsx';
+import GAdverts from './utilities/google_adverts.jsx';
 
 //lazy route loading (with error handling)
 const LazyRoute = (props) => {
@@ -54,6 +55,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className = 'central'>
+				<GAdverts />
 				<a className='banner' href='/'><img src={'/img/flag_scaled.png'} /></a>
 				<BrowserRouter>
 					{ GA.init() && <GA.RouteTracker /> }
