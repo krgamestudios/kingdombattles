@@ -2,7 +2,7 @@
 require('dotenv').config();
 
 //libraries
-let bcrypt = require('bcrypt');
+let bcrypt = require('bcryptjs');
 let formidable = require('formidable');
 let sendmail = require('sendmail')({silent: true});
 
