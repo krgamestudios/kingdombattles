@@ -4,9 +4,10 @@ version: "3.6"
 services:
   kingdombattles:
     container_name: kingdombattles
+    restart: always
     build: .
     ports:
-      - 4000
+      - 80
     volumes:
       - static_volume:/app/public
     labels:
@@ -15,14 +16,14 @@ services:
       - "traefik.http.routers.kingdombattlesrouter.entrypoints=websecure"
       - "traefik.http.routers.kingdombattlesrouter.tls.certresolver=myresolver"
       - "traefik.http.routers.kingdombattlesrouter.service=kingdombattlesservice@docker"
-      - "traefik.http.services.kingdombattlesservice.loadbalancer.server.port=4000"
+      - "traefik.http.services.kingdombattlesservice.loadbalancer.server.port=3000"
     networks:
-      - server-network
+      - traefik-network
 
 volumes:
   static_volume:
     driver: local
 
 networks:
-  server-network:
+  traefik-network:
     external: true

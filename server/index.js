@@ -118,6 +118,6 @@ app.get('*', (req, res) => {
 });
 
 //startup
-http.listen(4000, () => {
-	log('listening to *:4000');
+http.listen(3000, () => {
+	log('listening to *:3000');
 });
