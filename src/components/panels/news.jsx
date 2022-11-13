@@ -20,7 +20,7 @@ class News extends React.Component {
 		return (
 			<div className='panel'>
 				{Object.keys(this.state).map((key) => <div key={key}>
-					<ReactMarkdown source={this.state[key]} rehypePlugins={[rehypeRaw]} />
+					<ReactMarkdown children={this.state[key]} rehypePlugins={[rehypeRaw]} />
 					<hr className='newsLine' />
 				</div>)}
 			</div>

@@ -7,9 +7,9 @@ class Markdown extends React.Component {
 	constructor(props) {
 		super(props);
 
-		if (props.source !== undefined) {
+		if (props.data !== undefined) {
 			this.state = {
-				data: props.source
+				data: props.data
 			};
 		} else {
 			this.state = {
@@ -21,7 +21,7 @@ class Markdown extends React.Component {
 
 	render() {
 		if (this.state.data) {
-			return (<ReactMarkdown source={this.state.data} rehypePlugins={[rehypeRaw]} {...this.props} />);
+			return (<ReactMarkdown children={this.state.data} rehypePlugins={[rehypeRaw]} {...this.props} />);
 		} else {
 			return (<p className='centered'>Loading markdown...</p>);
 		}
