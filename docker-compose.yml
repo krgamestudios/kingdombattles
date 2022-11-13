@@ -8,6 +8,8 @@ services:
     build: .
     ports:
       - 80
+    environment:
+      - WEB_ADDRESS=kingdombattles.net
     volumes:
       - static_volume:/app/public
     labels:
