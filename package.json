@@ -26,7 +26,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "firstline": "^2.0.2",
-    "forever": "^1.0.1",
+    "forever": "^4.0.3",
     "formidable": "^1.2.2",
     "mysql": "^2.18.1",
     "query-string": "^6.14.1",
