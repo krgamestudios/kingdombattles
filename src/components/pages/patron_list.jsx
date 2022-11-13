@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown/with-html';
 
 //panels
 import CommonLinks from '../panels/common_links.jsx';

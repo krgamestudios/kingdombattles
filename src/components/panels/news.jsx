@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown/with-html';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import PropTypes from 'prop-types';
 
 class News extends React.Component {
@@ -19,7 +20,7 @@ class News extends React.Component {
 		return (
 			<div className='panel'>
 				{Object.keys(this.state).map((key) => <div key={key}>
-					<ReactMarkdown source={this.state[key]} escapeHtml={false} />
+					<ReactMarkdown source={this.state[key]} rehypePlugins={[rehypeRaw]} />
 					<hr className='newsLine' />
 				</div>)}
 			</div>
